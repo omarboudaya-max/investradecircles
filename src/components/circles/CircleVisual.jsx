@@ -179,16 +179,16 @@ export default function CircleVisual({
   useEffect(() => {
     // Spawn a floating comment every 1.8s
     const interval = setInterval(() => {
-      const source = activeMembers.length > 0 ? activeMembers : members.filter(Boolean);
+      const source = members.filter((m) => m?.lastComment);
       if (source.length === 0) return;
       const member = source[Math.floor(Math.random() * source.length)];
-      const comment = member?.lastComment || SAMPLE_COMMENTS[Math.floor(Math.random() * SAMPLE_COMMENTS.length)];
+      const comment = member.lastComment;
       const id = ++commentIdRef.current;
       const x = 20 + Math.random() * (SIZE - 200);
       setLiveComments((prev) => [...prev.slice(-8), { id, text: comment, x, name: member?.name }]);
     }, 1800);
     return () => clearInterval(interval);
-  }, [members.length, activeMembers.length]);
+  }, [members]);
 
   const removeComment = (id) => setLiveComments((prev) => prev.filter((c) => c.id !== id));
 

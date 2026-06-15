@@ -25,23 +25,34 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
 
   const { data: events = [] } = useQuery({
     queryKey: ['circle-events', circleId],
-    queryFn: () => supabase.from('CircleEvent').select('*').match({ circle_id: circleId }, 'event_date', 50).then(res => res.data || []),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('CircleEvent').select('*').eq('circle_id', circleId).order('event_date').limit(50);
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   const createEvent = useMutation({
-    mutationFn: () =>
-      supabase.from('CircleEvent').insert({
+    mutationFn: async () => {
+      const { error } = await supabase.from('CircleEvent').insert({
         ...form,
         circle_id: circleId,
         author_name: user?.full_name || user?.email?.split('@')[0] || 'Member',
+        created_by_id: user?.id,
         status: isAdmin || isModerator ? 'approved' : 'pending',
         session_active: false,
-      }),
+      });
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circle-events', circleId] });
       setForm({ title: '', description: '', event_date: '', event_type: 'discussion', meet_link: '' });
       setShowForm(false);
     },
+    onError: (error) => {
+      console.error(error);
+      alert('Failed to create event: ' + error.message);
+    }
   });
 
   const approveEvent = useMutation({

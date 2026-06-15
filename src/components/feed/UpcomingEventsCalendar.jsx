@@ -51,7 +51,7 @@ export default function UpcomingEventsCalendar() {
     queryFn: async () => {
       if (circleIds.length === 0) return [];
       const results = await Promise.all(
-        circleIds.map((id) => supabase.from('CircleEvent').select('*').match({ circle_id: id, status: 'approved' }, 'event_date', 20).then(res => res.data || []))
+        circleIds.map((id) => supabase.from('CircleEvent').select('*').eq('circle_id', id).eq('status', 'approved').order('event_date').limit(20).then(res => res.data || []))
       );
       return results.flat().filter((e) => isFuture(new Date(e.event_date)));
     },

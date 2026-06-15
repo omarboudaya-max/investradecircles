@@ -246,3 +246,17 @@ ALTER TABLE public."SavedProduct" DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public."ProductClick" DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public."Connection" DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public."AuditLog" DISABLE ROW LEVEL SECURITY;
+
+
+-- AuditLog Table
+CREATE TABLE public."AuditLog" (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  action TEXT NOT NULL,
+  details TEXT,
+  admin_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  admin_name TEXT,
+  created_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public."AuditLog" DISABLE ROW LEVEL SECURITY;
+

@@ -67,19 +67,30 @@ export default function CreateStoryModal({ onClose, onCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col" onClick={onClose}>
-      <div className="flex-1 flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-neutral-950 flex items-center justify-center" onClick={onClose}>
+      {/* Close Button Outside on Desktop */}
+      <button 
+        onClick={onClose} 
+        className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition hidden sm:block z-50"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      <div className="w-full h-full sm:h-[90vh] sm:aspect-[9/16] bg-black sm:rounded-[2rem] overflow-hidden flex flex-col shadow-2xl relative sm:ring-1 sm:ring-white/10" onClick={(e) => e.stopPropagation()}>
 
         {/* ── STEP: SELECT ── */}
         {step === 'select' && (
           <div className="flex-1 flex flex-col bg-black text-white">
-            {/* Top bar */}
-            <div className="flex items-center justify-between px-4 pt-safe-top pt-4 pb-2">
+            {/* Top bar (Mobile only close button) */}
+            <div className="flex items-center justify-between px-4 pt-safe-top pt-4 pb-2 sm:hidden">
               <button onClick={onClose} className="p-2 rounded-full bg-white/10 backdrop-blur-md">
                 <X className="w-5 h-5" />
               </button>
               <span className="text-sm font-semibold tracking-wide">New Story</span>
               <div className="w-9" />
+            </div>
+            <div className="hidden sm:flex items-center justify-center pt-8 pb-4">
+              <span className="text-base font-semibold tracking-wide">Create New Story</span>
             </div>
 
             {/* Main actions */}
@@ -88,7 +99,7 @@ export default function CreateStoryModal({ onClose, onCreated }) {
 
               {/* Camera */}
               <button
-                className="w-full flex items-center gap-4 bg-white/10 hover:bg-white/20 transition rounded-2xl px-5 py-4 backdrop-blur-md"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
                 onClick={() => cameraInputRef.current?.click()}
               >
                 <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
@@ -102,7 +113,7 @@ export default function CreateStoryModal({ onClose, onCreated }) {
 
               {/* Gallery image */}
               <button
-                className="w-full flex items-center gap-4 bg-white/10 hover:bg-white/20 transition rounded-2xl px-5 py-4 backdrop-blur-md"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
                 onClick={() => imageInputRef.current?.click()}
               >
                 <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center">
@@ -116,7 +127,7 @@ export default function CreateStoryModal({ onClose, onCreated }) {
 
               {/* Gallery video */}
               <button
-                className="w-full flex items-center gap-4 bg-white/10 hover:bg-white/20 transition rounded-2xl px-5 py-4 backdrop-blur-md"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
                 onClick={() => videoInputRef.current?.click()}
               >
                 <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center">
@@ -130,7 +141,7 @@ export default function CreateStoryModal({ onClose, onCreated }) {
 
               {/* Text story */}
               <button
-                className="w-full flex items-center gap-4 bg-white/10 hover:bg-white/20 transition rounded-2xl px-5 py-4 backdrop-blur-md"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
                 onClick={() => setStep('text')}
               >
                 <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
@@ -220,11 +231,10 @@ export default function CreateStoryModal({ onClose, onCreated }) {
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
               <button
                 onClick={() => { setStep('select'); setPreview(null); setMediaFile(null); setText(''); }}
-                className="p-2 rounded-full bg-black/50"
+                className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
               >
-                <X className="w-5 h-5 text-white" />
+                <ChevronLeft className="w-6 h-6 text-white" />
               </button>
-              <span className="text-white text-sm font-semibold">Story Preview</span>
               <div className="w-9" />
             </div>
 

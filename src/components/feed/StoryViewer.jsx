@@ -48,9 +48,17 @@ export default function StoryViewer({ stories, startIndex = 0, onClose, onReact 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-neutral-950 flex items-center justify-center" onClick={onClose}>
+      {/* Close Button Outside on Desktop */}
+      <button 
+        onClick={onClose} 
+        className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition hidden sm:block z-50"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
       <div
-        className="relative w-full max-w-sm h-screen max-h-[700px] rounded-2xl overflow-hidden bg-black"
+        className="relative w-full h-full sm:h-[90vh] sm:aspect-[9/16] bg-black sm:rounded-[2rem] overflow-hidden flex flex-col shadow-2xl sm:ring-1 sm:ring-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Progress bars */}
@@ -75,7 +83,7 @@ export default function StoryViewer({ stories, startIndex = 0, onClose, onReact 
             </div>
             <span className="text-white text-sm font-semibold drop-shadow">{story.author_name}</span>
           </div>
-          <button onClick={onClose} className="text-white p-1">
+          <button onClick={onClose} className="text-white p-1 sm:hidden drop-shadow-md">
             <X className="w-5 h-5" />
           </button>
         </div>

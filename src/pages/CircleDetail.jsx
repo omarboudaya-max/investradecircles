@@ -206,14 +206,16 @@ export default function CircleDetail() {
   const memberNames = allMemberIds.map((memberId) => {
     const profile = memberProfiles.find((p) => p.id === memberId);
     const name = profile?.full_name || profile?.email?.split('@')[0] || 'User';
+    const response = responses.find((r) => r.created_by_id === memberId || r.author_name === name);
     return {
       id: memberId,
       name,
       avatar_url: profile?.avatar_url || null,
-      isActive: activeResponderIds.has(memberId) || activeResponderNames.has(name),
+      isActive: !!response,
+      lastComment: response?.response_text || null,
     };
   });
-  while (memberNames.length < 8) memberNames.push({ name: '?', id: null, avatar_url: null, isActive: false });
+  while (memberNames.length < 8) memberNames.push({ name: '?', id: null, avatar_url: null, isActive: false, lastComment: null });
 
   if (loadingCircle) {
     return (

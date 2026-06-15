@@ -38,9 +38,11 @@ export default function PostCard({ post, onDeleted }) {
     mutationFn: async () => {
       const likedBy = post.liked_by || [];
       const newLikedBy = liked ? likedBy.filter((id) => id !== user?.id) : [...likedBy, user?.id];
-      await supabase.from('Post').update({ liked_by: newLikedBy, likes: newLikedBy.length }).eq('id', post.id);
+      const { error } = await supabase.from('Post').update({ liked_by: newLikedBy, likes: newLikedBy.length }).eq('id', post.id);
+      if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+    onError: (error) => toast({ title: 'Failed to like post', description: error.message, variant: 'destructive' }),
   });
 
   const deletePost = useMutation({
