@@ -1,0 +1,62 @@
+{
+  "name": "ProductClick",
+  "type": "object",
+  "properties": {
+    "circle_id": {
+      "type": "string",
+      "description": "Circle this product belongs to"
+    },
+    "product_category": {
+      "type": "string",
+      "description": "Product category that was clicked"
+    },
+    "brand_name": {
+      "type": "string",
+      "description": "Brand/institution name"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User who clicked"
+    }
+  },
+  "required": [
+    "circle_id",
+    "product_category"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

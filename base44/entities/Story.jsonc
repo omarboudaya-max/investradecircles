@@ -1,0 +1,88 @@
+{
+  "name": "Story",
+  "type": "object",
+  "properties": {
+    "author_id": {
+      "type": "string",
+      "description": "User ID of story creator"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Story image URL"
+    },
+    "text": {
+      "type": "string",
+      "description": "Optional text overlay"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Story expires 24h after creation"
+    },
+    "viewed_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User IDs who viewed this story"
+    },
+    "reactions": {
+      "type": "object",
+      "default": {},
+      "description": "Map of emoji to array of user IDs"
+    }
+  },
+  "required": [
+    "author_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.author_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "user_condition": {
+        "isAuthenticated": true
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "data.author_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.author_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

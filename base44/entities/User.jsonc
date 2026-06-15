@@ -1,0 +1,107 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "first_name": {
+      "type": "string",
+      "description": "First name"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "Last name"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth"
+    },
+    "bio": {
+      "type": "string",
+      "description": "User bio / about text"
+    },
+    "headline": {
+      "type": "string",
+      "description": "Professional headline"
+    },
+    "location": {
+      "type": "string",
+      "description": "User location"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile picture URL"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "Cover/banner image URL"
+    },
+    "user_type": {
+      "type": "string",
+      "enum": [
+        "innovator",
+        "investor",
+        "other"
+      ],
+      "description": "Whether the user is an Innovator, Investor or Other"
+    },
+    "business_type": {
+      "type": "string",
+      "enum": [
+        "startup",
+        "small_business",
+        "enterprise",
+        "freelancer",
+        "venture_capital",
+        "angel_investor",
+        "fund_manager",
+        "other"
+      ],
+      "description": "Type of business or activity"
+    },
+    "interests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topics/domains the user is interested in",
+      "default": []
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "isAuthenticated": true
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "data.id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "MarketData",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "description": "Ticker symbol (e.g. ^GSPC, BTC-USD)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name (e.g. S&P 500)"
+    },
+    "price": {
+      "type": "number",
+      "description": "Current price"
+    },
+    "change_pct": {
+      "type": "number",
+      "description": "Percentage change (e.g. 0.74 for +0.74%)"
+    },
+    "previous_close": {
+      "type": "number",
+      "description": "Previous closing price"
+    }
+  },
+  "required": [
+    "symbol"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "isAuthenticated": true
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

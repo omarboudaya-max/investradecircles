@@ -1,0 +1,134 @@
+{
+  "name": "Circle",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "cover_image": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "institution",
+        "individual"
+      ],
+      "default": "individual"
+    },
+    "website_url": {
+      "type": "string",
+      "description": "Official website URL (required for Institution circles)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "moderator_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacy": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private"
+      ],
+      "default": "public"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Officially verified by platform admins \u2014 shown as a verified badge"
+    },
+    "verified_label": {
+      "type": "string",
+      "description": "Optional label shown on the badge, e.g. 'Chamber of Commerce' or 'Stock Exchange'"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.privacy": "public"
+        },
+        {
+          "data.member_ids": {
+            "$in": [
+              "{{user.id}}"
+            ]
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.moderator_ids": {
+            "$in": [
+              "{{user.id}}"
+            ]
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

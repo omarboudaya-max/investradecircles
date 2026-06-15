@@ -1,0 +1,77 @@
+{
+  "name": "Connection",
+  "type": "object",
+  "properties": {
+    "requester_id": {
+      "type": "string",
+      "description": "ID of user who sent the connection request"
+    },
+    "recipient_id": {
+      "type": "string",
+      "description": "ID of user who received the request"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "requester_id",
+    "recipient_id"
+  ],
+  "rls": {
+    "create": {
+      "data.requester_id": "{{user.id}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.requester_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.requester_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.requester_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

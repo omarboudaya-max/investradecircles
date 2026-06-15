@@ -1,0 +1,85 @@
+{
+  "name": "CircleQuestion",
+  "type": "object",
+  "properties": {
+    "circle_id": {
+      "type": "string",
+      "description": "Circle this question belongs to"
+    },
+    "question_number": {
+      "type": "number",
+      "description": "Question number in the circle"
+    },
+    "question_text": {
+      "type": "string",
+      "description": "The discussion question"
+    },
+    "closes_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this question closes for responses"
+    },
+    "total_members": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "circle_id",
+    "question_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "isAuthenticated": true
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.status": "active"
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

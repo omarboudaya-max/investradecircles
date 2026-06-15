@@ -1,0 +1,51 @@
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import PostCard from '@/components/feed/PostCard';
+import { ArrowLeft } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function PostDetail() {
+  const { id } = useParams();
+
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['post-detail', id],
+    queryFn: async () => {
+      const { data } = await supabase.from('Post').select('*').eq('id', id);
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
+  const post = posts[0];
+
+  return (
+    <div className="max-w-2xl mx-auto py-4">
+      <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back to feed
+      </Link>
+
+      {isLoading ? (
+        <div className="bg-card rounded-2xl border p-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-11 h-11 rounded-full" />
+            <div className="space-y-1">
+              <Skeleton className="w-32 h-4" />
+              <Skeleton className="w-16 h-3" />
+            </div>
+          </div>
+          <Skeleton className="w-full h-24" />
+        </div>
+      ) : !post ? (
+        <div className="text-center py-20">
+          <p className="text-lg font-semibold">Post not found</p>
+          <p className="text-sm text-muted-foreground mt-1">This post may have been deleted or is private.</p>
+          <Link to="/" className="mt-4 inline-block text-primary hover:underline text-sm">Go home</Link>
+        </div>
+      ) : (
+        <PostCard post={post} />
+      )}
+    </div>
+  );
+}

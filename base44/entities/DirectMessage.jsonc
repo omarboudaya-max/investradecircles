@@ -1,0 +1,85 @@
+{
+  "name": "DirectMessage",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "description": "Unique ID for the conversation thread (sorted user IDs joined by _)"
+    },
+    "sender_id": {
+      "type": "string",
+      "description": "User ID of the sender"
+    },
+    "recipient_id": {
+      "type": "string",
+      "description": "User ID of the recipient"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message text"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_avatar": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "conversation_id",
+    "sender_id",
+    "recipient_id",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "data.sender_id": "{{user.id}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.sender_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.sender_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

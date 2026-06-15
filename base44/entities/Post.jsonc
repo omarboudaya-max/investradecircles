@@ -1,0 +1,141 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "description": "Post text content"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Attached image URL"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Attached video URL"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Attached document URL (PDF, spreadsheet)"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "file_type": {
+      "type": "string",
+      "description": "MIME type of the attached file"
+    },
+    "circle_id": {
+      "type": "string",
+      "description": "ID of the circle this post belongs to"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "public",
+        "circle",
+        "private"
+      ],
+      "default": "public"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0
+    },
+    "liked_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "saved_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User IDs who bookmarked this post",
+      "default": []
+    },
+    "reactions": {
+      "type": "object",
+      "description": "Map of emoji -> array of user IDs who reacted",
+      "default": {}
+    },
+    "post_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "photo",
+        "video",
+        "poll",
+        "document"
+      ],
+      "default": "text"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.visibility": "public"
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

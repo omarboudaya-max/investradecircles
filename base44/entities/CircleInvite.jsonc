@@ -1,0 +1,103 @@
+{
+  "name": "CircleInvite",
+  "type": "object",
+  "properties": {
+    "circle_id": {
+      "type": "string",
+      "description": "Circle being invited to"
+    },
+    "circle_name": {
+      "type": "string"
+    },
+    "inviter_id": {
+      "type": "string",
+      "description": "User ID of the person sending the invite"
+    },
+    "inviter_name": {
+      "type": "string"
+    },
+    "invitee_id": {
+      "type": "string",
+      "description": "User ID of the invited person (null for link-based invites)"
+    },
+    "invitee_email": {
+      "type": "string",
+      "description": "Email for link-based invites (optional)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique token for link-based invite URL"
+    }
+  },
+  "required": [
+    "circle_id",
+    "inviter_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.inviter_id": "{{user.id}}"
+        },
+        {
+          "data.invitee_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.inviter_id": "{{user.id}}"
+        },
+        {
+          "data.invitee_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.inviter_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
