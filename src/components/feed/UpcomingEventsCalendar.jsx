@@ -40,7 +40,7 @@ export default function UpcomingEventsCalendar() {
 
   const { data: circles = [] } = useQuery({
     queryKey: ['my-circles-for-events', user?.id],
-    queryFn: () => supabase.from('Circle').select('*').match({ member_ids: { $contains: user?.id } }).then(res => res.data || []),
+    queryFn: () => supabase.from('Circle').select('*').contains('member_ids', [user?.id]).then(res => res.data || []),
     enabled: !!user?.id,
   });
 

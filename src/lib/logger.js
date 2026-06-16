@@ -55,11 +55,27 @@ export const logger = {
 
   /**
    * Track a user action event (e.g. 'post_created', 'circle_joined').
+   * Now automatically saves to the AuditLog table for admin oversight!
    */
-  track(eventName, properties = {}) {
+  async track(eventName, properties = {}) {
     console.log('Analytics Event: ', { eventName, properties });
     if (shouldLog('debug')) {
       console.debug('[TRACK]', eventName, properties);
+    }
+    
+    try {
+      // Get the current session user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('AuditLog').insert({
+          action: eventName,
+          details: JSON.stringify(properties).slice(0, 500), // Prevent huge payloads
+          admin_id: user.id, // using existing column for user tracking
+          admin_name: user.email || 'User',
+        });
+      }
+    } catch (err) {
+      console.error('Failed to save audit log to DB', err);
     }
   },
 };

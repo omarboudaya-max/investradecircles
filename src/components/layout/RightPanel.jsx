@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
+import PendingConnectionRequests from '@/components/profile/PendingConnectionRequests';
 
 export default function RightPanel() {
   const { user } = useAuth();
@@ -117,6 +118,7 @@ export default function RightPanel() {
 
       {/* Suggested to Connect */}
       <div>
+        <PendingConnectionRequests />
         <h3 className="text-sm font-semibold text-foreground mb-3">People You May Know</h3>
         <div className="space-y-2">
           {suggestions.length === 0 ? (

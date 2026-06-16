@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Users, ArrowLeft, Landmark, User, Globe, AlertCircle } from 'lucide-react';
 import TagPicker from '@/components/circles/TagPicker';
 import InviteFriendsModal from '@/components/circles/InviteFriendsModal';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CATEGORIES = [
   {
@@ -33,6 +34,7 @@ const CATEGORIES = [
 
 export default function CreateCircle() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('individual');
@@ -67,6 +69,12 @@ export default function CreateCircle() {
       }).select().single();
       if (insertError) throw insertError;
       setCurrentUser(user);
+      
+      // Invalidate all related circle caches instantly!
+      queryClient.invalidateQueries({ queryKey: ['my-circles'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-circles'] });
+      queryClient.invalidateQueries({ queryKey: ['all-circles'] });
+      
       setInviteModal({ open: true, circleId: circleData.id, circleName: circleData.name });
     } catch (err) {
       setError(err?.message || 'Failed to create circle. Please try again.');

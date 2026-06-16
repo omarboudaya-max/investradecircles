@@ -25,15 +25,15 @@ import PostDetail from '@/pages/PostDetail';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AllCircles from '@/pages/AllCircles';
 
+import GlobalLoader from '@/components/layout/GlobalLoader';
+
+import Onboarding from '@/pages/Onboarding';
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400">
-        <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-      </div>
-    );
+    return <GlobalLoader />;
   }
 
   if (authError) {
@@ -53,6 +53,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/create-circle" element={<CreateCircle />} />

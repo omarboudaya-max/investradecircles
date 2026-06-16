@@ -41,7 +41,11 @@ export default function PostCard({ post, onDeleted }) {
       const { error } = await supabase.from('Post').update({ liked_by: newLikedBy, likes: newLikedBy.length }).eq('id', post.id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
+    },
     onError: (error) => toast({ title: 'Failed to like post', description: error.message, variant: 'destructive' }),
   });
 
@@ -49,6 +53,8 @@ export default function PostCard({ post, onDeleted }) {
     mutationFn: () => supabase.from('Post').delete().eq('id', post.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
       if (onDeleted) onDeleted(post.id);
       toast({ title: 'Post deleted' });
     },
@@ -62,6 +68,8 @@ export default function PostCard({ post, onDeleted }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
       queryClient.invalidateQueries({ queryKey: ['saved-posts', user?.id] });
     },
   });

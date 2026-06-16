@@ -112,10 +112,34 @@ export default function Messages() {
     return Object.values(convMap).sort((a, b) => new Date(b.lastDate) - new Date(a.lastDate));
   }, [sentMessages, receivedMessages, allUsers]);
 
-  const filteredConversations = useMemo(() =>
-    conversations.filter((c) => c.otherName.toLowerCase().includes(search.toLowerCase())),
-    [conversations, search]
-  );
+  const filteredConversations = useMemo(() => {
+    const term = search.toLowerCase();
+    const existing = conversations.filter((c) => c.otherName.toLowerCase().includes(term));
+
+    if (term) {
+      const existingIds = new Set(conversations.map(c => c.otherId));
+      const matchingUsers = allUsers.filter(u => 
+        u.id !== user?.id && 
+        !existingIds.has(u.id) && 
+        (u.full_name?.toLowerCase().includes(term) || u.email?.toLowerCase().includes(term))
+      );
+      
+      const newConvs = matchingUsers.map(u => ({
+        convId: makeConversationId(user?.id, u.id),
+        otherId: u.id,
+        otherName: u.full_name || u.email?.split('@')[0],
+        otherAvatar: u.avatar_url,
+        lastMessage: 'Start a conversation',
+        lastDate: new Date().toISOString(),
+        isMine: false,
+        unreadCount: 0,
+        isNewUser: true
+      }));
+      
+      return [...existing, ...newConvs];
+    }
+    return existing;
+  }, [conversations, search, allUsers, user?.id]);
 
   useEffect(() => {
     if (!initWithId || !user?.id || allUsers.length === 0) return;

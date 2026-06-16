@@ -15,6 +15,7 @@ CREATE TABLE public.profiles (
   business_type TEXT,
   role TEXT DEFAULT 'user',
   reputation INTEGER DEFAULT 0,
+  is_onboarded BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

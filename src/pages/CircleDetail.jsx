@@ -191,7 +191,7 @@ export default function CircleDetail() {
     queryKey: ['circle-member-profiles', allCircleMemberIds.sort().join(',')],
     queryFn: async () => {
       if (!allCircleMemberIds.length) return [];
-      return supabase.from('profiles').select('*').match({ id: { $in: allCircleMemberIds } }).then(res => res.data || []);
+      return supabase.from('profiles').select('*').in('id', allCircleMemberIds).then(res => res.data || []);
     },
     enabled: !!allCircleMemberIds.length,
   });

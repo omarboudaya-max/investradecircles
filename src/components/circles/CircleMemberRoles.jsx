@@ -127,7 +127,7 @@ export default function CircleMemberRoles({ circle, currentUserId }) {
   // Fetch real user profiles directly
   const { data: memberProfiles = [] } = useQuery({
     queryKey: ['member-roles-profiles', allIds.sort().join(',')],
-    queryFn: () => supabase.from('profiles').select('*').match({ id: { $in: allIds } }).then(res => res.data || []),
+    queryFn: () => supabase.from('profiles').select('*').in('id', allIds).then(res => res.data || []),
     enabled: allIds.length > 0,
   });
 
