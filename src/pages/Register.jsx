@@ -87,7 +87,8 @@ export default function Register() {
       if (signUpError) throw signUpError;
       setStep(5);
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      console.error("Signup error:", err);
+      setError(err?.message === '{}' ? 'You may have exceeded the email rate limit (3 per hour) on the free plan.' : (err?.message || 'Registration failed'));
     } finally {
       setLoading(false);
     }
@@ -114,7 +115,8 @@ export default function Register() {
       if (updateError) throw updateError;
       window.location.href = '/';
     } catch (err) {
-      setError(err.message || 'Verification failed');
+      console.error("Verification error:", err);
+      setError(err?.message === '{}' ? 'Unexpected server error. Please try again.' : (err?.message || 'Verification failed'));
     } finally {
       setLoading(false);
     }
