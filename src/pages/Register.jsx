@@ -336,9 +336,9 @@ export default function Register() {
               <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
                 <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Verify your email</h2>
+              <h2 className="text-2xl font-bold mb-2">Check your email</h2>
               <p className="text-muted-foreground text-sm mb-6">
-                We sent a verification code to<br />
+                We sent a confirmation link to<br />
                 <span className="font-semibold text-foreground">{email}</span>
               </p>
 
