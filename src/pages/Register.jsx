@@ -40,7 +40,6 @@ export default function Register() {
   const [userType, setUserType] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [interests, setInterests] = useState([]);
-  const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -83,7 +82,20 @@ export default function Register() {
     if (interests.length === 0) {setError('Please select at least one area of interest');return;}
     setLoading(true);
     try {
-      const { error: signUpError } = await supabase.auth.signUp({ email, password });
+      const { error: signUpError } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            date_of_birth: dob,
+            user_type: userType,
+            business_type: businessType || undefined,
+            interests
+          }
+        }
+      });
       if (signUpError) throw signUpError;
       setStep(5);
     } catch (err) {
@@ -94,33 +106,7 @@ export default function Register() {
     }
   };
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const { error: verifyError } = await supabase.auth.verifyOtp({ email, token: otpCode, type: 'signup' });
-      if (verifyError) throw verifyError;
-      
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          date_of_birth: dob,
-          user_type: userType,
-          business_type: businessType || undefined,
-          interests
-        }
-      });
-      if (updateError) throw updateError;
-      window.location.href = '/';
-    } catch (err) {
-      console.error("Verification error:", err);
-      setError(err?.message === '{}' ? 'Unexpected server error. Please try again.' : (err?.message || 'Verification failed'));
-    } finally {
-      setLoading(false);
-    }
-  };
+  // OTP verification removed in favor of Magic Link / Confirmation URL
 
   const handleResendOtp = async () => {
     try { await supabase.auth.resend({ type: 'signup', email }); } catch {/* silent */}
@@ -356,21 +342,17 @@ export default function Register() {
                 <span className="font-semibold text-foreground">{email}</span>
               </p>
 
-              <form onSubmit={handleVerifyOtp} className="w-full max-w-xs space-y-4">
-                <Input
-                placeholder="Enter 6-digit code"
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value)}
-                className="h-12 rounded-xl text-center text-lg tracking-widest"
-                maxLength={6} />
-              
-                <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold shadow-md">
-                  {loading ? 'Verifying...' : 'Verify & Continue'}
-                </Button>
-                <button type="button" onClick={handleResendOtp} className="text-sm text-blue-600 hover:underline w-full">
-                  Resend code
+              <div className="w-full max-w-xs space-y-4">
+                <p className="text-sm text-slate-600 mb-6">Please check your inbox and click the secure link to activate your account.</p>
+                <Link to="/login" className="w-full block">
+                  <Button type="button" className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold shadow-md">
+                    Return to Login
+                  </Button>
+                </Link>
+                <button type="button" onClick={handleResendOtp} className="text-sm text-blue-600 hover:underline w-full mt-4">
+                  Resend confirmation email
                 </button>
-              </form>
+              </div>
             </div>
           }
         </div>
