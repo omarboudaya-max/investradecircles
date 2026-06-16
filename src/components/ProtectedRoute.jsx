@@ -34,11 +34,11 @@ export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthe
     return unauthenticatedElement;
   }
 
-  if (user && user.is_onboarded === false && location.pathname !== '/onboarding') {
+  if (user && !user.is_onboarded && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />;
   }
 
-  if (user && user.is_onboarded === true && location.pathname === '/onboarding') {
+  if (user && user.is_onboarded && location.pathname === '/onboarding') {
     return <Navigate to="/" replace />;
   }
 

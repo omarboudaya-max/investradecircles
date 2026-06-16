@@ -50,6 +50,7 @@ export default function Onboarding() {
     try {
       // 1. Update Profile
       const updates = {
+        id: user.id,
         full_name: fullName,
         avatar_url: avatarUrl,
         headline,
@@ -57,7 +58,7 @@ export default function Onboarding() {
         user_type: userType,
         is_onboarded: true,
       };
-      await supabase.from('profiles').update(updates).eq('id', user.id);
+      await supabase.from('profiles').upsert(updates);
       await supabase.auth.updateUser({ data: updates });
 
       // 2. Join Circles
