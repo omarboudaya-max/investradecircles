@@ -29,7 +29,15 @@ export const AuthProvider = ({ children }) => {
       async (_event, session) => {
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
-          setUser({ ...session.user, ...profile });
+          const metadata = session.user.user_metadata || {};
+          const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
+          
+          setUser({ 
+            ...session.user, 
+            ...metadata, 
+            ...profile,
+            is_onboarded: isOnboarded
+          });
           setIsAuthenticated(true);
         } else {
           setUser(null);
@@ -52,7 +60,17 @@ export const AuthProvider = ({ children }) => {
       
       if (session?.user) {
         const profile = await fetchProfile(session.user.id);
-        setUser({ ...session.user, ...profile });
+        const metadata = session.user.user_metadata || {};
+        
+        // Ensure is_onboarded is explicitly boolean
+        const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
+        
+        setUser({ 
+          ...session.user, 
+          ...metadata, 
+          ...profile,
+          is_onboarded: isOnboarded
+        });
         setIsAuthenticated(true);
       } else {
         setUser(null);
@@ -76,7 +94,15 @@ export const AuthProvider = ({ children }) => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (authUser) {
       const profile = await fetchProfile(authUser.id);
-      setUser({ ...authUser, ...profile });
+      const metadata = authUser.user_metadata || {};
+      const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
+      
+      setUser({ 
+        ...authUser, 
+        ...metadata, 
+        ...profile,
+        is_onboarded: isOnboarded
+      });
     }
   };
 
