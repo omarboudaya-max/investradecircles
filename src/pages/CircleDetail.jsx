@@ -440,12 +440,7 @@ export default function CircleDetail() {
         </div>
       )}
 
-      {/* Admin monetization — visible in both standard and institutional layouts */}
-      {isAdmin && (
-        <div className="mt-5">
-          <CircleMonetization memberCount={allMemberIds.length} />
-        </div>
-      )}
+
     </div>
   );
 }

@@ -163,6 +163,7 @@ export default function CircleVisual({
   totalMembers = 0,
   circleName,
   memberProfiles = [],
+  isDark = false,
 }) {
   const SIZE = 380;
   const SPHERE_SIZE = 220;
@@ -197,7 +198,9 @@ export default function CircleVisual({
   const displaySlots = orbitSlots.slice(0, 12);
 
   return (
-    <div className="flex flex-col items-center bg-white py-8 px-4 select-none">
+    <div className={`flex flex-col items-center py-8 px-4 select-none transition-colors duration-300 ${
+      isDark ? 'bg-transparent' : 'bg-white/45 backdrop-blur-md rounded-b-2xl border-t border-amber-600/10'
+    }`}>
       {/* Inject keyframes */}
       <style>{`
         @keyframes orbitCW {
@@ -219,156 +222,162 @@ export default function CircleVisual({
       `}</style>
 
       {/* Circle Title */}
-      <h2 className="text-4xl font-bold mb-6" style={{ color: '#3B9EE8' }}>
+      <h2 className={`text-2xl sm:text-4xl font-bold mb-6 transition-colors ${
+        isDark ? 'text-amber-300' : 'text-amber-800'
+      }`}>
         {circleName || `Circle ${questionNumber || ''}`}
       </h2>
 
-      {/* Main container — relative, holds orbit + sphere + floating comments */}
-      <div
-        className="relative flex items-center justify-center"
-        style={{ width: SIZE, height: SIZE }}
-      >
-        {/* ── Orbiting ring: single wrapper rotates CW, avatars counter-rotate to stay upright ── */}
+      {/* Main container — relative, holds orbit + sphere + floating comments. scaled on mobile */}
+      <div className="w-full flex items-center justify-center overflow-hidden py-4">
         <div
-          className="absolute inset-0"
-          style={{ animation: 'orbitCW 22s linear infinite' }}
+          className="relative flex items-center justify-center origin-center scale-[0.75] xs:scale-[0.85] sm:scale-100 transition-transform duration-300"
+          style={{ width: SIZE, height: SIZE }}
         >
-          {displaySlots.map((member, i) => (
-            <AvatarSlot
-              key={i}
-              member={member}
-              index={i}
-              total={displaySlots.length}
-              orbitRadius={ORBIT_RADIUS}
-              avatarSize={AVATAR_SIZE}
-            />
-          ))}
-        </div>
-
-        {/* ── 3D Sphere (CSS perspective trick) ── */}
-        <div
-          className="absolute flex items-center justify-center rounded-full"
-          style={{
-            width: SPHERE_SIZE,
-            height: SPHERE_SIZE,
-            background: `
-              radial-gradient(circle at 35% 30%,
-                #7DC8F5 0%,
-                #3A8FD4 18%,
-                #1A5FA8 42%,
-                #0D3F7A 70%,
-                #071E45 100%
-              )
-            `,
-            boxShadow: `
-              0 0 60px 20px rgba(30,100,255,0.35),
-              inset -20px -20px 60px rgba(0,0,60,0.6),
-              inset 10px 10px 30px rgba(120,200,255,0.2)
-            `,
-            animation: 'sphereGlow 3s ease-in-out infinite',
-          }}
-        >
-          {/* Shiny specular highlight */}
+          {/* ── Orbiting ring: single wrapper rotates CW, avatars counter-rotate to stay upright ── */}
           <div
-            className="absolute rounded-full pointer-events-none"
-            style={{
-              width: SPHERE_SIZE * 0.45,
-              height: SPHERE_SIZE * 0.35,
-              top: '12%',
-              left: '18%',
-              background: 'radial-gradient(ellipse, rgba(255,255,255,0.35) 0%, transparent 70%)',
-              filter: 'blur(6px)',
-            }}
-          />
-
-          {/* Equator ring (CSS 3D) */}
-          <div
-            style={{
-              position: 'absolute',
-              width: SPHERE_SIZE * 0.92,
-              height: SPHERE_SIZE * 0.92,
-              borderRadius: '50%',
-              border: '2px solid rgba(100,180,255,0.35)',
-              animation: 'ringRotate 12s linear infinite',
-              transformStyle: 'preserve-3d',
-            }}
-          />
-
-          {/* Tilted meridian ring */}
-          <div
-            style={{
-              position: 'absolute',
-              width: SPHERE_SIZE * 0.92,
-              height: SPHERE_SIZE * 0.92,
-              borderRadius: '50%',
-              border: '1.5px solid rgba(100,180,255,0.2)',
-              animation: 'ringRotate 18s linear infinite reverse',
-              transformStyle: 'preserve-3d',
-              transform: 'rotateX(75deg) rotateY(45deg)',
-            }}
-          />
-
-          {/* Center text content */}
-          <div
-            className="absolute flex flex-col items-center justify-center text-center px-6"
-            style={{ inset: 0 }}
+            className="absolute inset-0"
+            style={{ animation: 'orbitCW 22s linear infinite' }}
           >
-            {selectedResponse ? (
-              <>
-                {(() => {
-                  const responderProfile = memberProfiles.find((p) => p.id === selectedResponse.created_by_id);
-                  const avatar = responderProfile?.avatar_url || selectedResponse.author_avatar;
-                  return avatar ? (
-                    <img src={avatar} alt={selectedResponse.author_name} className="w-14 h-14 rounded-full object-cover mb-2 border-2 border-white/60 shadow-lg" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg mb-2 border-2 border-white/40 shadow-lg" style={{ background: 'linear-gradient(135deg,#F5A623,#E8821A)' }}>
-                      {selectedResponse.author_name?.charAt(0)?.toUpperCase() || '?'}
-                    </div>
-                  );
-                })()}
-                <p className="text-white/80 text-xs font-medium underline underline-offset-2 mb-1">{selectedResponse.author_name}</p>
-                <p className="text-white text-sm font-semibold leading-snug line-clamp-4">{selectedResponse.response_text}</p>
-              </>
-            ) : (
-              <>
-                {questionNumber && <p className="text-blue-200/80 text-xs font-medium mb-1">Q. {questionNumber}</p>}
-                <p className="text-white text-base font-bold leading-snug line-clamp-4">{question || 'No question yet'}</p>
-              </>
-            )}
-
-            {/* Countdown */}
-            <div className="absolute bottom-7 text-center">
-              <CountdownTimer closesAt={closesAt} />
-              <p className="text-blue-200/70 text-[10px] mt-0.5">left to close</p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Floating live comments (Facebook Live style) ── */}
-        <div
-          className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none"
-          style={{ height: SIZE, zIndex: 20 }}
-        >
-          <AnimatePresence>
-            {liveComments.map((c) => (
-              <FloatingComment
-                key={c.id}
-                comment={`${c.name ? c.name.split(' ')[0] + ': ' : ''}${c.text}`}
-                x={c.x}
-                onDone={() => removeComment(c.id)}
+            {displaySlots.map((member, i) => (
+              <AvatarSlot
+                key={i}
+                member={member}
+                index={i}
+                total={displaySlots.length}
+                orbitRadius={ORBIT_RADIUS}
+                avatarSize={AVATAR_SIZE}
               />
             ))}
-          </AnimatePresence>
+          </div>
+
+          {/* ── 3D Sphere (CSS perspective trick) ── */}
+          <div
+            className="absolute flex items-center justify-center rounded-full"
+            style={{
+              width: SPHERE_SIZE,
+              height: SPHERE_SIZE,
+              background: `
+                radial-gradient(circle at 35% 30%,
+                  #7DC8F5 0%,
+                  #3A8FD4 18%,
+                  #1A5FA8 42%,
+                  #0D3F7A 70%,
+                  #071E45 100%
+                )
+              `,
+              boxShadow: `
+                0 0 60px 20px rgba(30,100,255,0.35),
+                inset -20px -20px 60px rgba(0,0,60,0.6),
+                inset 10px 10px 30px rgba(120,200,255,0.2)
+              `,
+              animation: 'sphereGlow 3s ease-in-out infinite',
+            }}
+          >
+            {/* Shiny specular highlight */}
+            <div
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: SPHERE_SIZE * 0.45,
+                height: SPHERE_SIZE * 0.35,
+                top: '12%',
+                left: '18%',
+                background: 'radial-gradient(ellipse, rgba(255,255,255,0.35) 0%, transparent 70%)',
+                filter: 'blur(6px)',
+              }}
+            />
+
+            {/* Equator ring (CSS 3D) */}
+            <div
+              style={{
+                position: 'absolute',
+                width: SPHERE_SIZE * 0.92,
+                height: SPHERE_SIZE * 0.92,
+                borderRadius: '50%',
+                border: '2px solid rgba(100,180,255,0.35)',
+                animation: 'ringRotate 12s linear infinite',
+                transformStyle: 'preserve-3d',
+              }}
+            />
+
+            {/* Tilted meridian ring */}
+            <div
+              style={{
+                position: 'absolute',
+                width: SPHERE_SIZE * 0.92,
+                height: SPHERE_SIZE * 0.92,
+                borderRadius: '50%',
+                border: '1.5px solid rgba(100,180,255,0.2)',
+                animation: 'ringRotate 18s linear infinite reverse',
+                transformStyle: 'preserve-3d',
+                transform: 'rotateX(75deg) rotateY(45deg)',
+              }}
+            />
+
+            {/* Center text content */}
+            <div
+              className="absolute flex flex-col items-center justify-center text-center px-6"
+              style={{ inset: 0 }}
+            >
+              {selectedResponse ? (
+                <>
+                  {(() => {
+                    const responderProfile = memberProfiles.find((p) => p.id === selectedResponse.created_by_id);
+                    const avatar = responderProfile?.avatar_url || selectedResponse.author_avatar;
+                    return avatar ? (
+                      <img src={avatar} alt={selectedResponse.author_name} className="w-14 h-14 rounded-full object-cover mb-2 border-2 border-white/60 shadow-lg" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg mb-2 border-2 border-white/40 shadow-lg" style={{ background: 'linear-gradient(135deg,#F5A623,#E8821A)' }}>
+                        {selectedResponse.author_name?.charAt(0)?.toUpperCase() || '?'}
+                      </div>
+                    );
+                  })()}
+                  <p className="text-white/85 text-xs font-medium underline underline-offset-2 mb-1">{selectedResponse.author_name}</p>
+                  <p className="text-white text-xs sm:text-sm font-semibold leading-snug line-clamp-4">{selectedResponse.response_text}</p>
+                </>
+              ) : (
+                <>
+                  {questionNumber && <p className="text-blue-200/80 text-xs font-medium mb-1">Q. {questionNumber}</p>}
+                  <p className="text-white text-sm sm:text-base font-bold leading-snug line-clamp-4">{question || 'No question yet'}</p>
+                </>
+              )}
+
+              {/* Countdown */}
+              <div className="absolute bottom-6 text-center">
+                <CountdownTimer closesAt={closesAt} />
+                <p className="text-blue-200/70 text-[10px] mt-0.5">left to close</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Floating live comments (Facebook Live style) ── */}
+          <div
+            className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none"
+            style={{ height: SIZE, zIndex: 20 }}
+          >
+            <AnimatePresence>
+              {liveComments.map((c) => (
+                <FloatingComment
+                  key={c.id}
+                  comment={`${c.name ? c.name.split(' ')[0] + ': ' : ''}${c.text}`}
+                  x={c.x}
+                  onDone={() => removeComment(c.id)}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
       {/* Total Response pill */}
-      <div className="mt-10 flex flex-col items-center gap-1.5">
-        <p className="text-sm font-medium" style={{ color: '#3B9EE8' }}>Total Response</p>
+      <div className="mt-6 flex flex-col items-center gap-1.5">
+        <p className={`text-sm font-semibold uppercase tracking-wider ${isDark ? 'text-amber-300' : 'text-amber-850'}`}>Total Response</p>
         <div
-          className="px-10 py-2.5 rounded-full text-white font-bold text-2xl shadow-lg"
+          className="px-10 py-2.5 rounded-full text-white font-bold text-xl sm:text-2xl shadow-lg transition-all duration-300"
           style={{
-            background: 'linear-gradient(90deg,#1A4E8A 0%,#2E7EC8 60%,#3B9EE8 100%)',
+            background: isDark 
+              ? 'linear-gradient(90deg,#b45309 0%,#d97706 60%,#f59e0b 100%)' 
+              : 'linear-gradient(90deg,#78350f 0%,#b45309 60%,#d97706 100%)',
             minWidth: 160,
             textAlign: 'center',
           }}

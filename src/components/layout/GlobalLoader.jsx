@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 
 export default function GlobalLoader() {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900"
+    >
       <div className="relative flex flex-col items-center">
         {/* Glow effect behind the logo */}
         <motion.div
@@ -89,6 +93,6 @@ export default function GlobalLoader() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

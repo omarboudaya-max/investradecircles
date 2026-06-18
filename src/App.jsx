@@ -1,12 +1,14 @@
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { ThemeProvider } from '@/lib/ThemeContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
-
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -31,61 +33,81 @@ import Onboarding from '@/pages/Onboarding';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const [animationDone, setAnimationDone] = useState(false);
 
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return <GlobalLoader />;
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimationDone(true);
+    }, 2500); // Ensure loader logo forms fully (takes ~2.3s) before transition
+    return () => clearTimeout(timer);
+  }, []);
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
-  }
+  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+    <>
+      <AnimatePresence mode="wait">
+        {showLoader && <GlobalLoader key="loader" />}
+      </AnimatePresence>
 
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/create-circle" element={<CreateCircle />} />
-          <Route path="/my-circles" element={<MyCircles />} />
-          <Route path="/circle/:id" element={<CircleDetail />} />
-          <Route path="/create-poll" element={<CreatePoll />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/profile/:userId" element={<UserProfile />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/join-circle" element={<JoinCircle />} />
-          <Route path="/saved" element={<SavedPosts />} />
-          <Route path="/post/:id" element={<PostDetail />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/all-circles" element={<AllCircles />} />
-        </Route>
-      </Route>
+      {!showLoader && (
+        <>
+          {authError ? (
+            authError.type === 'user_not_registered' ? (
+              <UserNotRegisteredError />
+            ) : authError.type === 'auth_required' ? (
+              (() => {
+                navigateToLogin();
+                return null;
+              })()
+            ) : null
+          ) : (
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
 
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/create-circle" element={<CreateCircle />} />
+                  <Route path="/my-circles" element={<MyCircles />} />
+                  <Route path="/circle/:id" element={<CircleDetail />} />
+                  <Route path="/create-poll" element={<CreatePoll />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                  <Route path="/profile/:userId" element={<UserProfile />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/join-circle" element={<JoinCircle />} />
+                  <Route path="/saved" element={<SavedPosts />} />
+                  <Route path="/post/:id" element={<PostDetail />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/all-circles" element={<AllCircles />} />
+                </Route>
+              </Route>
+
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          )}
+        </>
+      )}
+    </>
   );
 };
 
 function App() {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
