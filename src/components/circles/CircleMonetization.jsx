@@ -4,6 +4,7 @@ import { Lock, Users } from 'lucide-react';
 const MILESTONES = [
   {
     tier: 'advertisement',
+    level: 'Level 1',
     title: 'Advertisement Ready',
     description: 'Allow targeted, community-relevant ads and earn revenue.',
     threshold: 25,
@@ -17,6 +18,7 @@ const MILESTONES = [
   },
   {
     tier: 'sponsorship',
+    level: 'Level 2',
     title: 'Brand Sponsorship',
     description: 'Brands sponsor your circle based on topic relevance.',
     threshold: 75,
@@ -30,6 +32,7 @@ const MILESTONES = [
   },
   {
     tier: 'workspace',
+    level: 'Level 3',
     title: 'Professional Workspace',
     description: 'Upgrade to a workspace — sell services, goods, and more.',
     threshold: 200,
@@ -43,30 +46,13 @@ const MILESTONES = [
   },
 ];
 
-function ProgressBar({ current, threshold, barColor, trackColor }) {
-  const pct = Math.min((current / threshold) * 100, 100);
-  return (
-    <div className="space-y-1.5">
-      <div className={`h-2 rounded-full overflow-hidden ${trackColor}`}>
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${barColor}`}
-          style={{ width: `${Math.max(pct, 2)}%` }}
-        />
-      </div>
-      <p className="text-xs text-[#777777]">
-        {current} / {threshold} members
-      </p>
-    </div>
-  );
-}
-
+// Progress bar removed as per user request to hide counting
 export default function CircleMonetization({ memberCount }) {
   const unlocked = MILESTONES.filter((m) => memberCount >= m.threshold);
   const locked = MILESTONES.filter((m) => memberCount < m.threshold);
 
   return (
     <div className="rounded-2xl border overflow-hidden shadow-sm">
-      {/* Header */}
       <div className="px-5 py-4 flex items-center justify-between" style={{ background: '#FFF9F0' }}>
         <div>
           <h3 className="text-sm font-bold text-[#6B4F26] flex items-center gap-1.5">
@@ -75,10 +61,6 @@ export default function CircleMonetization({ memberCount }) {
           <p className="text-xs text-[#8C6D3D] mt-0.5">
             Grow your circle to unlock revenue opportunities
           </p>
-        </div>
-        <div className="text-right shrink-0">
-          <p className="text-[11px] text-[#8C6D3D]">Current members</p>
-          <p className="text-2xl font-bold text-[#6B4F26]">{memberCount}</p>
         </div>
       </div>
 
@@ -97,20 +79,14 @@ export default function CircleMonetization({ memberCount }) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{m.title}</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${m.labelBg} ${m.iconColor}`}>
+                        {m.level}
+                      </span>
+                      <p className="text-sm font-semibold text-foreground">{m.title}</p>
+                    </div>
                     <p className="text-xs text-[#666666] mt-0.5">{m.description}</p>
                   </div>
-                  <span className="text-xs text-[#777777] whitespace-nowrap shrink-0">
-                    {remaining} more member{remaining !== 1 ? 's' : ''}
-                  </span>
-                </div>
-                <div className="mt-2">
-                  <ProgressBar
-                    current={memberCount}
-                    threshold={m.threshold}
-                    barColor={m.barColor}
-                    trackColor={m.trackColor}
-                  />
                 </div>
               </div>
             </div>
@@ -128,7 +104,12 @@ export default function CircleMonetization({ memberCount }) {
                   <Users className={`w-4 h-4 ${m.iconColor}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{m.title}</p>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${m.labelBg} ${m.iconColor}`}>
+                      {m.level}
+                    </span>
+                    <p className="text-sm font-semibold text-foreground">{m.title}</p>
+                  </div>
                   <p className="text-xs text-[#666666]">{m.description}</p>
                 </div>
               </div>

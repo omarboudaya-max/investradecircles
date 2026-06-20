@@ -435,6 +435,12 @@ export default function CircleDetail() {
                   )}
                 </div>
               )}
+              
+              {isAdmin && (
+                <div className="px-6 pb-6">
+                  <CircleMonetization memberCount={allMemberIds.length} />
+                </div>
+              )}
             </>
           )}
         </div>

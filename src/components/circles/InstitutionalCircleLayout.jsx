@@ -21,6 +21,7 @@ import CircleEventCalendar from '@/components/circles/CircleEventCalendar';
 import CircleMemberRoles from '@/components/circles/CircleMemberRoles';
 import CircleAdminDashboard from '@/components/circles/CircleAdminDashboard';
 import CircleVisual from '@/components/circles/CircleVisual';
+import CircleMonetization from '@/components/circles/CircleMonetization';
 
 function formatPrice(symbol, price) {
   if (!price && price !== 0) return '—';
@@ -1136,6 +1137,12 @@ export default function InstitutionalCircleLayout({
                       <Plus className="w-4 h-4 mr-2" /> Ask a New Question
                     </Button>
                   )}
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className="px-6 pb-6 mt-6">
+                  <CircleMonetization memberCount={allMemberIds.length} />
                 </div>
               )}
             </div>
