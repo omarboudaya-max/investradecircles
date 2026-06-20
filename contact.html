@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Investraders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{background:linear-gradient(180deg,#071025 0%,#031026 100%);min-height:100vh}</style>
+</head>
+<body class="text-white antialiased">
+  <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-black font-bold">IT</div>
+      <div class="font-semibold">Investraders</div>
+    </a>
+    <nav class="hidden sm:flex gap-4">
+      <a href="index.html" class="text-gray-300">Home</a>
+      <a href="institutions.html" class="text-gray-300">Institutions</a>
+      <a href="individuals.html" class="text-gray-300">Individuals</a>
+      <a href="3m.html" class="text-gray-300">3M</a>
+      <a href="contact.html" class="text-white font-semibold">Contact</a>
+    </nav>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold mb-4">Contact Us</h1>
+    <p class="text-gray-300 mb-6">Get in touch to request a demo, partner, or get support.</p>
+
+    <form id="contactForm" class="space-y-4 bg-white/5 p-6 rounded-lg">
+      <label class="block">
+        <span class="text-sm text-gray-200">Name</span>
+        <input name="name" required class="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none" placeholder="Your full name">
+      </label>
+      <label class="block">
+        <span class="text-sm text-gray-200">Email</span>
+        <input name="email" type="email" required class="w-full mt-1 p-3 rounded bg-white/5 border border-white/10" placeholder="you@example.com">
+      </label>
+      <label class="block">
+        <span class="text-sm text-gray-200">Organization (optional)</span>
+        <input name="org" class="w-full mt-1 p-3 rounded bg-white/5 border border-white/10" placeholder="Chamber, Company, University...">
+      </label>
+      <label class="block">
+        <span class="text-sm text-gray-200">Message</span>
+        <textarea name="message" required class="w-full mt-1 p-3 rounded bg-white/5 border border-white/10" rows="5" placeholder="Tell us what you want to achieve"></textarea>
+      </label>
+
+      <div class="flex items-center gap-3">
+        <button type="submit" class="px-5 py-2 rounded-full bg-white text-black font-semibold">Send Message</button>
+        <a href="mailto:hello@example.com" class="text-gray-300">Or email hello@example.com</a>
+      </div>
+
+      <p id="sentMsg" class="text-green-400 hidden mt-2">Thanks — your message was prepared (demo). In a real site this would be sent to our backend.</p>
+    </form>
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-6 py-10 text-center text-gray-400 text-sm">© <span id="year5"></span> Investraders</footer>
+
+  <script>
+    document.getElementById('year5').textContent=new Date().getFullYear();
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      // demo: show confirmation and generate mailto for easy testing
+      const form = e.target;
+      const data = new URLSearchParams(new FormData(form));
+      const mailto = `mailto:hello@example.com?subject=Contact%20from%20${encodeURIComponent(form.name.value)}&body=${encodeURIComponent(data.toString().replace(/&/g,'\n').replace(/=/g,': '))}`;
+      document.getElementById('sentMsg').classList.remove('hidden');
+      // open mail client as demo
+      window.location.href = mailto;
+    });
+  </script>
+</body>
+</html>

@@ -29,7 +29,7 @@ export default function ForgotPassword() {
       <div className="absolute top-[-120px] right-[-60px] w-[320px] h-[320px] rounded-full bg-white/10 blur-xl" />
       <div className="absolute bottom-[-100px] left-[-70px] w-[280px] h-[280px] rounded-full bg-white/10 blur-xl" />
 
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 md:p-12 relative z-10">
+      <div className="w-full max-w-md bg-card rounded-3xl shadow-2xl p-8 md:p-12 relative z-10">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />

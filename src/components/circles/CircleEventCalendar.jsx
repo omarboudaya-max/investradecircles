@@ -111,7 +111,7 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
     const canDelete = isAdmin || isModerator || event.created_by_id === currentUserId;
 
     return (
-      <div className={`flex items-start gap-3 p-3 rounded-xl border bg-white hover:shadow-sm transition-shadow ${isPastItem ? 'opacity-50' : ''}`}>
+      <div className={`flex items-start gap-3 p-3 rounded-xl border bg-card hover:shadow-sm transition-shadow ${isPastItem ? 'opacity-50' : ''}`}>
         <div className="relative flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-primary/10 shrink-0">
           <span className="text-[10px] text-primary font-semibold uppercase">
             {format(new Date(event.event_date), 'MMM')}
@@ -130,7 +130,7 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
             <div className="flex items-center gap-1.5 shrink-0">
               {isLive && (
                 <span className="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-white rounded-full inline-block animate-pulse" /> LIVE
+                  <span className="w-1.5 h-1.5 bg-card rounded-full inline-block animate-pulse" /> LIVE
                 </span>
               )}
               {canDelete && (

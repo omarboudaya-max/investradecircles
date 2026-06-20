@@ -18,7 +18,7 @@ export default function PhotosCard({ userId }) {
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-border shadow-sm p-5">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
             <ImageIcon className="w-4 h-4 text-primary" /> Photos

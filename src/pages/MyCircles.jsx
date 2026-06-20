@@ -36,7 +36,7 @@ export default function MyCircles() {
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-muted-foreground hover:text-foreground">
+          <Link to="/home" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-bold">{showCreatedOnly ? 'Your Created Circles' : 'My Circles'}</h1>

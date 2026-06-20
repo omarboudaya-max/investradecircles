@@ -22,7 +22,7 @@ export default function PostDetail() {
 
   return (
     <div className="max-w-2xl mx-auto py-4">
-      <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
+      <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to feed
       </Link>
 
@@ -41,7 +41,7 @@ export default function PostDetail() {
         <div className="text-center py-20">
           <p className="text-lg font-semibold">Post not found</p>
           <p className="text-sm text-muted-foreground mt-1">This post may have been deleted or is private.</p>
-          <Link to="/" className="mt-4 inline-block text-primary hover:underline text-sm">Go home</Link>
+          <Link to="/home" className="mt-4 inline-block text-primary hover:underline text-sm">Go home</Link>
         </div>
       ) : (
         <PostCard post={post} />

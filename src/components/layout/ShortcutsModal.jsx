@@ -31,7 +31,7 @@ export default function ShortcutsModal({ open, onClose, user }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', duration: 0.4 }}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5"
+            className="bg-card rounded-2xl shadow-2xl w-full max-w-sm p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">

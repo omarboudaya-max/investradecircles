@@ -28,7 +28,7 @@ export default function Login() {
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
-      window.location.href = '/';
+      window.location.href = '/home';
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -47,7 +47,7 @@ export default function Login() {
       <div className="absolute bottom-[-100px] left-[-70px] w-[280px] h-[280px] rounded-full bg-white/10 blur-xl" />
       <div className="absolute top-[30%] left-[5%] w-[100px] h-[100px] rounded-full bg-cyan-300/20" />
 
-      <div className="w-full max-w-[920px] bg-white rounded-3xl shadow-2xl overflow-hidden flex min-h-[580px] relative z-10">
+      <div className="w-full max-w-[920px] bg-card rounded-3xl shadow-2xl overflow-hidden flex min-h-[580px] relative z-10">
 
         {/* Left – Branding panel */}
         <div className="hidden lg:flex w-[45%] bg-gradient-to-br from-blue-600 to-cyan-500 flex-col items-center justify-center p-12 relative overflow-hidden">
@@ -57,7 +57,7 @@ export default function Login() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full border-4 border-white" />
           </div>
           <div className="relative z-10 text-center">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 rounded-full bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-3xl font-bold bg-gradient-to-br from-blue-700 to-sky-400 bg-clip-text text-transparent leading-none select-none">i</span>
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">Investraders</h1>
@@ -67,7 +67,7 @@ export default function Login() {
             <p className="text-white/70 text-sm mb-6">Join thousands of investors and innovators on our platform.</p>
             <Link
               to="/register"
-              className="inline-block px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-white hover:text-blue-600 transition-all duration-200"
+              className="inline-block px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-card hover:text-blue-600 transition-all duration-200"
             >
               Create Account
             </Link>

@@ -26,6 +26,11 @@ import SavedPosts from '@/pages/SavedPosts';
 import PostDetail from '@/pages/PostDetail';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AllCircles from '@/pages/AllCircles';
+import Landing from '@/pages/Landing';
+import LandingInstitutions from '@/pages/LandingInstitutions';
+import LandingIndividuals from '@/pages/LandingIndividuals';
+import Landing3M from '@/pages/Landing3M';
+import LandingContact from '@/pages/LandingContact';
 
 import GlobalLoader from '@/components/layout/GlobalLoader';
 
@@ -42,7 +47,8 @@ const AuthenticatedApp = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
+  const isWebsiteRoute = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/institutions', '/individuals', '/3m', '/contact'].includes(window.location.pathname);
+  const showLoader = isLoadingPublicSettings || isLoadingAuth || (!isWebsiteRoute && !animationDone);
 
   return (
     <>
@@ -63,15 +69,20 @@ const AuthenticatedApp = () => {
             ) : null
           ) : (
             <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/institutions" element={<LandingInstitutions />} />
+              <Route path="/individuals" element={<LandingIndividuals />} />
+              <Route path="/3m" element={<Landing3M />} />
+              <Route path="/contact" element={<LandingContact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/" replace />} />}>
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route element={<AppLayout />}>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/create-circle" element={<CreateCircle />} />
                   <Route path="/my-circles" element={<MyCircles />} />
                   <Route path="/circle/:id" element={<CircleDetail />} />

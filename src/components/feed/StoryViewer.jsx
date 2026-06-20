@@ -66,7 +66,7 @@ export default function StoryViewer({ stories, startIndex = 0, onClose, onReact 
           {stories.map((_, i) => (
             <div key={i} className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden">
               <div
-                className="h-full bg-white rounded-full transition-none"
+                className="h-full bg-card rounded-full transition-none"
                 style={{ width: i < current ? '100%' : i === current ? `${progress}%` : '0%' }}
               />
             </div>

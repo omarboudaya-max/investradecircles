@@ -136,7 +136,7 @@ export default function Onboarding() {
       </div>
 
       <div className="flex-1 flex flex-col items-center pt-20 pb-10 px-4">
-        <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl border overflow-hidden">
+        <div className="w-full max-w-lg bg-card rounded-3xl shadow-xl border overflow-hidden">
           <AnimatePresence mode="wait">
             
             {step === 1 && (

@@ -796,7 +796,7 @@ function AnnouncementsTab({ circleId, isAdmin, isModerator, user, isDark }) {
             className={`min-h-[80px] text-sm focus-visible:ring-amber-500 focus-visible:ring-offset-0 ${
               isDark 
                 ? 'bg-transparent border-amber-400/20 text-white placeholder:text-blue-300/40 focus:border-amber-400/50' 
-                : 'bg-white border-amber-600/30 text-stone-950 placeholder:text-stone-400 focus:border-amber-600/60'
+                : 'bg-card border-amber-600/30 text-stone-950 placeholder:text-stone-400 focus:border-amber-600/60'
             }`}
           />
           <div className="flex gap-2">
@@ -1097,7 +1097,7 @@ export default function InstitutionalCircleLayout({
                       className={`flex-1 rounded-full h-10 ${
                         isDark 
                           ? 'bg-white/5 border-white/15 text-white placeholder:text-blue-300/40' 
-                          : 'bg-white border-stone-300 text-stone-900 placeholder:text-stone-400'
+                          : 'bg-card border-stone-300 text-stone-900 placeholder:text-stone-400'
                       }`}
                     />
                     <Button type="submit" disabled={!newResponse.trim()} size="icon" className={`rounded-full h-10 w-10 ${isDark ? 'bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold' : 'bg-amber-600 hover:bg-amber-700 text-white font-bold'}`}>
@@ -1123,7 +1123,7 @@ export default function InstitutionalCircleLayout({
                         className={`min-h-[80px] ${
                           isDark 
                             ? 'bg-white/5 border-white/15 text-white placeholder:text-blue-300/40' 
-                            : 'bg-white border-stone-300 text-stone-950 placeholder:text-stone-400'
+                            : 'bg-card border-stone-300 text-stone-950 placeholder:text-stone-400'
                         }`}
                       />
                       <div className="flex gap-2">

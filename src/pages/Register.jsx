@@ -119,7 +119,7 @@ export default function Register() {
       <div className="absolute top-[-120px] right-[-60px] w-[320px] h-[320px] rounded-full bg-white/10 blur-xl" />
       <div className="absolute bottom-[-100px] left-[-70px] w-[280px] h-[280px] rounded-full bg-white/10 blur-xl" />
 
-      <div className="w-full max-w-[920px] bg-white rounded-3xl shadow-2xl overflow-hidden flex min-h-[600px] relative z-10">
+      <div className="w-full max-w-[920px] bg-card rounded-3xl shadow-2xl overflow-hidden flex min-h-[600px] relative z-10">
 
         {/* Left – Branding */}
         <div className="hidden lg:flex w-[40%] bg-gradient-to-br from-blue-600 to-cyan-500 flex-col items-center justify-center p-10 relative overflow-hidden">
@@ -137,7 +137,7 @@ export default function Register() {
             <p className="text-white/90 font-medium mb-2">Already have an account?</p>
             <Link
               to="/login"
-              className="inline-block px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-white hover:text-blue-600 transition-all duration-200">
+              className="inline-block px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-card hover:text-blue-600 transition-all duration-200">
               
               Sign In
             </Link>

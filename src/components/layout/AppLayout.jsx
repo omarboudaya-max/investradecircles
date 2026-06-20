@@ -11,7 +11,7 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[1440px] mx-auto px-4 pt-4 pb-4">
-        <div className="flex flex-col rounded-2xl border-4 border-blue-600 shadow-xl shadow-primary/20 overflow-hidden bg-background min-h-[calc(100vh-2rem)]">
+        <div className="flex flex-col rounded-2xl border-4 border-blue-600 dark:border-gray-800 shadow-xl shadow-primary/20 overflow-hidden bg-background min-h-[calc(100vh-2rem)]">
           <Navbar user={user} />
           <div className="flex flex-1 min-h-0">
             <Sidebar />

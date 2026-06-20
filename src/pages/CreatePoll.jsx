@@ -39,7 +39,7 @@ export default function CreatePoll() {
 
   return (
     <div className="max-w-xl mx-auto">
-      <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+      <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft className="w-4 h-4" /> Back to Home
       </Link>
 

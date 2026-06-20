@@ -119,7 +119,7 @@ export default function UpcomingEventsCalendar() {
                     {dayEvents.slice(0, 3).map((e, i) => (
                       <span
                         key={i}
-                        className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : EVENT_TYPE_COLORS[e.event_type] || 'bg-slate-400'}`}
+                        className={`w-1 h-1 rounded-full ${isSelected ? 'bg-card' : EVENT_TYPE_COLORS[e.event_type] || 'bg-slate-400'}`}
                       />
                     ))}
                   </div>
@@ -176,7 +176,7 @@ export default function UpcomingEventsCalendar() {
                         href={getGoogleCalendarUrl(event)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 h-7 px-2.5 text-xs rounded-full border bg-white/70 hover:bg-white transition-colors font-medium"
+                        className="inline-flex items-center gap-1 h-7 px-2.5 text-xs rounded-full border bg-white/70 hover:bg-card transition-colors font-medium"
                       >
                         <CalendarPlus className="w-3 h-3" /> Add
                       </a>

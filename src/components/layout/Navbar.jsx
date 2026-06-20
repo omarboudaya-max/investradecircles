@@ -39,7 +39,7 @@ export default function Navbar({ user }) {
 
   return (
     <nav className="bg-blue-600 px-4 md:px-6 h-16 flex items-center justify-between shrink-0">
-      <Link to="/" className="flex items-center gap-2 shrink-0">
+      <Link to="/home" className="flex items-center gap-2 shrink-0">
         {/* Logo: stylized "i" inside light blue circle */}
         <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-md"
           style={{ background: 'white' }}>

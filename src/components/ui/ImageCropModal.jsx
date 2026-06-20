@@ -97,7 +97,7 @@ export default function ImageCropModal({ src, aspect, onConfirm, onCancel }) {
 
   return (
     <div className="fixed inset-0 z-[110] bg-black/90 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-md w-full">
+      <div className="bg-card rounded-2xl shadow-2xl overflow-hidden max-w-md w-full">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h2 className="font-semibold text-base">Adjust Photo</h2>

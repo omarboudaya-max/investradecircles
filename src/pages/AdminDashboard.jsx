@@ -84,7 +84,7 @@ export default function AdminDashboard() {
     },
   });
 
-  if (!isAdmin) return <Navigate to="/" replace />;
+  if (!isAdmin) return <Navigate to="/home" replace />;
 
   const filteredUsers = allUsers.filter((u) =>
     (u.full_name || u.email || '').toLowerCase().includes(search.toLowerCase())
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
           <button
             key={t}
             onClick={() => { setTab(t); setSearch(''); }}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === t ? 'bg-white shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === t ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
           >
             {t}
           </button>

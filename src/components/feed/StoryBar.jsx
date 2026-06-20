@@ -103,7 +103,7 @@ export default function StoryBar() {
               onClick={() => setViewingStories(group.stories)}
             >
               <div className={`w-16 h-16 rounded-full p-0.5 ${unviewed ? 'bg-gradient-to-br from-blue-500 to-cyan-400' : 'bg-gray-300'}`}>
-                <div className="w-full h-full rounded-full bg-white p-0.5 overflow-hidden">
+                <div className="w-full h-full rounded-full bg-card p-0.5 overflow-hidden">
                   {group.author_avatar ? (
                     <img src={group.author_avatar} alt={group.author_name} className="w-full h-full rounded-full object-cover" />
                   ) : (

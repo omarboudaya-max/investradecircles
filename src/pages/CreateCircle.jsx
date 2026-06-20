@@ -86,7 +86,7 @@ export default function CreateCircle() {
   return (
     <>
       <div className="max-w-xl mx-auto">
-        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+        <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
 
@@ -128,7 +128,7 @@ export default function CreateCircle() {
                       <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-3">{tagline}</p>
                       {selected && (
                         <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                          <span className="w-2 h-2 rounded-full bg-white" />
+                          <span className="w-2 h-2 rounded-full bg-card" />
                         </span>
                       )}
                     </button>

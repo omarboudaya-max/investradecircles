@@ -1,0 +1,65 @@
+import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
+import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
+import WebsiteFooter from '@/components/layout/WebsiteFooter';
+
+export default function LandingContact() {
+  const { user, isLoadingAuth } = useAuth();
+  const [sent, setSent] = useState(false);
+
+  if (!isLoadingAuth && user) {
+    return <Navigate to="/home" replace />;
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new URLSearchParams(new FormData(form));
+    const name = form.name.value;
+    const mailto = `mailto:hello@investraders.com?subject=Contact%20from%20${encodeURIComponent(name)}&body=${encodeURIComponent(data.toString().replace(/&/g,'\n').replace(/=/g,': '))}`;
+    setSent(true);
+    window.location.href = mailto;
+  };
+
+  return (
+    <div className="antialiased text-white relative bg-[#071025] min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, #071025 0%, #031026 100%)' }}>
+      <WebsiteNavbar />
+      <main className="max-w-3xl mx-auto px-6 py-12 flex-1 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
+        <p className="text-gray-300 mb-6">Get in touch to request a demo, partner, or get support.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white/5 p-6 rounded-lg border border-white/5">
+          <label className="block">
+            <span className="text-sm text-gray-200">Name</span>
+            <input name="name" required className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Your full name" />
+          </label>
+          <label className="block">
+            <span className="text-sm text-gray-200">Email</span>
+            <input name="email" type="email" required className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="you@example.com" />
+          </label>
+          <label className="block">
+            <span className="text-sm text-gray-200">Organization (optional)</span>
+            <input name="org" className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Chamber, Company, University..." />
+          </label>
+          <label className="block">
+            <span className="text-sm text-gray-200">Message</span>
+            <textarea name="message" required className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none focus:border-cyan-500 transition-colors" rows="5" placeholder="Tell us what you want to achieve"></textarea>
+          </label>
+
+          <div className="flex items-center gap-4 pt-2 flex-wrap">
+            <button type="submit" className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-100 transition-colors">Send Message</button>
+            <a href="mailto:hello@investraders.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">Or email hello@investraders.com</a>
+          </div>
+
+          {sent && (
+            <p className="text-green-400 mt-4 text-sm bg-green-500/10 p-3 rounded border border-green-500/20">
+              Thanks — your message was prepared. Your default mail client should open shortly.
+            </p>
+          )}
+        </form>
+      </main>
+      <WebsiteFooter />
+    </div>
+  );
+}

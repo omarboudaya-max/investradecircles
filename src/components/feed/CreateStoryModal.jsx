@@ -172,7 +172,7 @@ export default function CreateStoryModal({ onClose, onCreated }) {
               <button
                 onClick={submit}
                 disabled={!text || loading}
-                className="px-4 py-1.5 rounded-full bg-white text-black text-sm font-semibold disabled:opacity-40"
+                className="px-4 py-1.5 rounded-full bg-card text-black text-sm font-semibold disabled:opacity-40"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Share'}
               </button>

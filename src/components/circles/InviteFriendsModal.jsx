@@ -86,7 +86,7 @@ export default function InviteFriendsModal({ open, onClose, circleId, circleName
                 className={`h-9 w-24 rounded-full text-sm font-medium border transition-colors ${
                   invited.has(user.id)
                     ? 'bg-blue-600 border-blue-600 text-white'
-                    : 'bg-white border-blue-400 text-blue-600 hover:bg-blue-50'
+                    : 'bg-card border-blue-400 text-blue-600 hover:bg-blue-50'
                 }`}
               >
                 {invited.has(user.id) ? <Check className="w-4 h-4 mx-auto" /> : 'Invite'}

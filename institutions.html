@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investraders — Institutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{background:linear-gradient(180deg,#071025 0%,#031026 100%);min-height:100vh}</style>
+</head>
+<body class="text-white antialiased">
+  <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-black font-bold">IT</div>
+      <div class="font-semibold">Investraders</div>
+    </a>
+    <nav class="hidden sm:flex gap-4">
+      <a href="index.html" class="text-gray-300">Home</a>
+      <a href="institutions.html" class="text-white font-semibold">Institutions</a>
+      <a href="individuals.html" class="text-gray-300">Individuals</a>
+      <a href="3m.html" class="text-gray-300">3M</a>
+      <a href="contact.html" class="text-gray-300">Contact</a>
+    </nav>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold mb-4">For Institutions</h1>
+    <p class="text-gray-300 mb-6">We provide tools tailored for Chambers of Commerce, Stock Exchanges, Universities, and governments to increase visibility, build ecosystems and drive measurable outcomes.</p>
+
+    <section class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white/5 p-6 rounded-lg">
+        <h3 class="font-semibold">Chambers of Commerce</h3>
+        <p class="text-gray-300 mt-2">Create national and international directories, host events, and foster trade relations with partner institutions.</p>
+      </div>
+      <div class="bg-white/5 p-6 rounded-lg">
+        <h3 class="font-semibold">Stock Exchanges & Regulators</h3>
+        <p class="text-gray-300 mt-2">Curated company profiles, verified listings, and analytics to support investor relations and market transparency.</p>
+      </div>
+      <div class="bg-white/5 p-6 rounded-lg">
+        <h3 class="font-semibold">Universities & Research</h3>
+        <p class="text-gray-300 mt-2">Enable alumni networks, spin-out visibility, and industry-academia collaboration spaces.</p>
+      </div>
+      <div class="bg-white/5 p-6 rounded-lg">
+        <h3 class="font-semibold">Government & Development Agencies</h3>
+        <p class="text-gray-300 mt-2">Showcase national champions, enable investment promotion, and coordinate regional trade initiatives.</p>
+      </div>
+    </section>
+
+    <section class="mt-8 bg-gradient-to-r from-cyan-900/30 to-blue-900/20 p-6 rounded-lg">
+      <h3 class="font-semibold text-xl">Institution Onboarding</h3>
+      <p class="text-gray-300 mt-2">We offer onboarding, data migration, and dedicated support to integrate your institution's members and resources.</p>
+      <div class="mt-4">
+        <a href="contact.html" class="px-5 py-2 rounded-full bg-white text-black font-semibold">Request Institutional Demo</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-6 py-10 text-center text-gray-400 text-sm">© <span id="year2"></span> Investraders</footer>
+
+  <script>document.getElementById('year2').textContent=new Date().getFullYear();</script>
+</body>
+</html>

@@ -39,7 +39,7 @@ export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthe
   }
 
   if (user && user.is_onboarded && location.pathname === '/onboarding') {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return <Outlet />;

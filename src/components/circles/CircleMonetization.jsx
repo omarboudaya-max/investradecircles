@@ -83,7 +83,7 @@ export default function CircleMonetization({ memberCount }) {
       </div>
 
       {/* Content */}
-      <div className="bg-white px-5 py-4 space-y-5">
+      <div className="bg-card px-5 py-4 space-y-5">
         {locked.map((m) => {
           const remaining = m.threshold - memberCount;
           return (

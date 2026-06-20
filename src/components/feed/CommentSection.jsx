@@ -123,7 +123,7 @@ export default function CommentSection({ postId }) {
                       + React
                     </button>
                     {pickerFor === c.id && (
-                      <div className="absolute bottom-5 left-0 bg-white rounded-full border shadow-lg flex gap-1 p-1.5 z-20">
+                      <div className="absolute bottom-5 left-0 bg-card rounded-full border shadow-lg flex gap-1 p-1.5 z-20">
                         {REACTION_EMOJIS.map((emoji) => (
                           <button
                             key={emoji}
@@ -173,7 +173,7 @@ export default function CommentSection({ postId }) {
             <Smile className="w-4 h-4" />
           </button>
           {showEmojiPicker && (
-            <div className="absolute bottom-10 left-0 bg-white rounded-2xl border shadow-xl p-3 z-30 w-64">
+            <div className="absolute bottom-10 left-0 bg-card rounded-2xl border shadow-xl p-3 z-30 w-64">
               <div className="grid grid-cols-10 gap-1">
                 {COMMENT_EMOJIS.map((emoji) => (
                   <button
