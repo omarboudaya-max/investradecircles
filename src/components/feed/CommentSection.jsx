@@ -29,6 +29,7 @@ export default function CommentSection({ postId }) {
         post_id: postId,
         content,
         author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
+        author_avatar: user?.avatar_url || null,
       }),
     onSuccess: () => {
       setComment('');
@@ -86,9 +87,13 @@ export default function CommentSection({ postId }) {
           const activeReactions = Object.entries(c.reactions || {}).filter(([, users]) => users.length > 0);
           return (
             <div key={c.id} className="flex gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5">
-                {(c.author_name || 'U').charAt(0).toUpperCase()}
-              </div>
+              {c.author_avatar ? (
+                <img src={c.author_avatar} alt="" className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5 ring-1 ring-border/50" />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5">
+                  {(c.author_name || 'U').charAt(0).toUpperCase()}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="bg-muted/40 rounded-2xl px-3 py-2">
                   <p className="text-xs font-semibold mb-0.5">{c.author_name}</p>
@@ -154,9 +159,13 @@ export default function CommentSection({ postId }) {
         }}
         className="flex gap-2 items-center relative"
       >
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-          {(user?.full_name || 'U').charAt(0).toUpperCase()}
-        </div>
+        {user?.avatar_url ? (
+          <img src={user.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-border/50" />
+        ) : (
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+            {(user?.full_name || 'U').charAt(0).toUpperCase()}
+          </div>
+        )}
         <div className="flex-1 relative">
           <Input
             ref={inputRef}
