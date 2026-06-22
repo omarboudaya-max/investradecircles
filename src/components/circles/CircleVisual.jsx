@@ -87,16 +87,16 @@ function AvatarSlot({ member, index, total, orbitRadius, avatarSize }) {
   const y = Math.sin(angleRad) * orbitRadius;
 
   return (
-    <div
+    <motion.div
       className="absolute"
       style={{
         left: `calc(50% + ${x}px - ${avatarSize / 2}px)`,
         top: `calc(50% + ${y}px - ${avatarSize / 2}px)`,
         width: avatarSize,
         height: avatarSize,
-        // Counter-rotate to keep face upright while parent ring rotates
-        animation: `counterCW 22s linear infinite`,
       }}
+      animate={{ rotate: -360 }}
+      transition={{ repeat: Infinity, duration: 22, ease: "linear" }}
     >
       {isActive && (
         <div
@@ -149,7 +149,7 @@ function AvatarSlot({ member, index, total, orbitRadius, avatarSize }) {
           {member.name.split(' ')[0]}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -251,9 +251,10 @@ export default function CircleVisual({
           style={{ width: SIZE, height: SIZE }}
         >
           {/* ── Orbiting ring: single wrapper rotates CW, avatars counter-rotate to stay upright ── */}
-          <div
+          <motion.div
             className="absolute inset-0"
-            style={{ animation: 'orbitCW 22s linear infinite' }}
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 22, ease: "linear" }}
           >
             {displaySlots.map((member, i) => (
               <AvatarSlot
@@ -265,7 +266,7 @@ export default function CircleVisual({
                 avatarSize={AVATAR_SIZE}
               />
             ))}
-          </div>
+          </motion.div>
 
           {/* ── 3D Sphere (CSS perspective trick) ── */}
           <div
