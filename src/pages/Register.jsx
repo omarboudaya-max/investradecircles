@@ -108,6 +108,63 @@ export default function Register() {
 
   // OTP verification removed in favor of Magic Link / Confirmation URL
 
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const otpRefs = React.useRef([]);
+
+  const handleOtpChange = (index, value) => {
+    if (isNaN(value)) return;
+    const newOtp = [...otp];
+    // Allow pasting 6 digits
+    if (value.length > 1) {
+      const pastedData = value.slice(0, 6).split('');
+      for (let i = 0; i < 6; i++) {
+        newOtp[i] = pastedData[i] || '';
+      }
+      setOtp(newOtp);
+      if (otpRefs.current[5]) otpRefs.current[5].focus();
+      return;
+    }
+    
+    newOtp[index] = value;
+    setOtp(newOtp);
+    
+    // Auto focus next
+    if (value !== '' && index < 5 && otpRefs.current[index + 1]) {
+      otpRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0 && otpRefs.current[index - 1]) {
+      otpRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    const token = otp.join('');
+    if (token.length !== 6) {
+      setError('Please enter all 6 digits');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'signup'
+      });
+      if (verifyError) throw verifyError;
+      // Success!
+      window.location.href = '/home';
+    } catch (err) {
+      setError(err.message || 'Verification failed. Invalid or expired code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleResendOtp = async () => {
     try { await supabase.auth.resend({ type: 'signup', email }); } catch {/* silent */}
   };
@@ -338,21 +395,42 @@ export default function Register() {
               </div>
               <h2 className="text-2xl font-bold mb-2">Check your email</h2>
               <p className="text-muted-foreground text-sm mb-6">
-                We sent a confirmation link to<br />
+                We sent a 6-digit code to<br />
                 <span className="font-semibold text-foreground">{email}</span>
               </p>
 
-              <div className="w-full max-w-xs space-y-4">
-                <p className="text-sm text-slate-600 mb-6">Please check your inbox and click the secure link to activate your account.</p>
-                <Link to="/login" className="w-full block">
-                  <Button type="button" className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold shadow-md">
-                    Return to Login
-                  </Button>
-                </Link>
-                <button type="button" onClick={handleResendOtp} className="text-sm text-blue-600 hover:underline w-full mt-4">
-                  Resend confirmation email
-                </button>
-              </div>
+              <form onSubmit={handleVerifyOtp} className="w-full max-w-sm space-y-6">
+                <div className="flex justify-center gap-2 sm:gap-3">
+                  {otp.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => (otpRefs.current[index] = el)}
+                      type="text"
+                      maxLength={6}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      className="w-12 h-14 text-center text-2xl font-bold bg-transparent border-2 border-border rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
+                    />
+                  ))}
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  disabled={loading || otp.join('').length !== 6} 
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-semibold shadow-md"
+                >
+                  {loading ? 'Verifying...' : 'Verify Code'}
+                </Button>
+              </form>
+
+              <button 
+                type="button" 
+                onClick={handleResendOtp} 
+                className="text-sm text-blue-600 font-medium hover:underline w-full mt-6"
+              >
+                Didn't receive a code? Resend
+              </button>
             </div>
           }
         </div>
