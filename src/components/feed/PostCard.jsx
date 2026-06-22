@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
 import { getAppUrl } from '@/lib/app-url';
@@ -33,6 +33,18 @@ export default function PostCard({ post, onDeleted }) {
     staleTime: 5 * 60 * 1000,
   });
   const resolvedAvatar = authorProfile?.avatar_url || post.author_avatar || null;
+
+  const { data: comments = [] } = useQuery({
+    queryKey: ['comments', post.id],
+    queryFn: () => supabase.from('Comment').select('*').match({ post_id: post.id }).order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
+  });
+
+  const topComment = comments.length > 0 ? [...comments].sort((a, b) => {
+    const aScore = Object.values(a.reactions || {}).reduce((sum, list) => sum + (list?.length || 0), 0);
+    const bScore = Object.values(b.reactions || {}).reduce((sum, list) => sum + (list?.length || 0), 0);
+    if (aScore !== bScore) return bScore - aScore;
+    return new Date(b.created_date) - new Date(a.created_date);
+  })[0] : null;
 
   const toggleLike = useMutation({
     mutationFn: async () => {
@@ -209,7 +221,7 @@ export default function PostCard({ post, onDeleted }) {
             className={`flex items-center gap-1.5 text-sm transition-colors ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
           >
             <MessageCircle className="w-5 h-5" />
-            <span>Comment</span>
+            <span>{comments.length > 0 ? comments.length : 'Comment'}</span>
           </button>
         </div>
         <div className="flex items-center gap-3">
@@ -227,6 +239,25 @@ export default function PostCard({ post, onDeleted }) {
           </button>
         </div>
       </div>
+
+      {!showComments && topComment && (
+        <div className="px-4 pb-4 cursor-pointer" onClick={() => setShowComments(true)}>
+          <div className="bg-muted/30 hover:bg-muted/50 transition-colors rounded-xl p-3 text-sm border border-border/50">
+             <div className="flex items-center gap-2 mb-1.5">
+               {topComment.author_avatar ? (
+                 <img src={topComment.author_avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
+               ) : (
+                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                   {topComment.author_name?.charAt(0)?.toUpperCase()}
+                 </div>
+               )}
+               <span className="font-semibold text-foreground text-xs">{topComment.author_name}</span>
+               <span className="text-[10px] text-muted-foreground ml-auto">{topComment.created_date ? formatDistanceToNow(new Date(topComment.created_date), { addSuffix: true }) : ''}</span>
+             </div>
+             <p className="text-foreground/90 pl-7">{topComment.content}</p>
+          </div>
+        </div>
+      )}
 
       {showComments && (
         <div className="px-4 pb-4 border-t pt-3">
