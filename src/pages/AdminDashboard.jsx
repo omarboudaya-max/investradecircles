@@ -326,6 +326,9 @@ export default function AdminDashboard() {
                       } catch (e) { console.error('Ilboursa error:', e); }
                     }
 
+                    // Invalidate cache so the whole app updates instantly!
+                    queryClient.invalidateQueries({ queryKey: ['market-data'] });
+
                     alert(`Successfully refreshed ${updated.length} market assets!`);
                   } catch (err) {
                     alert('Error refreshing data. See console.');
