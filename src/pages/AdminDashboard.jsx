@@ -262,74 +262,18 @@ export default function AdminDashboard() {
                   btn.disabled = true;
 
                   try {
-                    addAuditLog('market_data_refresh', 'Manually refreshed global market ticker data');
-                    const updated = [];
-                    const timeNow = new Date().toISOString();
+                    addAuditLog('market_data_refresh', 'Manually refreshed global market ticker data via Edge Function');
+                    
+                    const { data, error } = await supabase.functions.invoke('refresh-market-data', {
+                      method: 'POST',
+                    });
 
-                    // 1. CoinGecko (Crypto)
-                    try {
-                      const cgRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
-                      const cgData = await cgRes.json();
-                      if (cgData.bitcoin) {
-                        await supabase.from('MarketData').upsert({ symbol: 'BTC/USD', price: cgData.bitcoin.usd, change_pct: Number(cgData.bitcoin.usd_24h_change.toFixed(2)), updated_at: timeNow }, { onConflict: 'symbol' });
-                        updated.push('BTC/USD');
-                      }
-                      if (cgData.ethereum) {
-                        await supabase.from('MarketData').upsert({ symbol: 'ETH/USD', price: cgData.ethereum.usd, change_pct: Number(cgData.ethereum.usd_24h_change.toFixed(2)), updated_at: timeNow }, { onConflict: 'symbol' });
-                        updated.push('ETH/USD');
-                      }
-                    } catch (e) { console.error('Crypto error:', e); }
-
-                    // 2. Yahoo Finance via proxy
-                    const YAHOO = [
-                      { s: 'S&P 500', y: '^GSPC' }, { s: 'NASDAQ', y: '^IXIC' }, { s: 'DOW', y: '^DJI' },
-                      { s: 'GOLD', y: 'GC=F' }, { s: 'OIL (WTI)', y: 'CL=F' }, { s: 'EUR/USD', y: 'EURUSD=X' }
-                    ];
-                    for (const t of YAHOO) {
-                      try {
-                        const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${t.y}?interval=1d&range=2d`)}`;
-                        const res = await fetch(url);
-                        const data = await res.json();
-                        const meta = data?.chart?.result?.[0]?.meta;
-                        if (meta) {
-                          const price = meta.regularMarketPrice;
-                          const prev = meta.chartPreviousClose || meta.previousClose;
-                          const pct = prev ? ((price - prev) / prev) * 100 : 0;
-                          await supabase.from('MarketData').upsert({ symbol: t.s, price, change_pct: Number(pct.toFixed(2)), updated_at: timeNow }, { onConflict: 'symbol' });
-                          updated.push(t.s);
-                        }
-                      } catch (e) { console.error('Yahoo error:', e); }
-                    }
-
-                    // 3. Ilboursa via proxy
-                    const TUNIS = ['PX1', 'SFBT', 'BIAT', 'BT', 'SAH', 'PGH', 'DH', 'TRE', 'TLNET'];
-                    for (const s of TUNIS) {
-                      try {
-                        const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://www.ilboursa.com/marches/cotation_${s}`)}`;
-                        const res = await fetch(url);
-                        const html = await res.text();
-                        
-                        const priceMatch = html.match(/<div class="cot_v1b">([^<]+)<\/div>/i);
-                        const changeMatch = html.match(/<div class="quote_(?:up|down|eq|neutral|eqc)\d">([^<]+)<\/div>/i);
-                        
-                        const rawPrice = priceMatch ? priceMatch[1].replace(/&#xA0;/g, '').replace(/&nbsp;/g, '').trim() : null;
-                        const rawChange = changeMatch ? changeMatch[1].trim() : null;
-                        
-                        const price = rawPrice ? parseFloat(rawPrice.replace(/TND/gi, '').replace(/[\s\xa0]/g, '').replace(',', '.')) : null;
-                        const change = rawChange ? parseFloat(rawChange.replace(/&#x2B;/gi, '+').replace(/&#x2D;/gi, '-').replace('%', '').replace(',', '.')) : null;
-
-                        if (price !== null && !isNaN(price)) {
-                          const sym = s === 'PX1' ? 'TUNINDEX' : s;
-                          await supabase.from('MarketData').upsert({ symbol: sym, price, change_pct: isNaN(change) ? 0 : change, updated_at: timeNow }, { onConflict: 'symbol' });
-                          updated.push(sym);
-                        }
-                      } catch (e) { console.error('Ilboursa error:', e); }
-                    }
+                    if (error) throw error;
 
                     // Invalidate cache so the whole app updates instantly!
                     queryClient.invalidateQueries({ queryKey: ['market-data'] });
 
-                    alert(`Successfully refreshed ${updated.length} market assets!`);
+                    alert(`Successfully refreshed ${data?.updated?.length || 0} market assets!`);
                   } catch (err) {
                     alert('Error refreshing data. See console.');
                     console.error(err);
