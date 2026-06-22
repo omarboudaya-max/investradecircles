@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '' // Service role to bypass RLS if needed
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '' // Using ANON KEY since MarketData has RLS disabled
     );
 
     const updated: string[] = [];
