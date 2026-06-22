@@ -99,7 +99,7 @@ export default function AdminDashboard() {
   // Computed stats
   const last7days = subDays(new Date(), 7);
   const last30days = subDays(new Date(), 30);
-  const newUsersLast7 = allUsers.filter((u) => u.created_date && isAfter(new Date(u.created_date), last7days)).length;
+  const newUsersLast7 = allUsers.filter((u) => u.created_at && isAfter(new Date(u.created_at), last7days)).length;
   const postsLast7 = allPosts.filter((p) => p.created_date && isAfter(new Date(p.created_date), last7days)).length;
   const postsLast30 = allPosts.filter((p) => p.created_date && isAfter(new Date(p.created_date), last30days)).length;
   const totalMembers = allCircles.reduce((acc, c) => {
@@ -325,7 +325,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{u.full_name || '—'}</p>
-                  <p className="text-xs text-muted-foreground">{u.email} · joined {u.created_date ? format(new Date(u.created_date), 'MMM d, yyyy') : '—'}</p>
+                  <p className="text-xs text-muted-foreground">{u.email} · joined {u.created_at ? format(new Date(u.created_at), 'MMM d, yyyy') : '—'}</p>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>
                   {u.role || 'user'}

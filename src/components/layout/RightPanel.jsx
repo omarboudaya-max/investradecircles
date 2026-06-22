@@ -32,7 +32,7 @@ export default function RightPanel() {
   // Suggested: real users not yet connected to current user
   const { data: allUsers = [] } = useQuery({
     queryKey: ['right-panel-users'],
-    queryFn: () => supabase.from('profiles').select('*').order('created_date', { ascending: false }).limit(50).then(res => res.data || []),
+    queryFn: () => supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(50).then(res => res.data || []),
     enabled: !!user?.id,
   });
 
