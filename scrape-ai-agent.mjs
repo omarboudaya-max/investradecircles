@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 
 // Load env variables from .env.local
 const envPath = path.join(process.cwd(), '.env.local');
 let supabaseUrl = '';
 let supabaseAnonKey = '';
-let openaiApiKey = '';
+let groqApiKey = '';
 
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
@@ -19,7 +19,7 @@ if (fs.existsSync(envPath)) {
       const val = parts.slice(1).join('=').trim();
       if (key === 'VITE_SUPABASE_URL') supabaseUrl = val;
       if (key === 'VITE_SUPABASE_ANON_KEY') supabaseAnonKey = val;
-      if (key === 'OPENAI_API_KEY') openaiApiKey = val;
+      if (key === 'GROQ_API_KEY') groqApiKey = val;
     }
   }
 }
@@ -29,13 +29,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   process.exit(1);
 }
 
-if (!openaiApiKey) {
-  console.error('Error: OPENAI_API_KEY must be defined in .env.local to run the AI Agent.');
+if (!groqApiKey) {
+  console.error('Error: GROQ_API_KEY must be defined in .env.local to run the AI Agent.');
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-const openai = new OpenAI({ apiKey: openaiApiKey });
+const groq = new Groq({ apiKey: groqApiKey });
 
 // List of stocks to analyze
 const TUNISIAN_STOCKS = [
@@ -58,13 +58,13 @@ function cleanHtml(html) {
 }
 
 /**
- * Uses OpenAI to extract structured data from raw text
+ * Uses Groq to extract structured data from raw text
  */
 async function analyzeWithAiAgent(symbol, textContent) {
-  console.log(`🤖 Agent is analyzing data for ${symbol}...`);
+  console.log(`🤖 Groq Agent is analyzing data for ${symbol}...`);
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Cost effective model
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile", // Fast and powerful Groq model
       response_format: { type: "json_object" },
       messages: [
         {
@@ -90,7 +90,7 @@ async function analyzeWithAiAgent(symbol, textContent) {
     const parsedData = JSON.parse(response.choices[0].message.content);
     return parsedData;
   } catch (error) {
-    console.error(`❌ AI Agent failed to analyze ${symbol}:`, error.message);
+    console.error(`❌ Groq Agent failed to analyze ${symbol}:`, error.message);
     return null;
   }
 }
