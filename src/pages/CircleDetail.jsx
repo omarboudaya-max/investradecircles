@@ -355,6 +355,7 @@ export default function CircleDetail() {
                 totalMembers={allMemberIds.length}
                 circleName={circle?.name}
                 memberProfiles={memberProfiles}
+                allResponses={responses}
               />
 
               {responses.length > 0 && (

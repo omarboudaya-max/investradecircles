@@ -485,12 +485,54 @@ Return ONLY in the exact JSON format specified — no extra text.`,
           } catch (e) {}
         }
 
+        // Parse HTML to extract mission, vision, and main activity from text
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const paragraphs = Array.from(doc.querySelectorAll('p, div, span, section'))
+          .map(el => el.textContent.trim().replace(/\s+/g, ' '))
+          .filter(t => t.length > 60 && t.length < 500);
+
+        let missionText = pageDesc || '';
+        let visionText = '';
+        let mainActivity = '';
+
+        for (const p of paragraphs) {
+          const lower = p.toLowerCase();
+          if (lower.includes('mission') || lower.includes('aim to ') || lower.includes('strive to ')) {
+            if (!missionText || missionText === pageDesc) missionText = p;
+          }
+          if (lower.includes('vision') || lower.includes('envision') || lower.includes('our future')) {
+            if (!visionText) visionText = p;
+          }
+          if (lower.includes('we are') || lower.includes('leading provider') || lower.includes('specializes in') || lower.includes('manufacturer')) {
+            if (!mainActivity) mainActivity = p;
+          }
+        }
+
+        // Basic heuristic for products if JSON-LD fails: look for images with pricing or product titles
+        if (parsedProducts.length === 0) {
+          const productCards = Array.from(doc.querySelectorAll('.product, .item, article'));
+          for (const card of productCards.slice(0, 5)) {
+            const img = card.querySelector('img')?.src || '';
+            const title = card.querySelector('h2, h3, .title, .name')?.textContent?.trim() || '';
+            const price = card.querySelector('.price, .amount')?.textContent?.trim() || '';
+            if (img && title) {
+              parsedProducts.push({
+                name: title,
+                image: img,
+                offers: { price: price }
+              });
+            }
+          }
+        }
+
         const generatedData = {
           name: brandName,
           is_product_brand: false,
-          tagline: pageDesc ? pageDesc.substring(0, 100) + '...' : '',
-          mission: pageDesc || '',
-          vision: '',
+          tagline: pageDesc ? pageDesc.substring(0, 100) + '...' : (mainActivity ? mainActivity.substring(0, 100) + '...' : ''),
+          mission: missionText,
+          vision: visionText,
+          main_activity: mainActivity,
           goals: [],
           products: [],
           services: [],
@@ -536,6 +578,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
           tagline: description ? description.substring(0, 100) + '...' : '',
           mission: description || '',
           vision: '',
+          main_activity: '',
           goals: [],
           products: [],
           services: [],
@@ -597,11 +640,11 @@ Return ONLY in the exact JSON format specified — no extra text.`,
   return (
     <div className="p-5 space-y-4 overflow-y-auto max-h-[70vh]">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center gap-2 mb-1 flex-wrap">
         <Landmark className={`w-4 h-4 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
         <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{info.name || circle?.name}</span>
         {info.is_product_brand && (
-          <span className={`ml-auto inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
             isDark 
               ? 'bg-orange-400/15 text-orange-300 border-orange-400/30' 
               : 'bg-orange-600/15 text-orange-800 border-orange-600/30'
@@ -609,11 +652,40 @@ Return ONLY in the exact JSON format specified — no extra text.`,
             <ShoppingBag className="w-2.5 h-2.5" /> Brand
           </span>
         )}
+        {circle?.website_url && (
+          <a
+            href={circle.website_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`ml-auto inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border shadow-sm transition-all ${
+              isDark 
+                ? 'bg-blue-500/10 text-blue-300 border-blue-500/30 hover:bg-blue-500/20' 
+                : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:shadow-md'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" /> Visit Website
+          </a>
+        )}
       </div>
 
       {/* Tagline */}
       {info.tagline && (
         <p className={`${isDark ? 'text-amber-300/70' : 'text-amber-900/85'} text-sm italic px-1`}>"{info.tagline}"</p>
+      )}
+
+      {/* Main Activity */}
+      {info.main_activity && (
+        <div className="rounded-xl p-4 border transition-all duration-300" 
+             style={{ 
+               background: isDark ? 'rgba(100,180,255,0.05)' : 'rgba(100,180,255,0.08)', 
+               borderColor: isDark ? 'rgba(100,180,255,0.2)' : 'rgba(100,180,255,0.3)' 
+             }}>
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen className={`w-3.5 h-3.5 ${isDark ? 'text-blue-400' : 'text-blue-700'}`} />
+            <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>Main Activity</span>
+          </div>
+          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`}>{info.main_activity}</p>
+        </div>
       )}
 
       {/* ── PRODUCTS visual gallery (shown first for product brands) ── */}
@@ -743,6 +815,7 @@ function AnnouncementsTab({ circleId, isAdmin, isModerator, user, isDark }) {
   });
 
   const announcements = posts.filter((p) => {
+    if (p.post_type === 'announcement') return true;
     const c = (p.content || '').toLowerCase();
     return ['announce', 'notice', 'official', 'statement', 'press', 'release', 'update', 'new', 'launching', 'scheduled', 'important'].some((kw) => c.includes(kw));
   });
@@ -752,7 +825,7 @@ function AnnouncementsTab({ circleId, isAdmin, isModerator, user, isDark }) {
       content,
       circle_id: circleId,
       visibility: 'circle',
-      post_type: 'text',
+      post_type: 'announcement',
       author_name: user?.full_name || user?.email?.split('@')[0] || 'Official',
       author_avatar: user?.avatar_url || null,
     }),
@@ -1018,6 +1091,7 @@ export default function InstitutionalCircleLayout({
                 circleName={circle?.name}
                 memberProfiles={memberProfiles}
                 isDark={isDark}
+                allResponses={responses}
               />
 
               {responses.length > 0 && (

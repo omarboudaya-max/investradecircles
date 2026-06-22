@@ -164,6 +164,7 @@ export default function CircleVisual({
   circleName,
   memberProfiles = [],
   isDark = false,
+  allResponses = [],
 }) {
   const SIZE = 380;
   const SPHERE_SIZE = 220;
@@ -180,16 +181,31 @@ export default function CircleVisual({
   useEffect(() => {
     // Spawn a floating comment every 1.8s
     const interval = setInterval(() => {
-      const source = members.filter((m) => m?.lastComment);
-      if (source.length === 0) return;
-      const member = source[Math.floor(Math.random() * source.length)];
-      const comment = member.lastComment;
+      let sourceComment = null;
+      let sourceName = null;
+
+      if (allResponses && allResponses.length > 0) {
+        // Pick a random response from all responses
+        const r = allResponses[Math.floor(Math.random() * allResponses.length)];
+        sourceComment = r.response_text;
+        sourceName = r.author_name;
+      } else {
+        // Fallback to active member last comments
+        const source = members.filter((m) => m?.lastComment);
+        if (source.length === 0) return;
+        const member = source[Math.floor(Math.random() * source.length)];
+        sourceComment = member.lastComment;
+        sourceName = member?.name;
+      }
+
+      if (!sourceComment) return;
+      
       const id = ++commentIdRef.current;
       const x = 20 + Math.random() * (SIZE - 200);
-      setLiveComments((prev) => [...prev.slice(-8), { id, text: comment, x, name: member?.name }]);
+      setLiveComments((prev) => [...prev.slice(-8), { id, text: sourceComment, x, name: sourceName }]);
     }, 1800);
     return () => clearInterval(interval);
-  }, [members]);
+  }, [members, allResponses]);
 
   const removeComment = (id) => setLiveComments((prev) => prev.filter((c) => c.id !== id));
 

@@ -123,7 +123,7 @@ export default function ProductSentiment({ circleId, productCategory, currentUse
 
   const { data: comments = [], isLoading } = useQuery({
     queryKey: ['product-comments', circleId, productCategory],
-    queryFn: () => supabase.from('ProductComment').select('*').match({ circle_id: circleId, product_category: productCategory }, '-created_date', 20).then(res => res.data || []),
+    queryFn: () => supabase.from('ProductComment').select('*').match({ circle_id: circleId, product_category: productCategory }).order('created_date', { ascending: false }).limit(20).then(res => res.data || []),
     staleTime: 30 * 1000,
     enabled: !!circleId && !!productCategory,
   });

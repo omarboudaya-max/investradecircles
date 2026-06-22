@@ -42,6 +42,7 @@ export default function CircleFeed({ circle, user }) {
   // Filter: circle posts + public posts that match category keywords; exclude private posts of other circles
   const filteredPosts = posts
     .filter((p) => {
+      if (p.post_type === 'announcement') return false;
       if (p.circle_id === circleId) return true;
       if (p.visibility === 'private') return false;
       if (p.visibility === 'circle' && p.circle_id !== circleId) return false;
