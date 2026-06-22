@@ -122,6 +122,7 @@ CREATE TABLE public."Comment" (
   author_name TEXT,
   author_avatar TEXT,
   content TEXT NOT NULL,
+  reactions JSONB DEFAULT '{}'::jsonb,
   created_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

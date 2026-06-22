@@ -13,7 +13,7 @@ export default function CommentSection({ postId }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
-  const [sort, setSort] = useState('newest');
+  const [sort, setSort] = useState('relevant');
   const [pickerFor, setPickerFor] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef();
