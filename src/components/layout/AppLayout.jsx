@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import RightPanel from './RightPanel';
+import BottomNav from './BottomNav';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function AppLayout() {
@@ -10,7 +11,8 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-[1440px] mx-auto px-4 pt-4 pb-4">
+      {/* Container with pb-16 on mobile to account for BottomNav */}
+      <div className="max-w-[1440px] mx-auto px-4 pt-4 pb-20 lg:pb-4">
         <div className="flex flex-col rounded-2xl border-4 border-blue-600 dark:border-gray-800 shadow-xl shadow-primary/20 overflow-hidden bg-background min-h-[calc(100vh-2rem)]">
           <Navbar user={user} />
           <div className="flex flex-1 min-h-0">
@@ -22,6 +24,7 @@ export default function AppLayout() {
           </div>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 }
