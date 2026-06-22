@@ -120,20 +120,20 @@ export default function Register() {
 
   // OTP verification removed in favor of Magic Link / Confirmation URL
 
-  const [otp, setOtp] = useState(['', '', '', '', '', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [verified, setVerified] = useState(false);
   const otpRefs = React.useRef([]);
 
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];
-    // Allow pasting 8 digits/characters
+    // Allow pasting 6 digits/characters
     if (value.length > 1) {
-      const pastedData = value.slice(0, 8).split('');
-      for (let i = 0; i < 8; i++) {
+      const pastedData = value.slice(0, 6).split('');
+      for (let i = 0; i < 6; i++) {
         newOtp[i] = pastedData[i] || '';
       }
       setOtp(newOtp);
-      if (otpRefs.current[7]) otpRefs.current[7].focus();
+      if (otpRefs.current[5]) otpRefs.current[5].focus();
       return;
     }
     
@@ -141,7 +141,7 @@ export default function Register() {
     setOtp(newOtp);
     
     // Auto focus next
-    if (value !== '' && index < 7 && otpRefs.current[index + 1]) {
+    if (value !== '' && index < 5 && otpRefs.current[index + 1]) {
       otpRefs.current[index + 1].focus();
     }
   };
@@ -156,8 +156,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
     const token = otp.join('');
-    if (token.length !== 8) {
-      setError('Please enter all 8 characters');
+    if (token.length !== 6) {
+      setError('Please enter all 6 characters');
       return;
     }
     setLoading(true);
@@ -182,7 +182,7 @@ export default function Register() {
   const handleResendOtp = async () => {
     try { 
       await supabase.auth.resend({ type: 'signup', email }); 
-      setOtp(['', '', '', '', '', '', '', '']);
+      setOtp(['', '', '', '', '', '']);
       if (otpRefs.current[0]) otpRefs.current[0].focus();
       alert('Verification code resent successfully!');
     } catch {/* silent */}
@@ -424,29 +424,29 @@ export default function Register() {
                   </div>
                   <h2 className="text-2xl font-bold mb-2">Check your email</h2>
                   <p className="text-muted-foreground text-sm mb-6">
-                    We sent an 8-character code to<br />
+                    We sent a 6-digit code to<br />
                     <span className="font-semibold text-foreground">{email}</span>
                   </p>
 
                   <form onSubmit={handleVerifyOtp} className="w-full max-w-sm space-y-6">
-                    <div className="flex justify-center gap-1.5 sm:gap-2">
+                    <div className="flex justify-center gap-2 sm:gap-3">
                       {otp.map((digit, index) => (
                         <input
                           key={index}
                           ref={(el) => (otpRefs.current[index] = el)}
                           type="text"
-                          maxLength={8}
+                          maxLength={6}
                           value={digit}
                           onChange={(e) => handleOtpChange(index, e.target.value)}
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                          className="w-10 h-12 sm:w-11 sm:h-14 text-center text-xl sm:text-2xl font-bold bg-transparent border-2 border-border rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
+                          className="w-12 h-14 text-center text-2xl font-bold bg-transparent border-2 border-border rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
                         />
                       ))}
                     </div>
                     
                     <Button 
                       type="submit" 
-                      disabled={loading || otp.join('').length !== 8} 
+                      disabled={loading || otp.join('').length !== 6} 
                       className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-semibold shadow-md"
                     >
                       {loading ? 'Verifying...' : 'Verify Code'}
