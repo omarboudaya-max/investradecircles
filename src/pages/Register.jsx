@@ -96,7 +96,19 @@ export default function Register() {
           }
         }
       });
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        if (signUpError.message.toLowerCase().includes('already registered')) {
+          // They might be unverified. Let's try to resend the OTP.
+          const { error: resendError } = await supabase.auth.resend({ type: 'signup', email });
+          if (resendError) {
+            // Probably already verified or hit rate limit.
+            throw signUpError; 
+          }
+          // Unverified! We successfully resent the OTP. Proceed to step 5.
+        } else {
+          throw signUpError;
+        }
+      }
       setStep(5);
     } catch (err) {
       console.error("Signup error:", err);
@@ -108,19 +120,20 @@ export default function Register() {
 
   // OTP verification removed in favor of Magic Link / Confirmation URL
 
-  const [otp, setOtp] = useState(['', '', '', '', '', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [verified, setVerified] = useState(false);
   const otpRefs = React.useRef([]);
 
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];
-    // Allow pasting 8 digits/characters
+    // Allow pasting 6 digits/characters
     if (value.length > 1) {
-      const pastedData = value.slice(0, 8).split('');
-      for (let i = 0; i < 8; i++) {
+      const pastedData = value.slice(0, 6).split('');
+      for (let i = 0; i < 6; i++) {
         newOtp[i] = pastedData[i] || '';
       }
       setOtp(newOtp);
-      if (otpRefs.current[7]) otpRefs.current[7].focus();
+      if (otpRefs.current[5]) otpRefs.current[5].focus();
       return;
     }
     
@@ -128,7 +141,7 @@ export default function Register() {
     setOtp(newOtp);
     
     // Auto focus next
-    if (value !== '' && index < 7 && otpRefs.current[index + 1]) {
+    if (value !== '' && index < 5 && otpRefs.current[index + 1]) {
       otpRefs.current[index + 1].focus();
     }
   };
@@ -143,8 +156,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
     const token = otp.join('');
-    if (token.length !== 8) {
-      setError('Please enter all 8 characters');
+    if (token.length !== 6) {
+      setError('Please enter all 6 characters');
       return;
     }
     setLoading(true);
@@ -156,16 +169,23 @@ export default function Register() {
       });
       if (verifyError) throw verifyError;
       // Success!
-      window.location.href = '/home';
+      setVerified(true);
+      setTimeout(() => {
+        window.location.href = '/onboarding';
+      }, 1500);
     } catch (err) {
       setError(err.message || 'Verification failed. Invalid or expired code.');
-    } finally {
       setLoading(false);
     }
   };
 
   const handleResendOtp = async () => {
-    try { await supabase.auth.resend({ type: 'signup', email }); } catch {/* silent */}
+    try { 
+      await supabase.auth.resend({ type: 'signup', email }); 
+      setOtp(['', '', '', '', '', '']);
+      if (otpRefs.current[0]) otpRefs.current[0].focus();
+      alert('Verification code resent successfully!');
+    } catch {/* silent */}
   };
 
   const stepProgress = (step - 1) / (STEP_LABELS.length - 1) * 100;
@@ -389,47 +409,59 @@ export default function Register() {
           {/* Step 5 – OTP Verification */}
           {step === 5 &&
           <div className="flex-1 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
-                <TrendingUp className="w-8 h-8 text-blue-600" />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">Check your email</h2>
-              <p className="text-muted-foreground text-sm mb-6">
-                We sent an 8-character code to<br />
-                <span className="font-semibold text-foreground">{email}</span>
-              </p>
-
-              <form onSubmit={handleVerifyOtp} className="w-full max-w-sm space-y-6">
-                <div className="flex justify-center gap-1.5 sm:gap-2">
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => (otpRefs.current[index] = el)}
-                      type="text"
-                      maxLength={8}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-10 h-12 sm:w-11 sm:h-14 text-center text-xl sm:text-2xl font-bold bg-transparent border-2 border-border rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
-                    />
-                  ))}
+              {verified ? (
+                <div className="flex flex-col items-center justify-center animate-in zoom-in duration-500">
+                  <div className="w-24 h-24 rounded-full bg-green-500 flex items-center justify-center mb-6 shadow-lg shadow-green-500/30">
+                    <Check className="w-12 h-12 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-green-600 mb-2">Verified!</h2>
+                  <p className="text-muted-foreground text-sm">Redirecting to onboarding...</p>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  disabled={loading || otp.join('').length !== 8} 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-semibold shadow-md"
-                >
-                  {loading ? 'Verifying...' : 'Verify Code'}
-                </Button>
-              </form>
+              ) : (
+                <>
+                  <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <TrendingUp className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold mb-2">Check your email</h2>
+                  <p className="text-muted-foreground text-sm mb-6">
+                    We sent a 6-digit code to<br />
+                    <span className="font-semibold text-foreground">{email}</span>
+                  </p>
 
-              <button 
-                type="button" 
-                onClick={handleResendOtp} 
-                className="text-sm text-blue-600 font-medium hover:underline w-full mt-6"
-              >
-                Didn't receive a code? Resend
-              </button>
+                  <form onSubmit={handleVerifyOtp} className="w-full max-w-sm space-y-6">
+                    <div className="flex justify-center gap-2 sm:gap-3">
+                      {otp.map((digit, index) => (
+                        <input
+                          key={index}
+                          ref={(el) => (otpRefs.current[index] = el)}
+                          type="text"
+                          maxLength={6}
+                          value={digit}
+                          onChange={(e) => handleOtpChange(index, e.target.value)}
+                          onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                          className="w-12 h-14 text-center text-2xl font-bold bg-transparent border-2 border-border rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none"
+                        />
+                      ))}
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      disabled={loading || otp.join('').length !== 6} 
+                      className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-semibold shadow-md"
+                    >
+                      {loading ? 'Verifying...' : 'Verify Code'}
+                    </Button>
+                  </form>
+
+                  <button 
+                    type="button" 
+                    onClick={handleResendOtp} 
+                    className="text-sm text-blue-600 font-medium hover:underline w-full mt-6"
+                  >
+                    Didn't receive a code? Resend
+                  </button>
+                </>
+              )}
             </div>
           }
         </div>

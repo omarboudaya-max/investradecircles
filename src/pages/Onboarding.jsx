@@ -17,7 +17,11 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
 
   // Step 1: Identity
-  const [fullName, setFullName] = useState(user?.full_name || '');
+  const [fullName, setFullName] = useState(
+    user?.user_metadata?.first_name 
+      ? `${user.user_metadata.first_name} ${user.user_metadata.last_name || ''}`.trim() 
+      : user?.full_name || ''
+  );
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [cropSrc, setCropSrc] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -26,7 +30,7 @@ export default function Onboarding() {
   // Step 2: Interests
   const [headline, setHeadline] = useState(user?.headline || '');
   const [bio, setBio] = useState(user?.bio || '');
-  const [userType, setUserType] = useState(user?.user_type || '');
+  const [userType, setUserType] = useState(user?.user_metadata?.user_type || user?.user_type || '');
 
   // Step 3: Communities (Circles)
   const [joinedCircles, setJoinedCircles] = useState([]);
