@@ -346,6 +346,13 @@ function InfoTab({ circle, user, isDark }) {
     const name = circle?.name || 'Institution';
     const description = circle?.description || 'Official institutional circle.';
 
+    if (circle?.ai_cached_data) {
+      console.log('⚡ Using pre-computed AI cached data for lightning fast load!');
+      setInfo(circle.ai_cached_data);
+      setLoading(false);
+      return;
+    }
+
     if (!websiteUrl) {
       setLoading(true);
       const infoData = {

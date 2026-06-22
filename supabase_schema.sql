@@ -33,6 +33,7 @@ CREATE TABLE public."Circle" (
   member_ids UUID[] DEFAULT '{}',
   moderator_ids UUID[] DEFAULT '{}',
   created_by_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  ai_cached_data JSONB DEFAULT NULL,
   created_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
