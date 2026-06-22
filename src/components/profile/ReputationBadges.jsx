@@ -79,17 +79,52 @@ export default function ReputationBadges({ userId }) {
             </Tooltip>
           ) : (
             earnedBadges.map((badge) => (
-              <Tooltip key={badge.id}>
+              <Tooltip key={badge.id} delayDuration={150}>
                 <TooltipTrigger asChild>
                   <span
-                    className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border cursor-default select-none ${badge.color}`}
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border cursor-default select-none transition-transform hover:scale-105 shadow-sm ${badge.color}`}
                   >
-                    <span>{badge.emoji}</span>
+                    <span className="text-sm drop-shadow-sm">{badge.emoji}</span>
+                    <span className="tracking-wider uppercase opacity-70 text-[9px] font-extrabold">{badge.level}</span>
                     {badge.label}
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">
-                  {badge.description}
+                <TooltipContent side="bottom" className="text-xs w-64 space-y-1 p-3.5 shadow-xl border bg-card/95 backdrop-blur-md rounded-xl">
+                  <div className="flex items-center gap-2 mb-2 border-b pb-2">
+                    <span className="text-2xl drop-shadow-sm">{badge.emoji}</span>
+                    <div>
+                      <p className="font-bold text-foreground text-sm leading-tight">{badge.label}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: badge.progressColor?.includes('cyan') || badge.progressColor?.includes('#06b6d4') ? '#0891b2' : badge.progressColor?.includes('#f59e0b') ? '#d97706' : badge.progressColor?.includes('#94a3b8') ? '#475569' : '#c2410c' }}>
+                        {badge.level} TIER
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground text-[11px] leading-relaxed">{badge.description}</p>
+                  <div className="pt-3">
+                    <div className="flex justify-between text-[10px] mb-1.5 font-semibold">
+                      <span className="text-foreground">{badge.nextThreshold ? 'Progress to Next Tier' : 'Maximum Tier Reached'}</span>
+                      <span className="text-muted-foreground">{badge.value} / {badge.nextThreshold || 'MAX'}</span>
+                    </div>
+                    {badge.nextThreshold ? (
+                      <div className="h-2 w-full bg-muted/80 rounded-full overflow-hidden shadow-inner border border-black/5">
+                        <div 
+                          className="h-full rounded-full transition-all duration-700 ease-out relative" 
+                          style={{ 
+                            width: `${Math.min(100, (badge.value / badge.nextThreshold) * 100)}%`,
+                            background: badge.progressColor
+                          }}
+                        >
+                          <div className="absolute inset-0 bg-white/20 w-full" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="h-2 w-full bg-muted/80 rounded-full overflow-hidden shadow-inner border border-black/5">
+                        <div className="h-full w-full rounded-full relative" style={{ background: badge.progressColor }}>
+                          <div className="absolute inset-0 bg-white/20 w-full" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </TooltipContent>
               </Tooltip>
             ))
