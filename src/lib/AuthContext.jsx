@@ -27,24 +27,31 @@ export const AuthProvider = ({ children }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        if (session?.user) {
-          const profile = await fetchProfile(session.user.id);
-          const metadata = session.user.user_metadata || {};
-          const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
-          
-          setUser({ 
-            ...session.user, 
-            ...metadata, 
-            ...profile,
-            is_onboarded: isOnboarded
-          });
-          setIsAuthenticated(true);
-        } else {
+        try {
+          if (session?.user) {
+            const profile = await fetchProfile(session.user.id);
+            const metadata = session.user.user_metadata || {};
+            const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
+            
+            setUser({ 
+              ...session.user, 
+              ...metadata, 
+              ...profile,
+              is_onboarded: isOnboarded
+            });
+            setIsAuthenticated(true);
+          } else {
+            setUser(null);
+            setIsAuthenticated(false);
+          }
+        } catch (err) {
+          console.error("Auth state change error:", err);
           setUser(null);
           setIsAuthenticated(false);
+        } finally {
+          setIsLoadingAuth(false);
+          setAuthChecked(true);
         }
-        setIsLoadingAuth(false);
-        setAuthChecked(true);
       }
     );
 
