@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Users, CheckCircle, X } from 'lucide-react';
 
@@ -59,7 +59,9 @@ export default function PendingInvites() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{invite.circle_name}</p>
-              <p className="text-xs text-muted-foreground">from {invite.inviter_name}</p>
+              <p className="text-xs text-muted-foreground">
+                from <Link to={`/profile/${invite.inviter_id}`} className="hover:underline text-primary">{invite.inviter_name}</Link>
+              </p>
             </div>
             <div className="flex gap-1.5 shrink-0">
               <Button

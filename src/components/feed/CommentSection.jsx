@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Send, Smile } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 const REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥', '💡'];
 const COMMENT_EMOJIS = ['😀','😂','❤️','🔥','👍','🎉','💰','📈','💡','🚀','😎','🤔','💪','🙏','✅','⚡','🌟','😮','👏','🤑'];
@@ -87,16 +88,20 @@ export default function CommentSection({ postId }) {
           const activeReactions = Object.entries(c.reactions || {}).filter(([, users]) => users.length > 0);
           return (
             <div key={c.id} className="flex gap-2">
-              {c.author_avatar ? (
-                <img src={c.author_avatar} alt="" className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5 ring-1 ring-border/50" />
-              ) : (
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5">
-                  {(c.author_name || 'U').charAt(0).toUpperCase()}
-                </div>
-              )}
+              <Link to={`/profile/${c.created_by_id}`} className="shrink-0 mt-0.5">
+                {c.author_avatar ? (
+                  <img src={c.author_avatar} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-border/50 hover:opacity-90 transition-opacity" />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold hover:opacity-90 transition-opacity">
+                    {(c.author_name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </Link>
               <div className="flex-1 min-w-0">
                 <div className="bg-muted/40 rounded-2xl px-3 py-2">
-                  <p className="text-xs font-semibold mb-0.5">{c.author_name}</p>
+                  <Link to={`/profile/${c.created_by_id}`} className="hover:underline">
+                    <p className="text-xs font-semibold mb-0.5">{c.author_name}</p>
+                  </Link>
                   <p className="text-sm leading-relaxed">{c.content}</p>
                 </div>
                 <div className="flex items-center flex-wrap gap-2 mt-1 ml-1">

@@ -378,15 +378,27 @@ export default function CircleDetail() {
                               const rProfile = memberProfiles.find((p) => p.id === r.created_by_id);
                               const avatar = rProfile?.avatar_url || r.author_avatar;
                               const isResponderActive = r.created_by_id ? activeResponderIds.has(r.created_by_id) : activeResponderNames.has(r.author_name);
-                              return avatar ? (
+                              
+                              const AvatarEl = avatar ? (
                                 <img src={avatar} alt={r.author_name} className="w-7 h-7 rounded-full object-cover shrink-0" style={{ border: isResponderActive ? '2px solid #22c55e' : '2px solid transparent' }} />
                               ) : (
                                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white text-[10px] font-bold" style={{ border: isResponderActive ? '2px solid #22c55e' : 'none' }}>
                                   {r.author_name?.charAt(0)}
                                 </div>
                               );
+
+                              return r.created_by_id ? (
+                                <Link to={`/profile/${r.created_by_id}`} onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 hover:opacity-90 z-10">
+                                  {AvatarEl}
+                                  <span className="text-sm font-medium hover:underline">{r.author_name}</span>
+                                </Link>
+                              ) : (
+                                <>
+                                  {AvatarEl}
+                                  <span className="text-sm font-medium">{r.author_name}</span>
+                                </>
+                              );
                             })()}
-                            <span className="text-sm font-medium">{r.author_name}</span>
                             {(r.created_by_id ? activeResponderIds.has(r.created_by_id) : activeResponderNames.has(r.author_name)) && (
                               <span className="flex items-center gap-1 text-[10px] text-green-600 font-medium ml-auto">
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block" /> Active

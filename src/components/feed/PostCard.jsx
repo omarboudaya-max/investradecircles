@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
 import SharePostModal from '@/components/feed/SharePostModal';
@@ -91,20 +92,23 @@ export default function PostCard({ post, onDeleted }) {
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {resolvedAvatar ? (
-            <img
-              src={resolvedAvatar}
-              alt={post.author_name}
-              className="w-12 h-12 rounded-full object-cover ring-2 ring-primary/20 cursor-pointer hover:opacity-90 transition-opacity shrink-0"
-              onClick={() => setLightboxSrc(resolvedAvatar)}
-            />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-base ring-2 ring-primary/20 shrink-0">
-              {post.author_name?.charAt(0)?.toUpperCase() || 'U'}
-            </div>
-          )}
+          <Link to={`/profile/${post.created_by_id}`} className="shrink-0">
+            {resolvedAvatar ? (
+              <img
+                src={resolvedAvatar}
+                alt={post.author_name}
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-primary/20 hover:opacity-90 transition-opacity"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-base ring-2 ring-primary/20">
+                {post.author_name?.charAt(0)?.toUpperCase() || 'U'}
+              </div>
+            )}
+          </Link>
           <div>
-            <p className="text-sm font-semibold">{post.author_name || 'Unknown'}</p>
+            <Link to={`/profile/${post.created_by_id}`} className="hover:underline">
+              <p className="text-sm font-semibold">{post.author_name || 'Unknown'}</p>
+            </Link>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-[10px] px-2 py-0">
                 {post.visibility || 'Public'}
@@ -244,14 +248,18 @@ export default function PostCard({ post, onDeleted }) {
         <div className="px-4 pb-4 cursor-pointer" onClick={() => setShowComments(true)}>
           <div className="bg-muted/30 hover:bg-muted/50 transition-colors rounded-xl p-3 text-sm border border-border/50">
              <div className="flex items-center gap-2 mb-1.5">
-               {topComment.author_avatar ? (
-                 <img src={topComment.author_avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
-               ) : (
-                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                   {topComment.author_name?.charAt(0)?.toUpperCase()}
-                 </div>
-               )}
-               <span className="font-semibold text-foreground text-xs">{topComment.author_name}</span>
+               <Link to={`/profile/${topComment.created_by_id}`} className="shrink-0">
+                 {topComment.author_avatar ? (
+                   <img src={topComment.author_avatar} alt="" className="w-5 h-5 rounded-full object-cover hover:opacity-90 transition-opacity" />
+                 ) : (
+                   <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary hover:opacity-90 transition-opacity">
+                     {topComment.author_name?.charAt(0)?.toUpperCase()}
+                   </div>
+                 )}
+               </Link>
+               <Link to={`/profile/${topComment.created_by_id}`} className="hover:underline">
+                 <span className="font-semibold text-foreground text-xs">{topComment.author_name}</span>
+               </Link>
                <span className="text-[10px] text-muted-foreground ml-auto">{topComment.created_date ? formatDistanceToNow(new Date(topComment.created_date), { addSuffix: true }) : ''}</span>
              </div>
              <p className="text-foreground/90 pl-7">{topComment.content}</p>

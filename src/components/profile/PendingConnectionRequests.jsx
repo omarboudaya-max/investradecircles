@@ -66,7 +66,9 @@ export default function PendingConnectionRequests() {
                   }
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{s.full_name || s.email?.split('@')[0] || 'User'}</p>
+                  <Link to={`/profile/${s.id}`} className="hover:underline">
+                    <p className="text-sm font-medium truncate">{s.full_name || s.email?.split('@')[0] || 'User'}</p>
+                  </Link>
                   {s.headline && <p className="text-xs text-muted-foreground truncate">{s.headline}</p>}
                 </div>
               </div>

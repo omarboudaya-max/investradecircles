@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { Link } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 
 const MEDAL = ['🥇', '🥈', '🥉'];
@@ -24,17 +25,23 @@ export default function CircleLeaderboard({ circleId }) {
   // Tally scores: posts=3pts, responses=2pts, +1 per upvote net on responses
   const scores = {};
   responses.forEach((r) => {
+    const id = r.created_by_id;
+    if (!id) return;
     const name = r.author_name || 'Unknown';
+    if (!scores[id]) scores[id] = { name, score: 0 };
     const voteScore = (r.upvoted_by?.length || 0) - (r.downvoted_by?.length || 0);
-    scores[name] = (scores[name] || 0) + 2 + Math.max(0, voteScore);
+    scores[id].score += 2 + Math.max(0, voteScore);
   });
   posts.forEach((p) => {
+    const id = p.created_by_id;
+    if (!id) return;
     const name = p.author_name || 'Unknown';
-    scores[name] = (scores[name] || 0) + 3;
+    if (!scores[id]) scores[id] = { name, score: 0 };
+    scores[id].score += 3;
   });
 
   const leaderboard = Object.entries(scores)
-    .map(([name, score]) => ({ name, score }))
+    .map(([uid, data]) => ({ uid, name: data.name, score: data.score }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
 
@@ -48,7 +55,7 @@ export default function CircleLeaderboard({ circleId }) {
         </h3>
         <div className="space-y-2">
           {leaderboard.map((entry, i) => (
-            <div key={entry.name} className="flex items-center gap-3">
+            <Link key={entry.uid} to={`/profile/${entry.uid}`} className="flex items-center gap-3 hover:bg-white/50 p-1 rounded-xl transition-colors">
               {/* Rank */}
               <span className="text-lg w-6 text-center shrink-0">
                 {i < 3 ? MEDAL[i] : <span className="text-xs font-bold text-muted-foreground">#{i + 1}</span>}
@@ -64,7 +71,7 @@ export default function CircleLeaderboard({ circleId }) {
               {/* Name + bar */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-sm font-medium truncate">{entry.name}</span>
+                  <span className="text-sm font-medium truncate group-hover:underline">{entry.name}</span>
                   <span className="text-xs font-bold text-primary ml-2 shrink-0">{entry.score} pts</span>
                 </div>
                 <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
@@ -74,7 +81,7 @@ export default function CircleLeaderboard({ circleId }) {
                   />
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

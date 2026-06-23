@@ -1125,14 +1125,29 @@ export default function InstitutionalCircleLayout({
                             onClick={() => setSelectedResponseData(selectedResponseData?.id === r.id ? null : r)}
                           >
                             <div className="flex items-center gap-2 mb-1">
-                              {avatar ? (
-                                <img src={avatar} alt={r.author_name} className={`w-7 h-7 rounded-full object-cover border ${isDark ? 'border-white/20' : 'border-stone-300'}`} />
+                              {r.created_by_id ? (
+                                <Link to={`/profile/${r.created_by_id}`} onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 hover:opacity-90 z-10">
+                                  {avatar ? (
+                                    <img src={avatar} alt={r.author_name} className={`w-7 h-7 rounded-full object-cover border ${isDark ? 'border-white/20' : 'border-stone-300'}`} />
+                                  ) : (
+                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold bg-gradient-to-br ${isDark ? 'from-amber-400 to-orange-500' : 'from-amber-600 to-amber-700'}`}>
+                                      {r.author_name?.charAt(0)}
+                                    </div>
+                                  )}
+                                  <span className={`text-sm font-medium hover:underline ${isDark ? 'text-white' : 'text-stone-900'}`}>{r.author_name}</span>
+                                </Link>
                               ) : (
-                                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold bg-gradient-to-br ${isDark ? 'from-amber-400 to-orange-500' : 'from-amber-600 to-amber-700'}`}>
-                                  {r.author_name?.charAt(0)}
-                                </div>
+                                <>
+                                  {avatar ? (
+                                    <img src={avatar} alt={r.author_name} className={`w-7 h-7 rounded-full object-cover border ${isDark ? 'border-white/20' : 'border-stone-300'}`} />
+                                  ) : (
+                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold bg-gradient-to-br ${isDark ? 'from-amber-400 to-orange-500' : 'from-amber-600 to-amber-700'}`}>
+                                      {r.author_name?.charAt(0)}
+                                    </div>
+                                  )}
+                                  <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-stone-900'}`}>{r.author_name}</span>
+                                </>
                               )}
-                              <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-stone-900'}`}>{r.author_name}</span>
                             </div>
                             <p className={`text-sm ml-9 ${isDark ? 'text-blue-200/70' : 'text-stone-700'}`}>{r.response_text}</p>
                             {/* Votes inline */}
