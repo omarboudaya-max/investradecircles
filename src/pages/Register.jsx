@@ -36,7 +36,6 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState('');
   const [userType, setUserType] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [interests, setInterests] = useState([]);
@@ -65,7 +64,6 @@ export default function Register() {
     e.preventDefault();
     setError('');
     if (!firstName.trim() || !lastName.trim()) {setError('Please enter your full name');return;}
-    if (!dob) {setError('Please enter your date of birth');return;}
     setStep(3);
   };
 
@@ -89,7 +87,6 @@ export default function Register() {
           data: {
             first_name: firstName,
             last_name: lastName,
-            date_of_birth: dob,
             user_type: userType,
             business_type: businessType || undefined,
             interests
@@ -308,10 +305,6 @@ export default function Register() {
                     <label className="text-sm font-medium mb-1.5 block">Last Name</label>
                     <Input placeholder="Doe" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="h-12 rounded-xl" />
                   </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">Date of Birth</label>
-                  <Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} required className="h-12 rounded-xl" />
                 </div>
 
                 <div className="flex gap-3 mt-auto pt-2">
