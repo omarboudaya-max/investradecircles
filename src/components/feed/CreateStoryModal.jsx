@@ -1,8 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { X, Camera, Image, Video, Type, Loader2, ChevronLeft, Sparkles } from 'lucide-react';
+import { X, Camera, Image, Type, Loader2, ChevronLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
-import { Button } from '@/components/ui/button';
 
 const BG_GRADIENTS = [
   'from-blue-500 to-cyan-400',
@@ -67,141 +66,114 @@ export default function CreateStoryModal({ onClose, onCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-950 flex items-center justify-center" onClick={onClose}>
-      {/* Close Button Outside on Desktop */}
-      <button 
-        onClick={onClose} 
-        className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition hidden sm:block z-50"
-      >
-        <X className="w-6 h-6" />
-      </button>
-
-      <div className="w-full h-full sm:h-[90vh] sm:aspect-[9/16] bg-black sm:rounded-[2rem] overflow-hidden flex flex-col shadow-2xl relative sm:ring-1 sm:ring-white/10" onClick={(e) => e.stopPropagation()}>
-
-        {/* ── STEP: SELECT ── */}
+    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center" onClick={onClose}>
+      
+      <div className="w-full h-full sm:h-[90vh] sm:w-[400px] sm:rounded-[2rem] bg-neutral-900 overflow-hidden flex flex-col relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        
+        {/* ── STEP: SELECT / CAMERA VIEW ── */}
         {step === 'select' && (
-          <div className="flex-1 flex flex-col bg-black text-white">
-            {/* Top bar (Mobile only close button) */}
-            <div className="flex items-center justify-between px-4 pt-safe-top pt-4 pb-2 sm:hidden">
-              <button onClick={onClose} className="p-2 rounded-full bg-white/10 backdrop-blur-md">
-                <X className="w-5 h-5" />
+          <div className="flex-1 flex flex-col relative">
+            {/* Top Bar */}
+            <div className="absolute top-0 inset-x-0 p-4 flex justify-between items-center z-10 pt-safe-top">
+              <button onClick={onClose} className="p-2 rounded-full bg-black/20 text-white">
+                <X className="w-6 h-6" />
               </button>
-              <span className="text-sm font-semibold tracking-wide">New Story</span>
-              <div className="w-9" />
-            </div>
-            <div className="hidden sm:flex items-center justify-center pt-8 pb-4">
-              <span className="text-base font-semibold tracking-wide">Create New Story</span>
             </div>
 
-            {/* Main actions */}
-            <div className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
-              <p className="text-white/60 text-sm">Choose how to create your story</p>
+            {/* Viewfinder area */}
+            <div className="flex-1 bg-black flex flex-col items-center justify-center">
+               <div className="flex flex-col items-center text-white/50 space-y-4">
+                 <Camera className="w-16 h-16 stroke-1 text-white/20" />
+                 <p className="text-sm font-medium tracking-wide">Ready to capture</p>
+               </div>
+            </div>
 
-              {/* Camera */}
-              <button
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
-                onClick={() => cameraInputRef.current?.click()}
-              >
-                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold">Camera</p>
-                  <p className="text-xs text-white/60">Take a photo or video</p>
-                </div>
-              </button>
+            {/* Bottom Controls */}
+            <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-center justify-center pb-8 z-10">
+              
+              <div className="flex items-center justify-between w-full px-12">
+                
+                {/* Gallery Button */}
+                <button 
+                  onClick={() => imageInputRef.current?.click()}
+                  className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white/80 hover:scale-105 transition-transform flex items-center justify-center bg-white/10 backdrop-blur"
+                >
+                  <Image className="w-5 h-5 text-white" />
+                </button>
 
-              {/* Gallery image */}
-              <button
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
-                onClick={() => imageInputRef.current?.click()}
-              >
-                <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center">
-                  <Image className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold">Photo from Gallery</p>
-                  <p className="text-xs text-white/60">Import a photo from your device</p>
-                </div>
-              </button>
+                {/* Main Capture Button */}
+                <button 
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="w-[72px] h-[72px] rounded-full border-4 border-white flex items-center justify-center p-1 group hover:scale-105 transition-transform"
+                >
+                  <div className="w-full h-full bg-white rounded-full transition-transform group-active:scale-90" />
+                </button>
 
-              {/* Gallery video */}
-              <button
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
-                onClick={() => videoInputRef.current?.click()}
-              >
-                <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center">
-                  <Video className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold">Video from Gallery</p>
-                  <p className="text-xs text-white/60">Import a video from your device</p>
-                </div>
-              </button>
+                {/* Text Story Button */}
+                <button 
+                  onClick={() => setStep('text')}
+                  className="w-10 h-10 rounded-full border border-white/30 hover:bg-white/20 transition-colors flex items-center justify-center"
+                >
+                  <Type className="w-5 h-5 text-white" />
+                </button>
 
-              {/* Text story */}
-              <button
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 transition rounded-2xl px-5 py-4 backdrop-blur-md"
-                onClick={() => setStep('text')}
-              >
-                <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                  <Type className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold">Text Story</p>
-                  <p className="text-xs text-white/60">Share your thoughts with a background</p>
-                </div>
-              </button>
+              </div>
             </div>
 
             {/* Hidden inputs */}
             <input ref={cameraInputRef} type="file" accept="image/*,video/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
-            <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+            <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+            {/* Keeping video input ref just in case but merging it to gallery button is cleaner */}
             <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
           </div>
         )}
 
         {/* ── STEP: TEXT STORY ── */}
         {step === 'text' && (
-          <div className={`flex-1 flex flex-col bg-gradient-to-br ${bgGradient}`}>
-            <div className="flex items-center justify-between px-4 pt-4 pb-2">
-              <button onClick={() => setStep('select')} className="p-2 rounded-full bg-black/30">
-                <ChevronLeft className="w-5 h-5 text-white" />
+          <div className={`flex-1 flex flex-col transition-colors duration-500 bg-gradient-to-br ${bgGradient} relative`}>
+            {/* Top Bar */}
+            <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between z-10 pt-safe-top">
+              <button onClick={() => setStep('select')} className="p-2 rounded-full bg-black/20 text-white">
+                <ChevronLeft className="w-7 h-7" />
               </button>
-              <span className="text-sm font-semibold text-white tracking-wide">Text Story</span>
-              <button
-                onClick={submit}
-                disabled={!text || loading}
-                className="px-4 py-1.5 rounded-full bg-card text-black text-sm font-semibold disabled:opacity-40"
-              >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Share'}
-              </button>
+              
+              <div className="flex gap-2 bg-black/20 rounded-full p-1.5 backdrop-blur-md">
+                {BG_GRADIENTS.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setBgGradient(g)}
+                    className={`w-7 h-7 rounded-full bg-gradient-to-br ${g} border-2 transition-transform ${bgGradient === g ? 'border-white scale-110' : 'border-transparent'}`}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Text area */}
-            <div className="flex-1 flex items-center justify-center px-6">
+            <div className="flex-1 flex items-center justify-center px-6 z-0">
               <textarea
                 autoFocus
                 placeholder="Tap to type..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="w-full bg-transparent text-white text-2xl font-bold text-center placeholder-white/50 outline-none resize-none text-shadow"
-                rows={5}
+                className="w-full bg-transparent text-white text-4xl font-extrabold text-center placeholder-white/50 outline-none resize-none drop-shadow-md leading-tight"
+                rows={6}
               />
             </div>
 
-            {/* Background picker */}
-            <div className="px-4 pb-6 flex justify-center gap-3">
-              <div className="flex items-center gap-2 bg-black/30 rounded-full px-3 py-2">
-                <Sparkles className="w-3.5 h-3.5 text-white/70" />
-                {BG_GRADIENTS.map((g) => (
-                  <button
-                    key={g}
-                    onClick={() => setBgGradient(g)}
-                    className={`w-6 h-6 rounded-full bg-gradient-to-br ${g} border-2 transition-transform ${bgGradient === g ? 'border-white scale-110' : 'border-transparent'}`}
-                  />
-                ))}
-              </div>
+            {/* Bottom Actions */}
+            <div className="absolute bottom-6 inset-x-6 flex items-center justify-between z-10">
+               <div className="flex items-center gap-2 bg-black/40 rounded-full px-4 py-2 backdrop-blur-md">
+                 <img src={user?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}&background=random`} alt="" className="w-6 h-6 rounded-full" />
+                 <span className="text-white text-sm font-semibold">Your Story</span>
+               </div>
+               
+               <button
+                  onClick={submit}
+                  disabled={!text.trim() || loading}
+                  className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-50 transition-transform hover:scale-105 active:scale-95"
+               >
+                 {loading ? <Loader2 className="w-5 h-5 animate-spin text-black" /> : <ChevronLeft className="w-6 h-6 text-black rotate-180" />}
+               </button>
             </div>
           </div>
         )}
@@ -209,55 +181,70 @@ export default function CreateStoryModal({ onClose, onCreated }) {
         {/* ── STEP: PREVIEW ── */}
         {step === 'preview' && preview && (
           <div className="flex-1 flex flex-col bg-black relative">
-            {/* Media */}
-            <div className="flex-1 relative">
+            
+            {/* Blurred Background underneath to fill gaps */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-30 blur-2xl transform scale-110" 
+              style={{ backgroundImage: `url(${preview})` }} 
+            />
+
+            {/* Top Bar */}
+            <div className="absolute top-0 inset-x-0 p-4 flex justify-between z-20 pt-safe-top bg-gradient-to-b from-black/50 to-transparent">
+              <button onClick={() => { setStep('select'); setPreview(null); setMediaFile(null); setText(''); }} className="p-2 rounded-full bg-black/20 text-white backdrop-blur">
+                <ChevronLeft className="w-7 h-7" />
+              </button>
+            </div>
+
+            {/* Media Content */}
+            <div className="flex-1 relative z-10 flex items-center justify-center overflow-hidden">
               {mediaType === 'video' ? (
                 <video src={preview} autoPlay loop muted playsInline className="w-full h-full object-contain" />
               ) : (
-                <img src={preview} alt="" className="w-full h-full object-contain" />
+                <img src={preview} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
               )}
 
               {/* Text overlay on media */}
               {text && (
-                <div className="absolute inset-x-0 bottom-24 flex justify-center px-6">
-                  <div className="bg-black/60 rounded-2xl px-4 py-2 text-white text-lg font-bold text-center">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-6">
+                  <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 text-white text-2xl font-bold text-center shadow-xl">
                     {text}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Controls */}
-            <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-              <button
-                onClick={() => { setStep('select'); setPreview(null); setMediaFile(null); setText(''); }}
-                className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-              <div className="w-9" />
-            </div>
-
-            {/* Caption input */}
-            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-4 pb-6 pt-10">
-              <div className="flex gap-3 items-center">
-                <input
+            {/* Caption Input / Controls */}
+            <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent pb-6 pt-16 px-4 flex flex-col gap-4">
+              
+              <input
                   placeholder="Add a caption..."
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  className="flex-1 bg-white/20 backdrop-blur-md rounded-full px-4 py-2.5 text-white text-sm placeholder-white/60 outline-none border border-white/20"
-                />
-                <button
-                  onClick={submit}
-                  disabled={loading}
-                  className="px-5 py-2.5 rounded-full bg-blue-500 text-white text-sm font-bold disabled:opacity-40 shrink-0"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Share'}
-                </button>
+                  className="w-full bg-black/40 backdrop-blur-xl rounded-full px-5 py-3 text-white text-[15px] placeholder-white/70 outline-none border border-white/20 shadow-lg"
+              />
+
+              <div className="flex items-center justify-between px-2">
+                 <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 cursor-pointer transition-colors rounded-full px-4 py-2 backdrop-blur-md">
+                   <div className="w-7 h-7 rounded-full border-2 border-green-500 overflow-hidden p-0.5">
+                     <img src={user?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}&background=random`} alt="" className="w-full h-full rounded-full object-cover" />
+                   </div>
+                   <span className="text-white text-sm font-semibold">Your Story</span>
+                 </div>
+                 
+                 <button
+                    onClick={submit}
+                    disabled={loading}
+                    className="w-[46px] h-[46px] bg-white rounded-full flex items-center justify-center shadow-xl disabled:opacity-50 transition-transform hover:scale-105 active:scale-95"
+                 >
+                   {loading ? <Loader2 className="w-5 h-5 animate-spin text-black" /> : <ChevronLeft className="w-6 h-6 text-black rotate-180" />}
+                 </button>
               </div>
+
             </div>
+
           </div>
         )}
+
       </div>
     </div>
   );
