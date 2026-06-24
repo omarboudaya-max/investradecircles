@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { MessageSquare, Send, TrendingUp, TrendingDown, Minus, Loader2, SmilePlus } from 'lucide-react';
 
-async function analyzeAndSave({ circleId, productCategory, content, authorName }) {
+async function analyzeAndSave({ circleId, productCategory, content, authorName, createdById }) {
   let sentiment = 'neutral';
   let sentiment_score = 0;
 
@@ -59,6 +59,7 @@ async function analyzeAndSave({ circleId, productCategory, content, authorName }
     author_name: authorName,
     sentiment,
     sentiment_score,
+    created_by_id: createdById,
   });
 
   return { sentiment, sentiment_score };
@@ -134,6 +135,7 @@ export default function ProductSentiment({ circleId, productCategory, currentUse
       productCategory,
       content: text.trim(),
       authorName: currentUser?.full_name || currentUser?.email?.split('@')[0] || 'User',
+      createdById: currentUser?.id,
     }),
     onSuccess: () => {
       setText('');

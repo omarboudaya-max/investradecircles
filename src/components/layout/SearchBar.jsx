@@ -10,31 +10,39 @@ export default function SearchBar() {
   const wrapperRef = useRef(null);
   const navigate = useNavigate();
 
-  const q = query.trim().toLowerCase();
+  // Use debounced query for database searching
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query.trim());
+    }, 300); // 300ms debounce
+    return () => clearTimeout(handler);
+  }, [query]);
 
   const { data: users = [] } = useQuery({
-    queryKey: ['search-users'],
-    queryFn: () => supabase.from('profiles').select('*').then(res => res.data || []),
-    staleTime: 60000,
+    queryKey: ['search-users', debouncedQuery],
+    queryFn: () => supabase.from('profiles').select('id, full_name, email, avatar_url').ilike('full_name', `%${debouncedQuery}%`).limit(5).then(res => res.data || []),
+    enabled: debouncedQuery.length > 0,
   });
 
   const { data: circles = [] } = useQuery({
-    queryKey: ['search-circles'],
-    queryFn: () => supabase.from('Circle').select('*').then(res => res.data || []),
-    staleTime: 60000,
+    queryKey: ['search-circles', debouncedQuery],
+    queryFn: () => supabase.from('Circle').select('id, name').ilike('name', `%${debouncedQuery}%`).limit(5).then(res => res.data || []),
+    enabled: debouncedQuery.length > 0,
   });
 
   const { data: posts = [] } = useQuery({
-    queryKey: ['search-posts'],
-    queryFn: () => supabase.from('Post').select('*').order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
-    staleTime: 30000,
+    queryKey: ['search-posts', debouncedQuery],
+    queryFn: () => supabase.from('Post').select('id, content').ilike('content', `%${debouncedQuery}%`).limit(5).then(res => res.data || []),
+    enabled: debouncedQuery.length > 0,
   });
 
-  const matchedUsers = q ? users.filter((u) => (u.full_name || u.email || '').toLowerCase().includes(q)).slice(0, 3) : [];
-  const matchedCircles = q ? circles.filter((c) => (c.name || '').toLowerCase().includes(q)).slice(0, 3) : [];
-  const matchedPosts = q ? posts.filter((p) => (p.content || '').toLowerCase().includes(q)).slice(0, 3) : [];
+  const matchedUsers = users;
+  const matchedCircles = circles;
+  const matchedPosts = posts;
 
   const hasResults = matchedUsers.length + matchedCircles.length + matchedPosts.length > 0;
+  const isSearching = query.trim() !== debouncedQuery;
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -70,7 +78,9 @@ export default function SearchBar() {
 
       {open && query && (
         <div className="absolute top-full mt-2 left-0 right-0 bg-popover border rounded-2xl shadow-xl z-50 overflow-hidden">
-          {!hasResults ? (
+          {isSearching ? (
+             <div className="px-4 py-5 text-center text-sm text-muted-foreground">Searching...</div>
+          ) : !hasResults ? (
             <div className="px-4 py-5 text-center text-sm text-muted-foreground">No results for "{query}"</div>
           ) : (
             <div className="py-1">

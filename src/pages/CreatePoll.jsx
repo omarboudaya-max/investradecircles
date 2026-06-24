@@ -32,6 +32,7 @@ export default function CreatePoll() {
       post_type: 'poll',
       visibility: 'public',
       author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
+      created_by_id: user?.id,
     });
     setLoading(false);
     navigate('/');

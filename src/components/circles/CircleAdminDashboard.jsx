@@ -4,8 +4,10 @@ import { supabase } from '@/lib/supabase';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
-import { BarChart2, FileText, MessageCircle, Users, Zap } from 'lucide-react';
+import { BarChart2, FileText, MessageCircle, Users, Zap, UserPlus, CheckCircle, X } from 'lucide-react';
 import { subWeeks, startOfWeek, format, isWithinInterval, endOfWeek } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 function buildWeeklyData(posts, responses, weeks = 6) {
   const data = [];
@@ -46,6 +48,31 @@ export default function CircleAdminDashboard({ circleId, circle }) {
     queryFn: () => supabase.from('CircleResponse').select('*').match({ circle_id: circleId }).order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
   });
 
+  const { data: requests = [] } = useQuery({
+    queryKey: ['admin-requests', circleId],
+    queryFn: () => supabase.from('CircleInvite').select('*').match({ circle_id: circleId, status: 'request' }).then(res => res.data || []),
+  });
+
+  const queryClient = useQueryClient();
+
+  const handleRequest = useMutation({
+    mutationFn: async ({ request, action }) => {
+      if (action === 'approve') {
+        const members = circle?.member_ids || [];
+        if (!members.includes(request.inviter_id)) {
+          await supabase.from('Circle').update({ member_ids: [...members, request.inviter_id] }).eq('id', circleId);
+        }
+        await supabase.from('CircleInvite').update({ status: 'accepted' }).eq('id', request.id);
+      } else {
+        await supabase.from('CircleInvite').update({ status: 'declined' }).eq('id', request.id);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-requests', circleId] });
+      queryClient.invalidateQueries({ queryKey: ['circle', circleId] });
+    }
+  });
+
   const weeklyData = buildWeeklyData(posts, responses);
   const totalMembers = Array.from(new Set([
     ...(circle?.member_ids || []),
@@ -79,6 +106,30 @@ export default function CircleAdminDashboard({ circleId, circle }) {
             <StatCard icon={Zap} label="Responses" value={totalResponses} color="bg-cyan-500" />
             <StatCard icon={FileText} label="This Week" value={postsThisWeek} color="bg-emerald-500" />
           </div>
+
+          {/* Pending Requests */}
+          {requests.length > 0 && (
+            <div className="mt-6 border-t pt-4">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-2">
+                <UserPlus className="w-4 h-4" /> Pending Join Requests ({requests.length})
+              </h4>
+              <div className="space-y-2">
+                {requests.map(req => (
+                  <div key={req.id} className="flex items-center justify-between p-3 border rounded-xl bg-card">
+                    <span className="text-sm font-medium">{req.inviter_name}</span>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="h-7 px-3 text-xs" onClick={() => handleRequest.mutate({ request: req, action: 'decline' })}>
+                        Decline
+                      </Button>
+                      <Button size="sm" className="h-7 px-3 text-xs" onClick={() => handleRequest.mutate({ request: req, action: 'approve' })}>
+                        Approve
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Weekly Chart */}
           <div>

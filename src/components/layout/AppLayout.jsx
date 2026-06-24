@@ -5,9 +5,27 @@ import Sidebar from './Sidebar';
 import RightPanel from './RightPanel';
 import BottomNav from './BottomNav';
 import { useAuth } from '@/lib/AuthContext';
+import { useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function AppLayout() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Global realtime listener for Posts (likes, new posts)
+    const channel = supabase.channel('global:Post')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Post' }, () => {
+        // Debounce or just invalidate. React Query handles deduplication well.
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
+        queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
+        queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
+      })
+      .subscribe();
+      
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
 
   return (
     <div className="min-h-screen bg-background">

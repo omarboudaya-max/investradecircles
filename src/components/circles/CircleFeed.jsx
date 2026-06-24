@@ -32,6 +32,7 @@ function scorePost(post, category, circleId) {
 export default function CircleFeed({ circle, user }) {
   const circleId = circle?.id;
   const category = circle?.category || 'general';
+  const isMember = circle?.member_ids?.includes(user?.id) || circle?.created_by_id === user?.id;
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['circle-feed-posts', circleId, category],
@@ -76,7 +77,7 @@ export default function CircleFeed({ circle, user }) {
       ) : (
         <div className="space-y-3">
           {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} readOnly={!isMember} />
           ))}
         </div>
       )}

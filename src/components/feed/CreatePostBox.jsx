@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Image, Video, CircleDot, FileText, X, Loader2, Check, ChevronDown, Plus } from 'lucide-react';
 import ImageCropModal from '@/components/ui/ImageCropModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -33,6 +33,11 @@ export default function CreatePostBox() {
   const fileInputRef = useRef(null);
   const photoInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionStartIndex, setMentionStartIndex] = useState(-1);
 
   const navigate = useNavigate();
   const displayName = user?.full_name || user?.email?.split('@')[0] || 'User';
@@ -51,7 +56,6 @@ export default function CreatePostBox() {
   const [rateLimitError, setRateLimitError] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
-  // Fetch circles and filter client-side for membership (matching app-wide pattern)
   const { data: circles = [] } = useQuery({
     queryKey: ['my-circles-post'],
     queryFn: () => supabase.from('Circle').select('*').order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
@@ -59,6 +63,20 @@ export default function CreatePostBox() {
     staleTime: CACHE.medium,
     select: (data) => data.filter((c) => c.member_ids?.includes(user?.id) || c.created_by_id === user?.id),
   });
+
+  // Fetch all profiles for tagging to ensure dropdown works even without connections
+  const { data: allProfiles = [] } = useQuery({
+    queryKey: ['all-profiles-mention'],
+    queryFn: () => supabase.from('profiles').select('id, full_name, email, avatar_url').limit(100).then(res => res.data || []),
+    staleTime: CACHE.medium,
+  });
+
+  const filteredMentions = showMentions && mentionQuery
+    ? allProfiles.filter(p => {
+        const name = (p.full_name || p.email?.split('@')[0] || '').toLowerCase();
+        return name.includes(mentionQuery);
+      }).slice(0, 5)
+    : [];
 
   const handlePhotoSelect = (e) => {
     const file = e.target.files[0];
@@ -202,6 +220,7 @@ export default function CreatePostBox() {
       author_name: displayName,
       author_avatar: avatarUrl,
       post_type: postType,
+      created_by_id: user?.id,
     };
 
     if (selectedCircle) {
@@ -222,18 +241,72 @@ export default function CreatePostBox() {
     createPost.mutate(payload);
   };
 
+  const handleContentChange = (e) => {
+    const val = e.target.value;
+    setContent(val);
+    if (validationError) setValidationError(null);
+    if (rateLimitError) setRateLimitError(null);
+
+    // Fast exit if no @
+    if (!val.includes('@')) {
+      if (showMentions) setShowMentions(false);
+      return;
+    }
+
+    // Detect @ typing
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = val.slice(0, cursorPos);
+    const lastAtPos = textBeforeCursor.lastIndexOf('@');
+
+    // Check if @ is start of word
+    if (lastAtPos !== -1 && (lastAtPos === 0 || /[\s\n]/.test(textBeforeCursor[lastAtPos - 1]))) {
+      const textAfterAt = textBeforeCursor.slice(lastAtPos + 1);
+      // Fast heuristic to prevent heavy Regex on large text blocks
+      if (textAfterAt.length < 30 && !textAfterAt.includes('\n') && !textAfterAt.includes(' ')) {
+        setMentionQuery(textAfterAt.toLowerCase());
+        setMentionStartIndex(lastAtPos);
+        setShowMentions(true);
+        return;
+      }
+    }
+    if (showMentions) setShowMentions(false);
+  };
+
+  const handleMentionSelect = (profile) => {
+    const mentionName = profile.full_name || profile.email?.split('@')[0] || 'User';
+    const mentionText = `@[${mentionName}](${profile.id})`;
+    const before = content.slice(0, mentionStartIndex);
+    const after = content.slice(textareaRef.current?.selectionStart || content.length);
+    const newContent = before + mentionText + ' ' + after;
+    setContent(newContent);
+    setShowMentions(false);
+    
+    // Focus back to textarea
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        const newCursorPos = before.length + mentionText.length + 1;
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
   return (
     <div className="bg-card rounded-2xl border border-border p-4 mb-5 shadow-sm relative">
       <div className="flex items-start gap-3 mb-3">
-        {avatarUrl ? (
-          <img src={avatarUrl} alt={displayName} className="w-10 h-10 rounded-full object-cover shrink-0" />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shrink-0">
-            {displayName.charAt(0)}
-          </div>
-        )}
+        <Link to={`/profile/${user?.id}`} className="shrink-0 hover:opacity-90 transition-opacity">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={displayName} className="w-10 h-10 rounded-full object-cover" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
+              {displayName.charAt(0)}
+            </div>
+          )}
+        </Link>
         <div className="flex-1">
-          <p className="text-sm font-semibold">Hello! {displayName}</p>
+          <Link to={`/profile/${user?.id}`} className="hover:underline">
+            <p className="text-sm font-semibold">Hello! {displayName}</p>
+          </Link>
           <p className="text-xs text-muted-foreground">What's in your mind to post today..</p>
         </div>
         <button
@@ -260,12 +333,39 @@ export default function CreatePostBox() {
         </div>
       )}
 
-      <Textarea
-        placeholder="Write something what you want post..."
-        value={content}
-        onChange={(e) => { setContent(e.target.value); setValidationError(null); setRateLimitError(null); }}
-        className={`min-h-[80px] border-border resize-none mb-1 ${validationError ? 'border-destructive' : ''}`}
-      />
+      <div className="relative">
+        <Textarea
+          ref={textareaRef}
+          placeholder="Write something what you want post..."
+          value={content}
+          onChange={handleContentChange}
+          className={`min-h-[80px] border-border resize-none mb-1 ${validationError ? 'border-destructive' : ''}`}
+        />
+        
+        {/* Mentions Dropdown */}
+        {showMentions && filteredMentions.length > 0 && (
+          <div className="absolute z-50 left-2 top-full mt-1 w-64 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+            <div className="p-1">
+              {filteredMentions.map((profile) => (
+                <button
+                  key={profile.id}
+                  onClick={() => handleMentionSelect(profile)}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary text-left"
+                >
+                  {profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold shrink-0">
+                      {(profile.full_name || profile.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="truncate font-medium">{profile.full_name || profile.email?.split('@')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
       {validationError && <p className="text-xs text-destructive mb-2">{validationError}</p>}
       {rateLimitError && <p className="text-xs text-orange-500 mb-2">{rateLimitError}</p>}
       {postError && <p className="text-xs text-destructive mb-2">{postError}</p>}

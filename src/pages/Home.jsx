@@ -14,7 +14,7 @@ export default function Home() {
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
-      const { data } = await supabase.from('Post').select('*').neq('post_type', 'announcement').order('created_date', { ascending: false }).limit(20);
+      const { data } = await supabase.from('Post').select('*').is('circle_id', null).neq('post_type', 'announcement').order('created_date', { ascending: false }).limit(20);
       return data || [];
     },
   });

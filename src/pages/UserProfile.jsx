@@ -15,6 +15,7 @@ import PhotosCard from '@/components/profile/PhotosCard';
 import { Camera, MapPin, Edit2, Check, X, Users, Loader2 } from 'lucide-react';
 import ImageLightbox from '@/components/ui/ImageLightbox';
 import ImageCropModal from '@/components/ui/ImageCropModal';
+import { Helmet } from 'react-helmet-async';
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -49,6 +50,11 @@ export default function UserProfile() {
 
   const coverInputRef = useRef(null);
   const avatarInputRef = useRef(null);
+
+  // Scroll to top on mount or when userId changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [userId]);
 
   // Sync localProfile from currentUser when not editing
   useEffect(() => {
@@ -160,7 +166,11 @@ export default function UserProfile() {
   const { data: posts = [] } = useQuery({
     queryKey: ['profile-posts', profileId],
     queryFn: async () => {
-      const { data } = await supabase.from('Post').select('*').eq('created_by_id', profileId).order('created_date', { ascending: false }).limit(5);
+      const { data } = await supabase.from('Post')
+        .select('*')
+        .or(`created_by_id.eq.${profileId},content.ilike.%(${profileId})%`)
+        .order('created_date', { ascending: false })
+        .limit(10);
       return data || [];
     },
     enabled: !!profileId,
@@ -177,8 +187,35 @@ export default function UserProfile() {
     );
   }
 
+  if (!isOwnProfile && !loadingOther && !otherProfile) {
+    return (
+      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-20">
+        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+          <Users className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h2 className="text-xl font-bold text-foreground">User Not Found</h2>
+        <p className="text-muted-foreground text-sm mt-2 text-center max-w-sm">
+          This user profile is unavailable, missing, or the user no longer exists.
+        </p>
+        <Button variant="outline" className="mt-6 rounded-full" onClick={() => window.history.back()}>
+          Go Back
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-3 pb-8">
+      {profile && (
+        <Helmet>
+          <title>{`${displayName} - Investraders`}</title>
+          <meta name="description" content={profile.headline || profile.bio?.substring(0, 150) || 'View this profile on Investraders'} />
+          <meta property="og:title" content={`${displayName} - Investraders`} />
+          <meta property="og:description" content={profile.headline || profile.bio?.substring(0, 150) || 'View this profile on Investraders'} />
+          {avatarUrl && <meta property="og:image" content={avatarUrl} />}
+        </Helmet>
+      )}
+
       {/* Cover + Avatar */}
       <div className="relative">
         {/* Cover Photo */}

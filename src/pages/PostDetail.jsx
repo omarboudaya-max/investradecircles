@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import PostCard from '@/components/feed/PostCard';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Helmet } from 'react-helmet-async';
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -22,6 +23,16 @@ export default function PostDetail() {
 
   return (
     <div className="max-w-2xl mx-auto py-4">
+      {post && (
+        <Helmet>
+          <title>{`${post.author_name}'s Post - Investraders`}</title>
+          <meta name="description" content={post.content?.substring(0, 150)} />
+          <meta property="og:title" content={`${post.author_name}'s Post`} />
+          <meta property="og:description" content={post.content?.substring(0, 150)} />
+          {post.image_url && <meta property="og:image" content={post.image_url} />}
+        </Helmet>
+      )}
+
       <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to feed
       </Link>

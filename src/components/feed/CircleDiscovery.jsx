@@ -50,7 +50,7 @@ export default function CircleDiscovery() {
     if (!user) return [];
 
     const notMember = allCircles.filter(
-      (c) => !(c.member_ids || []).includes(user.id)
+      (c) => !(c.member_ids || []).includes(user.id) && c.privacy?.toLowerCase() !== 'private'
     );
 
     const userTags = userProfile?.tags || [];

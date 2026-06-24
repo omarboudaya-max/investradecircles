@@ -23,6 +23,7 @@ import InstitutionalCircleLayout from '@/components/circles/InstitutionalCircleL
 import CircleMonetization from '@/components/circles/CircleMonetization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 function ResponseVotes({ response, userId }) {
   const queryClient = useQueryClient();
@@ -112,6 +113,7 @@ export default function CircleDetail() {
         total_members: circle?.member_ids?.length || 0,
         status: 'active',
         closes_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+        created_by_id: user?.id,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circle-questions', id] });
@@ -128,6 +130,7 @@ export default function CircleDetail() {
         response_text: text,
         author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
         author_avatar: user?.avatar_url || null,
+        created_by_id: user?.id,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circle-responses', activeQuestion?.id] });
@@ -139,11 +142,34 @@ export default function CircleDetail() {
     mutationFn: async () => {
       const members = circle?.member_ids || [];
       if (members.includes(user?.id)) return; // already a member
-      const { error } = await supabase.from('Circle').update({ member_ids: [...members, user.id] }).eq('id', id);
-      if (error) throw error;
+      if (circle?.privacy?.toLowerCase() === 'private') {
+        // Create a join request instead of joining directly
+        const { error } = await supabase.from('CircleInvite').insert({
+          circle_id: id,
+          circle_name: circle.name,
+          inviter_id: user.id, // requester
+          inviter_name: user.full_name || user.email?.split('@')[0],
+          invitee_id: circle.created_by_id, // admin
+          status: 'request'
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('Circle').update({ member_ids: [...members, user.id] }).eq('id', id);
+        if (error) throw error;
+      }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['circle', id] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['circle', id] });
+      queryClient.invalidateQueries({ queryKey: ['join-request'] });
+    },
   });
+
+  const { data: hasPendingRequest } = useQuery({
+    queryKey: ['join-request', id, user?.id],
+    queryFn: () => supabase.from('CircleInvite').select('*').match({ circle_id: id, inviter_id: user?.id, status: 'request' }).then(res => res.data || []),
+    enabled: !!id && !!user?.id && circle?.privacy?.toLowerCase() === 'private',
+  });
+  const isRequestPending = hasPendingRequest?.length > 0;
 
   const isMember = circle?.member_ids?.includes(user?.id) || circle?.created_by_id === user?.id;
   const isAdmin = circle?.created_by_id === user?.id;
@@ -247,6 +273,16 @@ export default function CircleDetail() {
       {showShareModal && circle && (
         <ShareCircleModal circle={circle} onClose={() => setShowShareModal(false)} onPostAsStory={() => queryClient.invalidateQueries({ queryKey: ['stories'] })} />
       )}
+
+      {circle && (
+        <Helmet>
+          <title>{`${circle.name} - Investraders`}</title>
+          <meta name="description" content={circle.description?.substring(0, 150) || 'Join this circle on Investraders'} />
+          <meta property="og:title" content={`${circle.name} - Investraders`} />
+          <meta property="og:description" content={circle.description?.substring(0, 150) || 'Join this circle on Investraders'} />
+        </Helmet>
+      )}
+
       <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Home
       </Link>
@@ -266,14 +302,24 @@ export default function CircleDetail() {
             {!isMember && (
               <Button
                 onClick={() => joinCircle.mutate()}
-                disabled={joinCircle.isPending}
-                className="rounded-full bg-primary"
+                disabled={joinCircle.isPending || isRequestPending}
+                className={`rounded-full ${circle?.privacy?.toLowerCase() === 'private' ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary'}`}
               >
-                {joinCircle.isPending ? 'Joining...' : 'Join Circle'}
+                {joinCircle.isPending ? 'Processing...' : isRequestPending ? 'Request Pending' : circle?.privacy?.toLowerCase() === 'private' ? 'Request to Join' : 'Join Circle'}
               </Button>
             )}
           </div>
-          <InstitutionalCircleLayout {...institutionalProps} />
+          {circle?.privacy?.toLowerCase() === 'private' && !isMember ? (
+            <div className="bg-card rounded-2xl border shadow-sm p-12 text-center flex flex-col items-center justify-center text-muted-foreground mt-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Users className="w-8 h-8 opacity-50" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-1">Private Institution</h3>
+              <p className="text-sm max-w-md mx-auto">You must be a member to access exclusive content and discussions.</p>
+            </div>
+          ) : (
+            <InstitutionalCircleLayout {...institutionalProps} />
+          )}
         </>
       ) : (
         /* ── Standard layout for all other categories ── */
@@ -316,17 +362,27 @@ export default function CircleDetail() {
               {!isMember && (
                 <Button
                   onClick={() => joinCircle.mutate()}
-                  disabled={joinCircle.isPending}
-                  className="rounded-full bg-primary"
+                  disabled={joinCircle.isPending || isRequestPending}
+                  className={`rounded-full ${circle?.privacy?.toLowerCase() === 'private' ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary'}`}
                 >
-                  {joinCircle.isPending ? 'Joining...' : 'Join Circle'}
+                  {joinCircle.isPending ? 'Processing...' : isRequestPending ? 'Request Pending' : circle?.privacy?.toLowerCase() === 'private' ? 'Request to Join' : 'Join Circle'}
                 </Button>
               )}
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex border-b">
+          {circle?.privacy?.toLowerCase() === 'private' && !isMember ? (
+            <div className="p-16 text-center flex flex-col items-center justify-center text-muted-foreground">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Users className="w-8 h-8 opacity-50" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-1">Private Circle</h3>
+              <p className="text-sm max-w-md mx-auto">You must be a member to view discussions, events, and posts in this circle.</p>
+            </div>
+          ) : (
+            <>
+              {/* Tabs */}
+              <div className="flex border-b">
             <button
               onClick={() => setActiveTab('discussion')}
               className={`flex items-center gap-1.5 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'discussion' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
@@ -456,9 +512,10 @@ export default function CircleDetail() {
               )}
             </>
           )}
-        </div>
+        </>
       )}
-
+    </div>
+  )}
 
     </div>
   );

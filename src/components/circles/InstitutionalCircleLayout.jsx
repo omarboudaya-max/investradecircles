@@ -835,6 +835,7 @@ function AnnouncementsTab({ circleId, isAdmin, isModerator, user, isDark }) {
       post_type: 'announcement',
       author_name: user?.full_name || user?.email?.split('@')[0] || 'Official',
       author_avatar: user?.avatar_url || null,
+      created_by_id: user?.id,
     }),
     onSuccess: () => {
       setContent('');

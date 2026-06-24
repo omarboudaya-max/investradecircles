@@ -123,6 +123,8 @@ async function analyzeInstitutionalWebsiteWithGroq(circleName, websiteUrl, textC
           }
 
           IMPORTANT:
+          - DO NOT classify blog posts, articles, newsletters, or company announcements as products. If an item is a news post or article, it MUST go into the 'news' array.
+          - The 'products' array is STRICTLY for retail items, physical goods, software applications, or core services being sold.
           - If they are a product brand, fill the 'products' array and leave 'services' empty.
           - If they are a service brand (like a bank), fill the 'services' array and leave 'products' empty.
           - If you find relative image urls (e.g. '/assets/img.png'), prepend them with the base URL: ${websiteUrl}

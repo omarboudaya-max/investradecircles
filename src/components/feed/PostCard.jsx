@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from '@/components/ui/use-toast';
 import { getAppUrl } from '@/lib/app-url';
 
-export default function PostCard({ post, onDeleted }) {
+export default function PostCard({ post, onDeleted, readOnly = false }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -87,6 +87,29 @@ export default function PostCard({ post, onDeleted }) {
     },
   });
 
+  const renderContent = (text) => {
+    if (!text) return null;
+    const regex = /@\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      parts.push(
+        <Link key={match.index} to={`/profile/${match[2]}`} className="text-primary font-semibold hover:underline" onClick={(e) => e.stopPropagation()}>
+          {match[1]}
+        </Link>
+      );
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    return parts;
+  };
+
   return (
     <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
       {/* Header */}
@@ -157,7 +180,7 @@ export default function PostCard({ post, onDeleted }) {
 
       {/* Content */}
       <div className="px-4 pb-3">
-        <p className="text-sm text-foreground leading-relaxed">{post.content}</p>
+        <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{renderContent(post.content)}</p>
       </div>
 
       {post.image_url && (
@@ -206,23 +229,27 @@ export default function PostCard({ post, onDeleted }) {
         </p>
       </div>
 
-      <div className="px-4 pb-3">
-        <EmojiReactions post={post} />
-      </div>
+      {!readOnly && (
+        <div className="px-4 pb-3">
+          <EmojiReactions post={post} />
+        </div>
+      )}
 
       {/* Actions */}
       <div className="px-4 py-3 border-t flex items-center justify-between">
         <div className="flex items-center gap-5">
           <button
-            onClick={() => toggleLike.mutate()}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+            onClick={() => !readOnly && toggleLike.mutate()}
+            disabled={readOnly}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${readOnly ? 'opacity-50 cursor-not-allowed' : ''} ${liked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
           >
             <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
             <span>{post.likes || 0}</span>
           </button>
           <button
-            onClick={() => setShowComments(!showComments)}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+            onClick={() => !readOnly && setShowComments(!showComments)}
+            disabled={readOnly}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${readOnly ? 'opacity-50 cursor-not-allowed' : ''} ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
           >
             <MessageCircle className="w-5 h-5" />
             <span>{comments.length > 0 ? comments.length : 'Comment'}</span>
@@ -262,7 +289,7 @@ export default function PostCard({ post, onDeleted }) {
                </Link>
                <span className="text-[10px] text-muted-foreground ml-auto">{topComment.created_date ? formatDistanceToNow(new Date(topComment.created_date), { addSuffix: true }) : ''}</span>
              </div>
-             <p className="text-foreground/90 pl-7">{topComment.content}</p>
+             <p className="text-foreground/90 pl-7 whitespace-pre-wrap">{renderContent(topComment.content)}</p>
           </div>
         </div>
       )}

@@ -6,9 +6,33 @@ import { Input } from '@/components/ui/input';
 import { Send, Smile } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { CACHE } from '@/lib/query-client';
 
 const REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥', '💡'];
 const COMMENT_EMOJIS = ['😀','😂','❤️','🔥','👍','🎉','💰','📈','💡','🚀','😎','🤔','💪','🙏','✅','⚡','🌟','😮','👏','🤑'];
+
+const renderContent = (text) => {
+  if (!text) return null;
+  const regex = /@\[([^\]]+)\]\(([^)]+)\)/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    parts.push(
+      <Link key={match.index} to={`/profile/${match[2]}`} className="text-primary font-semibold hover:underline" onClick={(e) => e.stopPropagation()}>
+        {match[1]}
+      </Link>
+    );
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts;
+};
 
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
@@ -19,10 +43,80 @@ export default function CommentSection({ postId }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef();
 
+  // Tagging states
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionStartIndex, setMentionStartIndex] = useState(-1);
+
   const { data: comments = [] } = useQuery({
     queryKey: ['comments', postId],
     queryFn: () => supabase.from('Comment').select('*').match({ post_id: postId }).order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
   });
+
+  useEffect(() => {
+    const channel = supabase.channel(`public:Comment:${postId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Comment', filter: `post_id=eq.${postId}` }, () => {
+        queryClient.invalidateQueries({ queryKey: ['comments', postId] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [postId, queryClient]);
+
+  const { data: allProfiles = [] } = useQuery({
+    queryKey: ['all-profiles-mention'],
+    queryFn: () => supabase.from('profiles').select('id, full_name, email, avatar_url').limit(100).then(res => res.data || []),
+    staleTime: CACHE.medium,
+  });
+
+  const filteredMentions = showMentions && mentionQuery
+    ? allProfiles.filter(p => {
+        const name = (p.full_name || p.email?.split('@')[0] || '').toLowerCase();
+        return name.includes(mentionQuery);
+      }).slice(0, 5)
+    : [];
+
+  const handleCommentChange = (e) => {
+    const val = e.target.value;
+    setComment(val);
+
+    if (!val.includes('@')) {
+      if (showMentions) setShowMentions(false);
+      return;
+    }
+
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = val.slice(0, cursorPos);
+    const lastAtPos = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtPos !== -1 && (lastAtPos === 0 || /[\s\n]/.test(textBeforeCursor[lastAtPos - 1]))) {
+      const textAfterAt = textBeforeCursor.slice(lastAtPos + 1);
+      if (textAfterAt.length < 30 && !textAfterAt.includes('\n') && !textAfterAt.includes(' ')) {
+        setMentionQuery(textAfterAt.toLowerCase());
+        setMentionStartIndex(lastAtPos);
+        setShowMentions(true);
+        return;
+      }
+    }
+    if (showMentions) setShowMentions(false);
+  };
+
+  const handleMentionSelect = (profile) => {
+    const mentionName = profile.full_name || profile.email?.split('@')[0] || 'User';
+    const mentionText = `@[${mentionName}](${profile.id})`;
+    const before = comment.slice(0, mentionStartIndex);
+    const after = comment.slice(inputRef.current?.selectionStart || comment.length);
+    const newContent = before + mentionText + ' ' + after;
+    setComment(newContent);
+    setShowMentions(false);
+    
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const newCursorPos = before.length + mentionText.length + 1;
+        inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
 
   const addComment = useMutation({
     mutationFn: (content) =>
@@ -31,6 +125,7 @@ export default function CommentSection({ postId }) {
         content,
         author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
         author_avatar: user?.avatar_url || null,
+        created_by_id: user?.id,
       }),
     onSuccess: () => {
       setComment('');
@@ -102,7 +197,7 @@ export default function CommentSection({ postId }) {
                   <Link to={`/profile/${c.created_by_id}`} className="hover:underline">
                     <p className="text-xs font-semibold mb-0.5">{c.author_name}</p>
                   </Link>
-                  <p className="text-sm leading-relaxed">{c.content}</p>
+                  <p className="text-sm leading-relaxed">{renderContent(c.content)}</p>
                 </div>
                 <div className="flex items-center flex-wrap gap-2 mt-1 ml-1">
                   <span className="text-[10px] text-muted-foreground">
@@ -176,9 +271,35 @@ export default function CommentSection({ postId }) {
             ref={inputRef}
             placeholder="Write a comment..."
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={handleCommentChange}
             className="h-8 text-sm rounded-full pr-8"
           />
+
+          {/* Mentions Dropdown */}
+          {showMentions && filteredMentions.length > 0 && (
+            <div className="absolute z-50 left-0 bottom-full mb-1 w-64 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+              <div className="p-1">
+                {filteredMentions.map((profile) => (
+                  <button
+                    key={profile.id}
+                    type="button"
+                    onClick={() => handleMentionSelect(profile)}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary text-left"
+                  >
+                    {profile.avatar_url ? (
+                      <img src={profile.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold shrink-0">
+                        {(profile.full_name || profile.email || 'U').charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="truncate font-medium">{profile.full_name || profile.email?.split('@')[0]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}

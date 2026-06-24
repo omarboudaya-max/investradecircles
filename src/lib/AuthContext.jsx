@@ -23,7 +23,18 @@ export const AuthProvider = ({ children }) => {
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    checkUserAuth();
+    let isMounted = true;
+
+    // Hard fallback: If auth checks take longer than 8 seconds, force unblock
+    const fallbackTimer = setTimeout(() => {
+      if (isMounted) {
+        console.warn('Auth check timeout reached, forcing unblock.');
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+      }
+    }, 8000);
+
+    checkUserAuth().finally(() => clearTimeout(fallbackTimer));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
@@ -55,7 +66,11 @@ export const AuthProvider = ({ children }) => {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   const checkUserAuth = async () => {

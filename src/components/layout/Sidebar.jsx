@@ -23,6 +23,14 @@ export default function Sidebar() {
     enabled: !!user?.id,
   });
 
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['notifications', user?.id],
+    queryFn: () =>
+      supabase.from('Notification').select('*').match({ user_id: user?.id, is_read: false }).then(res => res.data || []),
+    enabled: !!user?.id,
+    refetchInterval: 30000,
+  });
+
   return (
     <aside className="hidden lg:block w-64 shrink-0 sticky top-0 h-[calc(100vh-6rem)] overflow-y-auto p-4">
       {/* Navigation */}
@@ -55,27 +63,30 @@ export default function Sidebar() {
         </div>
 
         <div className="space-y-2">
-          {createdCircles.slice(0, 5).map((circle) => (
-            <Link
-              key={circle.id}
-              to={`/circle/${circle.id}`}
-              className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-colors group"
-            >
-              <CircleIcon category={circle.category} size="md" websiteUrl={circle.website_url} />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate flex items-center gap-1">
-                  {circle.name}
-                  {circle.member_ids?.length > 0 && (
-                    <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{circle.member_ids.length}</span>
-                  )}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">{circle.description || 'No description'}</p>
-              </div>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
-              </div>
-            </Link>
-          ))}
+          {createdCircles.slice(0, 5).map((circle) => {
+            const unreadCount = notifications.filter(n => n.circle_id === circle.id).length;
+            return (
+              <Link
+                key={circle.id}
+                to={`/circle/${circle.id}`}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-colors group"
+              >
+                <CircleIcon category={circle.category} size="md" websiteUrl={circle.website_url} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate flex items-center gap-1">
+                    {circle.name}
+                    {unreadCount > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{unreadCount}</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{circle.description || 'No description'}</p>
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         {createdCircles.length > 5 && (
