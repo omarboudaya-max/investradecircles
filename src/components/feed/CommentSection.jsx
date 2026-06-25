@@ -13,7 +13,7 @@ const COMMENT_EMOJIS = ['😀','😂','❤️','🔥','👍','🎉','💰','📈
 
 const renderContent = (text) => {
   if (!text) return null;
-  const regex = /@\[([^\]]+)\]\(([^)]+)\)/g;
+  const regex = /(@\[[^\]]+\]\([^)]+\)|https?:\/\/[^\s]+)/g;
   const parts = [];
   let lastIndex = 0;
   let match;
@@ -21,11 +21,25 @@ const renderContent = (text) => {
     if (match.index > lastIndex) {
       parts.push(text.substring(lastIndex, match.index));
     }
-    parts.push(
-      <Link key={match.index} to={`/profile/${match[2]}`} className="text-primary font-semibold hover:underline" onClick={(e) => e.stopPropagation()}>
-        {match[1]}
-      </Link>
-    );
+    const token = match[0];
+    if (token.startsWith('@[')) {
+      const m = /@\[([^\]]+)\]\(([^)]+)\)/.exec(token);
+      if (m) {
+        parts.push(
+          <Link key={match.index} to={`/profile/${m[2]}`} className="text-primary font-semibold hover:underline" onClick={(e) => e.stopPropagation()}>
+            {m[1]}
+          </Link>
+        );
+      } else {
+        parts.push(token);
+      }
+    } else {
+      parts.push(
+        <a key={match.index} href={token} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" onClick={(e) => e.stopPropagation()}>
+          {token}
+        </a>
+      );
+    }
     lastIndex = regex.lastIndex;
   }
   if (lastIndex < text.length) {
