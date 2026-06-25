@@ -14,7 +14,9 @@
         "new_response",
         "connection_request",
         "circle_invite",
-        "message"
+        "message",
+        "mention",
+        "circle_question"
       ],
       "description": "Type of notification"
     },
@@ -29,6 +31,10 @@
     "circle_name": {
       "type": "string",
       "description": "Related circle name"
+    },
+    "target_url": {
+      "type": "string",
+      "description": "URL to navigate to when clicked"
     },
     "is_read": {
       "type": "boolean",

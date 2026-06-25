@@ -105,8 +105,8 @@ export default function CircleDetail() {
   });
 
   const createQuestion = useMutation({
-    mutationFn: (text) =>
-      supabase.from('CircleQuestion').insert({
+    mutationFn: async (text) => {
+      const { data, error } = await supabase.from('CircleQuestion').insert({
         circle_id: id,
         question_text: text,
         question_number: questions.length + 1,
@@ -114,7 +114,28 @@ export default function CircleDetail() {
         status: 'active',
         closes_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
         created_by_id: user?.id,
-      }),
+      }).select();
+      if (error) throw error;
+
+      if (circle?.member_ids && circle.member_ids.length > 0) {
+        const notifications = circle.member_ids
+          .filter(memberId => memberId !== user?.id)
+          .map(memberId => ({
+            user_id: memberId,
+            type: 'circle_question',
+            message: `${circle.name} has a new question`,
+            circle_id: id,
+            circle_name: circle.name,
+            target_url: `/circle/${id}`
+          }));
+        
+        if (notifications.length > 0) {
+          await supabase.from('Notification').insert(notifications);
+        }
+      }
+
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circle-questions', id] });
       setNewQuestion('');

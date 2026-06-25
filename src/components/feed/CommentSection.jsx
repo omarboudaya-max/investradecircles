@@ -34,7 +34,7 @@ const renderContent = (text) => {
   return parts;
 };
 
-export default function CommentSection({ postId }) {
+export default function CommentSection({ postId, postAuthorId }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
@@ -119,14 +119,50 @@ export default function CommentSection({ postId }) {
   };
 
   const addComment = useMutation({
-    mutationFn: (content) =>
-      supabase.from('Comment').insert({
+    mutationFn: async (content) => {
+      // 1. Insert the comment
+      const { data, error } = await supabase.from('Comment').insert({
         post_id: postId,
         content,
         author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
         author_avatar: user?.avatar_url || null,
         created_by_id: user?.id,
-      }),
+      }).select();
+      if (error) throw error;
+
+      // 2. Notify post owner if it's not their own comment
+      if (postAuthorId && postAuthorId !== user?.id) {
+        await supabase.from('Notification').insert({
+          user_id: postAuthorId,
+          type: 'new_comment',
+          message: `${user?.full_name || user?.email?.split('@')[0] || 'Someone'} commented on your post`,
+          target_url: `/post/${postId}`
+        });
+      }
+
+      // 3. Notify mentioned users
+      const regex = /@\[([^\]]+)\]\(([^)]+)\)/g;
+      const mentionedIds = new Set();
+      let match;
+      while ((match = regex.exec(content)) !== null) {
+        if (match[2] !== user?.id) {
+          mentionedIds.add(match[2]);
+        }
+      }
+      
+      const notifications = Array.from(mentionedIds).map(userId => ({
+        user_id: userId,
+        type: 'mention',
+        message: `${user?.full_name || user?.email?.split('@')[0] || 'Someone'} mentioned you in a comment`,
+        target_url: `/post/${postId}`
+      }));
+
+      if (notifications.length > 0) {
+        await supabase.from('Notification').insert(notifications);
+      }
+
+      return data;
+    },
     onSuccess: () => {
       setComment('');
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });

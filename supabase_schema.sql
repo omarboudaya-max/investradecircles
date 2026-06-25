@@ -163,6 +163,7 @@ CREATE TABLE public."Notification" (
   message TEXT NOT NULL,
   circle_id UUID REFERENCES public."Circle"(id) ON DELETE CASCADE,
   circle_name TEXT,
+  target_url TEXT,
   is_read BOOLEAN DEFAULT false,
   created_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

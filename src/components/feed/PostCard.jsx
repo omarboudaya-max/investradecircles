@@ -296,7 +296,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
 
       {showComments && (
         <div className="px-4 pb-4 border-t pt-3">
-          <CommentSection postId={post.id} />
+          <CommentSection postId={post.id} postAuthorId={post.created_by_id} />
         </div>
       )}
 

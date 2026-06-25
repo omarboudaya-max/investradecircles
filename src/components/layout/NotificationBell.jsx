@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Check, MessageCircle, FileText, Zap, UserPlus, Users } from 'lucide-react';
+import { Bell, Check, MessageCircle, FileText, Zap, UserPlus, Users, HelpCircle, AtSign } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
@@ -19,6 +19,8 @@ const TYPE_ICON = {
   connection_request: UserPlus,
   circle_invite: Users,
   message: MessageCircle,
+  mention: AtSign,
+  circle_question: HelpCircle,
 };
 
 export default function NotificationBell() {
@@ -101,9 +103,11 @@ export default function NotificationBell() {
                   }`}
                   onClick={() => {
                     if (!n.is_read) markOneRead.mutate(n.id);
-                    if (n.circle_id) { setOpen(false); navigate(`/circle/${n.circle_id}`); }
-                    else if (n.type === 'connection_request') { setOpen(false); navigate('/profile'); }
-                    else if (n.type === 'message') { setOpen(false); navigate('/messages'); }
+                    setOpen(false);
+                    if (n.target_url) { navigate(n.target_url); }
+                    else if (n.circle_id) { navigate(`/circle/${n.circle_id}`); }
+                    else if (n.type === 'connection_request') { navigate('/profile'); }
+                    else if (n.type === 'message') { navigate('/messages'); }
                   }}
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
