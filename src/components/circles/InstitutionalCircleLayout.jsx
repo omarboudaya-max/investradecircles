@@ -677,7 +677,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
 
       {/* Tagline */}
       {info.tagline && (
-        <p className={`${isDark ? 'text-amber-300/70' : 'text-amber-900/85'} text-sm italic px-1`}>"{info.tagline}"</p>
+        <p className={`${isDark ? 'text-amber-300/70' : 'text-amber-900/85'} text-sm italic px-1`} dir="auto">"{info.tagline}"</p>
       )}
 
       {/* Main Activity */}
@@ -691,7 +691,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
             <BookOpen className={`w-3.5 h-3.5 ${isDark ? 'text-blue-400' : 'text-blue-700'}`} />
             <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>Main Activity</span>
           </div>
-          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`}>{info.main_activity}</p>
+          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`} dir="auto">{info.main_activity}</p>
         </div>
       )}
 
@@ -720,7 +720,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
             <Target className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
             <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>Mission</span>
           </div>
-          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`}>{info.mission}</p>
+          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`} dir="auto">{info.mission}</p>
         </div>
       )}
 
@@ -735,7 +735,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
             <Eye className={`w-3.5 h-3.5 ${isDark ? 'text-sky-400' : 'text-sky-700'}`} />
             <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-amber-800'}`}>Vision</span>
           </div>
-          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`}>{info.vision}</p>
+          <p className={`${isDark ? 'text-white/85' : 'text-stone-800'} text-sm leading-relaxed`} dir="auto">{info.vision}</p>
         </div>
       )}
 
@@ -752,7 +752,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
           </div>
           <ul className="space-y-2">
             {info.goals.map((g, i) => (
-              <li key={i} className={`flex items-start gap-2 text-sm ${isDark ? 'text-white/80' : 'text-stone-800'}`}>
+              <li key={i} className={`flex items-start gap-2 text-sm ${isDark ? 'text-white/80' : 'text-stone-800'}`} dir="auto">
                 <span className={`${isDark ? 'text-amber-400' : 'text-amber-600'} mt-0.5 shrink-0`}>•</span>{g}
               </li>
             ))}
@@ -777,8 +777,8 @@ Return ONLY in the exact JSON format specified — no extra text.`,
                    style={{ borderColor: isDark ? 'rgba(100,180,255,0.08)' : 'rgba(180,120,20,0.15)' }}>
                 <BookOpen className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
                 <div>
-                  <p className={`text-[11px] font-semibold ${isDark ? 'text-white' : 'text-stone-950'}`}>{s.title}</p>
-                  <p className={`text-[10px] mt-0.5 ${isDark ? 'text-blue-300/55' : 'text-stone-600'}`}>{s.description}</p>
+                  <p className={`text-[11px] font-semibold ${isDark ? 'text-white' : 'text-stone-950'}`} dir="auto">{s.title}</p>
+                  <p className={`text-[10px] mt-0.5 ${isDark ? 'text-blue-300/55' : 'text-stone-600'}`} dir="auto">{s.description}</p>
                 </div>
               </div>
             ))}

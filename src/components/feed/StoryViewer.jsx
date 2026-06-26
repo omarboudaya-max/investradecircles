@@ -17,8 +17,8 @@ export default function StoryViewer({ stories, startIndex = 0, onClose, onReact 
     // Mark as viewed
     if (user?.id && !(story.viewed_by || []).includes(user.id)) {
       supabase.from('Story').update({
-        viewed_by: [...(story.viewed_by || []).eq('id', story.id), user.id],
-      });
+        viewed_by: [...(story.viewed_by || []), user.id],
+      }).eq('id', story.id);
     }
     setProgress(0);
     const interval = setInterval(() => {

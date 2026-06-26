@@ -533,11 +533,8 @@ export default function CircleDetail() {
               )}
             </>
           )}
-        </>
+        </div>
       )}
-    </div>
-  )}
-
     </div>
   );
 }
