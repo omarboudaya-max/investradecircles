@@ -8,6 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import { LanguageProvider } from '@/lib/i18n/LanguageContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
@@ -112,6 +113,7 @@ const AuthenticatedApp = () => {
 function App() {
   return (
     <HelmetProvider>
+      <LanguageProvider>
       <ThemeProvider>
         <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
@@ -122,6 +124,7 @@ function App() {
         </QueryClientProvider>
       </AuthProvider>
     </ThemeProvider>
+    </LanguageProvider>
     </HelmetProvider>
   )
 }

@@ -3,9 +3,11 @@ import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
 import WebsiteFooter from '@/components/layout/WebsiteFooter';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 export default function Landing() {
   const { user, isLoadingAuth } = useAuth();
+  const t = useTranslation();
 
   if (!isLoadingAuth && user) {
     return <Navigate to="/home" replace />;
@@ -55,35 +57,34 @@ export default function Landing() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
             </svg>
             GLOBAL PLATFORM
+            {t.landing.globalPlatform !== 'GLOBAL PLATFORM' && <> — {t.landing.globalPlatform}</>}
           </div>
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-bold leading-[1.05] tracking-tight mb-8">
-            <span className="block text-[#f8fafc]">The Global Business</span>
-            <span className="block text-[#38bdf8] glow-text-blue">Circles & Community</span>
-            <span className="block text-[#f8fafc]">Intelligence Platform</span>
+            <span className="block text-[#f8fafc]">{t.landing.heroLine1}</span>
+            <span className="block text-[#38bdf8] glow-text-blue">{t.landing.heroLine2}</span>
+            <span className="block text-[#f8fafc]">{t.landing.heroLine3}</span>
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#94a3b8] max-w-3xl mx-auto mb-6">
-            Streamlined Companies for Better National and International Visibility & Connectivity
+            {t.landing.heroSubtitle}
           </p>
 
           <p className="text-base text-[#64748b] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Whether you are a Chamber of Commerce, a Stock Exchange, a University, a Company,
-            or simply someone with a dream — Investrade gives you the tools to build communities,
-            create opportunities, and generate income.
+            {t.landing.heroDescription}
           </p>
 
           <div className="inline-flex items-center justify-center border border-amber-500/50 bg-amber-500/10 text-amber-500 px-6 py-2 rounded-full font-semibold mb-10 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-            Make Money Meanwhile — 3M
+            {t.landing.makeMoneyMeanwhile}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/register" className="inline-flex items-center justify-center gap-2 bg-[#38bdf8] text-[#030914] font-bold px-8 py-3.5 rounded-full text-base transition-all hover:bg-[#7dd3fc] shadow-[0_0_20px_rgba(56,189,248,0.4)]">
-              Create Your Circle 
+              {t.landing.getStarted}
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
             <Link to="/login" className="inline-flex items-center justify-center gap-2 border border-white/20 text-white font-medium px-8 py-3.5 rounded-full text-base transition-colors hover:bg-white/5">
-              Learn More
+              {t.landing.learnMore}
             </Link>
           </div>
         </section>

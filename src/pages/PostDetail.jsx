@@ -6,9 +6,13 @@ import PostCard from '@/components/feed/PostCard';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function PostDetail() {
   const { id } = useParams();
+  const t = useTranslation();
+  const { isArabic } = useLanguage();
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['post-detail', id],
@@ -33,8 +37,8 @@ export default function PostDetail() {
         </Helmet>
       )}
 
-      <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back to feed
+      <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <ArrowLeft className={`w-4 h-4 ${isArabic ? 'rotate-180' : ''}`} /> {t.postDetail.backToFeed}
       </Link>
 
       {isLoading ? (
@@ -50,9 +54,9 @@ export default function PostDetail() {
         </div>
       ) : !post ? (
         <div className="text-center py-20">
-          <p className="text-lg font-semibold">Post not found</p>
-          <p className="text-sm text-muted-foreground mt-1">This post may have been deleted or is private.</p>
-          <Link to="/home" className="mt-4 inline-block text-primary hover:underline text-sm">Go home</Link>
+          <p className="text-lg font-semibold">{t.postDetail.notFoundTitle}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t.postDetail.notFoundSubtitle}</p>
+          <Link to="/home" className="mt-4 inline-block text-primary hover:underline text-sm">{t.postDetail.goHome}</Link>
         </div>
       ) : (
         <PostCard post={post} />

@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Check, ChevronRight, ChevronLeft } from 'lucide-react';
 import GoogleIcon from '@/components/GoogleIcon';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const DOMAINS = [
 { id: 'stocks', label: '📈 Stocks & Equities' },
@@ -31,6 +33,8 @@ const STEP_LABELS = ['Account', 'Personal', 'Role', 'Interests', 'Verify'];
 
 export default function Register() {
   const [step, setStep] = useState(1); // 1=account, 2=personal, 3=role, 4=interests, 5=otp
+  const t = useTranslation();
+  const { isArabic } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,8 +59,8 @@ export default function Register() {
   const handleStep1 = (e) => {
     e.preventDefault();
     setError('');
-    if (password !== confirmPassword) {setError('Passwords do not match');return;}
-    if (password.length < 8) {setError('Password must be at least 8 characters');return;}
+    if (password !== confirmPassword) {setError(t.register.passwordMismatch);return;}
+    if (password.length < 8) {setError(t.register.passwordTooShort);return;}
     setStep(2);
   };
 

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { TagBadge } from '@/components/circles/TagPicker';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 const CATEGORY_COLORS = {
   institution: 'bg-amber-100 text-amber-800',
@@ -20,6 +21,7 @@ const INSTITUTIONAL_CATEGORIES = ['chamber_of_commerce', 'institution', 'univers
 
 export default function MyCircles() {
   const { user } = useAuth();
+  const t = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const showCreatedOnly = urlParams.get('filter') === 'created';
 
@@ -39,11 +41,11 @@ export default function MyCircles() {
           <Link to="/home" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold">{showCreatedOnly ? 'Your Created Circles' : 'My Circles'}</h1>
+          <h1 className="text-2xl font-bold">{showCreatedOnly ? t.myCircles.yourCreatedCircles || 'Your Created Circles' : t.myCircles.title}</h1>
         </div>
         <Link to="/create-circle">
           <Button className="rounded-full bg-primary gap-2">
-            <Plus className="w-4 h-4" /> New Circle
+            <Plus className="w-4 h-4" /> {t.createCircle.title}
           </Button>
         </Link>
       </div>
@@ -65,10 +67,10 @@ export default function MyCircles() {
             <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
               <Users className="w-10 h-10 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">{showCreatedOnly ? 'No created circles' : 'No circles yet'}</h3>
-            <p className="text-muted-foreground mb-4">{showCreatedOnly ? 'Create your first circle to get started!' : 'Join or create your first circle!'}</p>
+            <h3 className="text-lg font-semibold mb-2">{showCreatedOnly ? t.myCircles.emptyCreated : t.myCircles.emptyJoined}</h3>
+            <p className="text-muted-foreground mb-4">{showCreatedOnly ? t.myCircles.createOne : t.myCircles.exploreCircles}</p>
             <Link to="/all-circles">
-              <Button className="rounded-full bg-primary">Browse Circles</Button>
+              <Button className="rounded-full bg-primary">{t.allCircles.title}</Button>
             </Link>
           </div>
         );
@@ -98,14 +100,14 @@ export default function MyCircles() {
                             {circle.name}
                           </h3>
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-1">
-                            {circle.description || 'No description'}
+                          {circle.description || t.myCircles.noDescription}
                           </p>
                           <div className="flex flex-wrap items-center gap-2 mt-auto">
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">
                               <Landmark className="w-2.5 h-2.5" /> INSTITUTIONAL
                             </span>
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
-                              <Users className="w-3 h-3" /> {Array.from(new Set([...(circle.member_ids || []), ...(circle.created_by_id ? [circle.created_by_id] : [])])).length} members
+                              <Users className="w-3 h-3" /> {Array.from(new Set([...(circle.member_ids || []), ...(circle.created_by_id ? [circle.created_by_id] : [])])).length} {t.myCircles.members}
                             </span>
                           </div>
                         </div>
@@ -132,7 +134,7 @@ export default function MyCircles() {
                         {circle.name}
                       </h3>
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-1">
-                        {circle.description || 'No description'}
+                        {circle.description || t.myCircles.noDescription}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mt-auto">
                         <Badge className={`capitalize ${CATEGORY_COLORS[circle.category] || 'bg-gray-100 text-gray-700'}`}>
@@ -142,7 +144,7 @@ export default function MyCircles() {
                           <TagBadge key={tag} tag={tag} />
                         ))}
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Users className="w-3 h-3" /> {Array.from(new Set([...(circle.member_ids || []), ...(circle.created_by_id ? [circle.created_by_id] : [])])).length} members
+                           <Users className="w-3 h-3" /> {Array.from(new Set([...(circle.member_ids || []), ...(circle.created_by_id ? [circle.created_by_id] : [])])).length} {t.myCircles.members}
                         </span>
                       </div>
                     </div>

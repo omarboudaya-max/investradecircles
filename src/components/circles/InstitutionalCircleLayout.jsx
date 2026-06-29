@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/lib/ThemeContext';
@@ -696,7 +697,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
       )}
 
       {/* ── PRODUCTS visual gallery (shown first for product brands) ── */}
-      {info.is_product_brand && info.products?.length > 0 && (
+      {info.is_product_brand && Array.isArray(info.products) && info.products.length > 0 && (
         <ProductGallery
           products={info.products}
           websiteUrl={circle?.website_url}
@@ -740,7 +741,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
       )}
 
       {/* Goals */}
-      {info.goals?.length > 0 && (
+      {Array.isArray(info.goals) && info.goals.length > 0 && (
         <div className="rounded-xl p-4 border transition-all duration-300" 
              style={{ 
                background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.5)', 
@@ -761,7 +762,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
       )}
 
       {/* Services (only for non-product brands) */}
-      {!info.is_product_brand && info.services?.length > 0 && (
+      {!info.is_product_brand && Array.isArray(info.services) && info.services.length > 0 && (
         <div className="rounded-xl p-4 border transition-all duration-300" 
              style={{ 
                background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.5)', 
@@ -787,7 +788,7 @@ Return ONLY in the exact JSON format specified — no extra text.`,
       )}
 
       {/* Latest News */}
-      {info.news?.length > 0 && (
+      {Array.isArray(info.news) && info.news.length > 0 && (
         <div className="rounded-xl p-4 border transition-all duration-300" 
              style={{ 
                background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.5)', 
@@ -1102,7 +1103,7 @@ export default function InstitutionalCircleLayout({
                 allResponses={responses}
               />
 
-              {responses.length > 0 && (
+              {Array.isArray(responses) && responses.length > 0 && (
                 <div className="px-6 pb-4">
                   <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-blue-200' : 'text-stone-800'}`}>
                     <MessageCircle className={`w-4 h-4 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} /> Responses

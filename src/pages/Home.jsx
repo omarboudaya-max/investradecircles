@@ -9,8 +9,10 @@ import PendingInvites from '@/components/circles/PendingInvites';
 import WeeklyLeaderboard from '@/components/feed/WeeklyLeaderboard';
 import UpcomingEventsCalendar from '@/components/feed/UpcomingEventsCalendar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 export default function Home() {
+  const t = useTranslation();
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
@@ -47,8 +49,8 @@ export default function Home() {
             <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
               <span className="text-3xl">📝</span>
             </div>
-            <h3 className="text-lg font-semibold mb-1">No posts yet</h3>
-            <p className="text-sm text-muted-foreground">Be the first to share something with your circles!</p>
+            <h3 className="text-lg font-semibold mb-1">{t.home.noPostsTitle}</h3>
+            <p className="text-sm text-muted-foreground">{t.home.noPostsSubtitle}</p>
           </div>
         ) : (
           posts.map((post) => <PostCard key={post.id} post={post} />)

@@ -306,10 +306,10 @@ export default function ProductGallery({ products, websiteUrl, brandName, taglin
   const [activeFilter, setActiveFilter] = useState('All');
   const PER_PAGE = 4;
 
-  const categories = useMemo(() => ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))], [products]);
+  const categories = useMemo(() => ['All', ...Array.from(new Set((Array.isArray(products) ? products : []).map(p => p.category).filter(Boolean)))], [products]);
 
   const filtered = useMemo(() =>
-    activeFilter === 'All' ? products : products.filter(p => p.category === activeFilter),
+    activeFilter === 'All' ? (Array.isArray(products) ? products : []) : (Array.isArray(products) ? products : []).filter(p => p.category === activeFilter),
     [products, activeFilter]
   );
 

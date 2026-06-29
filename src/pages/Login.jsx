@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import GoogleIcon from '@/components/GoogleIcon';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,6 +15,8 @@ export default function Login() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const t = useTranslation();
+  const { isArabic } = useLanguage();
 
   const navigate = useNavigate();
 
@@ -23,7 +27,7 @@ export default function Login() {
     setEmailError('');
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address.');
+      setEmailError(t.login.invalidEmail);
       setLoading(false);
       return;
     }
@@ -32,7 +36,7 @@ export default function Login() {
       if (signInError) throw signInError;
       navigate('/home');
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || t.login.loginFailed);
     } finally {
       setLoading(false);
     }
@@ -63,24 +67,24 @@ export default function Login() {
               <span className="text-3xl font-bold bg-gradient-to-br from-blue-700 to-sky-400 bg-clip-text text-transparent leading-none select-none">i</span>
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">Investraders</h1>
-            <p className="text-white/80 text-sm mb-10">Make Money Meanwhile -3M</p>
+            <p className="text-white/80 text-sm mb-10">{t.login.welcomeBack}</p>
             <div className="w-px h-8 bg-white/30 mx-auto mb-8" />
-            <p className="text-white/90 text-lg font-medium mb-2">New here?</p>
-            <p className="text-white/70 text-sm mb-6">Join thousands of investors and innovators on our platform.</p>
+            <p className="text-white/90 text-lg font-medium mb-2">{t.login.newHere}</p>
+            <p className="text-white/70 text-sm mb-6">{t.login.joinThousands}</p>
             <Link
               to="/register"
               className="inline-block px-8 py-3 rounded-full border-2 border-white text-white font-semibold hover:bg-card hover:text-blue-600 transition-all duration-200"
             >
-              Create Account
+              {t.login.createAccount}
             </Link>
           </div>
         </div>
 
         {/* Right – Form panel */}
         <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
-          <div className="max-w-sm mx-auto w-full">
-            <h2 className="text-2xl font-bold text-foreground mb-1">Welcome back</h2>
-            <p className="text-muted-foreground text-sm mb-8">Sign in to your Investraders account</p>
+          <div className={`max-w-sm mx-auto w-full ${isArabic ? 'text-right' : 'text-left'}`}>
+            <h2 className="text-2xl font-bold text-foreground mb-1">{t.login.welcomeBack}</h2>
+            <p className="text-muted-foreground text-sm mb-8">{t.login.signInSubtitle}</p>
 
             {error && (
               <div className="bg-red-50 text-red-600 text-sm rounded-xl p-3 mb-5 border border-red-200">{error}</div>
@@ -93,33 +97,34 @@ export default function Login() {
               className="w-full flex items-center justify-center gap-3 h-12 rounded-xl border border-border hover:bg-gray-50 transition-colors mb-5 font-medium text-sm text-foreground"
             >
               <GoogleIcon className="w-5 h-5" />
-              Continue with Google
+              {t.login.continueWithGoogle}
             </button>
 
             <div className="flex items-center gap-3 mb-5">
               <div className="flex-1 h-px bg-border" />
-              <span className="text-xs text-muted-foreground">or sign in with email</span>
+              <span className="text-xs text-muted-foreground">{t.login.orSignInWithEmail}</span>
               <div className="flex-1 h-px bg-border" />
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">Email Address</label>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">{t.login.emailAddress}</label>
                 <Input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t.login.emailPlaceholder}
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
                   required
+                  dir="ltr"
                   className={`h-12 rounded-xl ${emailError ? 'border-red-400 focus-visible:ring-red-400' : ''}`}
                 />
                 {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
               </div>
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-sm font-medium text-foreground">Password</label>
+                <div className={`flex items-center justify-between mb-1.5 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                  <label className="text-sm font-medium text-foreground">{t.login.password}</label>
                   <Link to="/forgot-password" className="text-xs text-blue-600 hover:underline font-medium">
-                    Forgot password?
+                    {t.login.forgotPassword}
                   </Link>
                 </div>
                 <div className="relative">
@@ -129,6 +134,7 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    dir="ltr"
                     className="h-12 rounded-xl pr-11"
                   />
                   <button
@@ -146,15 +152,15 @@ export default function Login() {
                 disabled={loading}
                 className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-semibold text-base shadow-md mt-2"
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? t.login.signingIn : t.login.signIn}
               </Button>
             </form>
 
             {/* Sign up link */}
             <p className="text-center text-sm text-muted-foreground mt-6">
-              Don't have an account?{' '}
+              {t.login.noAccount}{' '}
               <Link to="/register" className="text-blue-600 font-medium hover:underline text-sm">
-                Sign up
+                {t.login.signUp}
               </Link>
             </p>
           </div>
@@ -162,9 +168,9 @@ export default function Login() {
       </div>
 
       <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-8 text-white/70 text-xs">
-        <span className="hover:text-white cursor-pointer">About us</span>
-        <span className="hover:text-white cursor-pointer">Contact us</span>
-        <span className="hover:text-white cursor-pointer">Support</span>
+        <span className="hover:text-white cursor-pointer">{t.login.aboutUs}</span>
+        <span className="hover:text-white cursor-pointer">{t.login.contactUs}</span>
+        <span className="hover:text-white cursor-pointer">{t.login.support}</span>
       </div>
     </div>
   );
