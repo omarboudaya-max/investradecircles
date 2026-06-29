@@ -335,8 +335,8 @@ export default function CircleDetail() {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Users className="w-8 h-8 opacity-50" />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-1">Private Institution</h3>
-              <p className="text-sm max-w-md mx-auto">You must be a member to access exclusive content and discussions.</p>
+              <h3 className="text-lg font-bold text-foreground mb-1">{t.circleDetail.privateInstitution}</h3>
+              <p className="text-sm max-w-md mx-auto">{t.circleDetail.mustBeMemberInst}</p>
             </div>
           ) : (
             <InstitutionalCircleLayout {...institutionalProps} />
@@ -397,8 +397,8 @@ export default function CircleDetail() {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Users className="w-8 h-8 opacity-50" />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-1">Private Circle</h3>
-              <p className="text-sm max-w-md mx-auto">You must be a member to view discussions, events, and posts in this circle.</p>
+              <h3 className="text-lg font-bold text-foreground mb-1">{t.circleDetail.privateCircle}</h3>
+              <p className="text-sm max-w-md mx-auto">{t.circleDetail.mustBeMemberInd}</p>
             </div>
           ) : (
             <>
@@ -408,13 +408,13 @@ export default function CircleDetail() {
               onClick={() => setActiveTab('discussion')}
               className={`flex items-center gap-1.5 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'discussion' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
             >
-              <LayoutList className="w-4 h-4" /> Discussion
+              <LayoutList className="w-4 h-4" /> {t.circleDetail.discussion}
             </button>
             <button
               onClick={() => setActiveTab('feed')}
               className={`flex items-center gap-1.5 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'feed' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
             >
-              <Newspaper className="w-4 h-4" /> Feed
+              <Newspaper className="w-4 h-4" /> {t.circleDetail.feed}
             </button>
           </div>
 
@@ -438,7 +438,7 @@ export default function CircleDetail() {
               {responses.length > 0 && (
                 <div className="px-6 pb-4">
                   <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-primary" /> Responses
+                    <MessageCircle className="w-4 h-4 text-primary" /> {t.circleDetail.responses}
                   </h3>
                   <div className="space-y-2">
                     <AnimatePresence>

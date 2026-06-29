@@ -185,23 +185,23 @@ export default function Landing() {
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
                     </div>
                     <div>
-                      <h2 className="text-white font-bold text-lg flex items-center gap-1">Cairo Chamber <svg className="w-4 h-4 text-[#38bdf8]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg></h2>
-                      <p className="text-white/60 text-xs">247 members • Institution</p>
+                      <h2 className="text-white font-bold text-lg flex items-center gap-1">{t.landing.mockupCairoChamber} <svg className="w-4 h-4 text-[#38bdf8]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg></h2>
+                      <p className="text-white/60 text-xs">{t.landing.mockupMembersInst}</p>
                     </div>
                   </div>
 
                   <div className="flex justify-between mt-6 px-2">
                     <div className="text-center">
                       <div className="text-white font-bold text-xl">24</div>
-                      <div className="text-white/50 text-xs">Posts</div>
+                      <div className="text-white/50 text-xs">{t.landing.mockupPosts}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-white font-bold text-xl">12</div>
-                      <div className="text-white/50 text-xs">Events</div>
+                      <div className="text-white/50 text-xs">{t.landing.mockupEvents}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-white font-bold text-xl">8</div>
-                      <div className="text-white/50 text-xs">Markets</div>
+                      <div className="text-white/50 text-xs">{t.landing.mockupMarkets}</div>
                     </div>
                   </div>
                 </div>
@@ -214,9 +214,9 @@ export default function Landing() {
                 </div>
 
                 <div className="flex gap-4 px-4 py-3 bg-[#0f172a]">
-                  <div className="text-[#38bdf8] text-sm font-semibold border-b-2 border-[#38bdf8] pb-1">Feed</div>
-                  <div className="text-[#64748b] text-sm font-semibold pb-1">Events</div>
-                  <div className="text-[#64748b] text-sm font-semibold pb-1">Members</div>
+                  <div className="text-[#38bdf8] text-sm font-semibold border-b-2 border-[#38bdf8] pb-1">{t.landing.mockupFeed}</div>
+                  <div className="text-[#64748b] text-sm font-semibold pb-1">{t.landing.mockupEvents}</div>
+                  <div className="text-[#64748b] text-sm font-semibold pb-1">{t.landing.mockupMembersTab}</div>
                 </div>
 
                 {/* Feed Content */}
@@ -225,11 +225,11 @@ export default function Landing() {
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-full bg-indigo-500"></div>
                       <div>
-                        <div className="text-white text-xs font-bold">Dr. Ahmed Hassan</div>
-                        <div className="text-[#64748b] text-[10px]">2h ago</div>
+                        <div className="text-white text-xs font-bold">{t.landing.mockupDrAhmed}</div>
+                        <div className="text-[#64748b] text-[10px]">{t.landing.mockupTimeAgo}</div>
                       </div>
                     </div>
-                    <p className="text-white/80 text-xs mb-3 leading-relaxed">New investment opportunities available for Q3 Chamber members — register now!</p>
+                    <p className="text-white/80 text-xs mb-3 leading-relaxed">{t.landing.mockupPostText}</p>
                     <div className="flex gap-3 text-[#64748b] text-[10px]">
                       <span className="flex items-center gap-1"><svg className="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/></svg> 24</span>
                       <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg> 8</span>
@@ -240,31 +240,31 @@ export default function Landing() {
                     <div className="absolute top-0 left-0 w-1 h-full bg-[#38bdf8]"></div>
                     <div className="flex items-center gap-1 text-[10px] text-[#38bdf8] font-bold uppercase tracking-wider mb-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                      UPCOMING EVENT
+                      {t.landing.mockupUpcomingEvent}
                     </div>
-                    <h3 className="text-white text-sm font-bold">Business Networking</h3>
-                    <p className="text-[#64748b] text-xs mb-2">Jun 25 - 10:00 AM</p>
-                    <button className="bg-[#38bdf8] text-[#030914] text-xs font-bold px-4 py-1 rounded-full absolute bottom-3 right-3">Join</button>
+                    <h3 className="text-white text-sm font-bold">{t.landing.mockupBusinessNetworking}</h3>
+                    <p className="text-[#64748b] text-xs mb-2">{t.landing.mockupEventDate}</p>
+                    <button className="bg-[#38bdf8] text-[#030914] text-xs font-bold px-4 py-1 rounded-full absolute bottom-3 right-3">{t.landing.mockupJoin}</button>
                   </div>
                 </div>
 
                 <div className="bg-[#0f172a] border-t border-white/5 p-3 flex justify-around text-[#64748b] text-[10px]">
                   <div className="flex flex-col items-center gap-1 text-[#38bdf8]">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
-                    Home
+                    {t.landing.mockupHome}
                   </div>
                   <div className="flex flex-col items-center gap-1 hover:text-white">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    Explore
+                    {t.landing.mockupExplore}
                   </div>
                   <div className="flex flex-col items-center gap-1 hover:text-white relative">
                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    Alerts
+                    {t.landing.mockupAlerts}
                   </div>
                   <div className="flex flex-col items-center gap-1 hover:text-white">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    Profile
+                    {t.landing.mockupProfile}
                   </div>
                 </div>
               </div>
@@ -298,17 +298,17 @@ export default function Landing() {
 
               {/* Center Circle */}
               <div className="absolute inset-0 m-auto w-64 h-64 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a] shadow-[0_0_80px_rgba(59,130,246,0.5)] flex flex-col items-center justify-center text-center p-8 z-20 border border-[#60a5fa]/30">
-                <span className="text-white/60 text-sm font-semibold mb-2">Q. 2</span>
-                <h4 className="text-xl font-bold text-white mb-6">What sector is your top pick for 2026?</h4>
+                <span className="text-white/60 text-sm font-semibold mb-2">{t.landing.mockupQ2}</span>
+                <h4 className="text-xl font-bold text-white mb-6">{t.landing.mockupQuestion}</h4>
                 <div className="text-[#94a3b8] text-xs font-mono">00:00:00</div>
-                <div className="text-[#64748b] text-[10px] uppercase mt-1">left to close</div>
+                <div className="text-[#64748b] text-[10px] uppercase mt-1">{t.landing.mockupLeftToClose}</div>
               </div>
 
               {/* Inner Orbit (3 avatars) */}
               <div className="absolute inset-0 m-auto w-[360px] h-[360px] rounded-full border border-dashed border-[#334155] animate-orbit z-10">
                 <div className="absolute top-0 left-1/2 -ml-8 -mt-8 flex flex-col items-center animate-orbit-reverse">
                   <div className="absolute -top-10 whitespace-nowrap bg-[#1e293b] text-white text-xs px-3 py-1.5 rounded-full border border-amber-500/50 shadow-lg">
-                    Tech is my top pick! 🚀
+                    {t.landing.mockupTechPick}
                   </div>
                   <div className="w-16 h-16 rounded-full border-2 border-amber-500 p-0.5 bg-[#0f172a]">
                     <img src="https://i.pravatar.cc/150?u=omar" className="w-full h-full rounded-full object-cover" alt="User" />
@@ -335,7 +335,7 @@ export default function Landing() {
               <div className="absolute inset-0 m-auto w-[520px] h-[520px] rounded-full border border-dashed border-[#334155]/60 animate-orbit-slow z-0">
                 <div className="absolute top-[14%] left-[85%] -ml-7 -mt-7 flex flex-col items-center animate-orbit-slow-reverse">
                   <div className="absolute -right-2 top-0 whitespace-nowrap bg-[#1e293b]/50 text-white/50 text-[10px] px-2 py-1 rounded-full border border-white/10">
-                    Hedge with gold & BTC 🪙
+                    {t.landing.mockupHedgeGold}
                   </div>
                   <div className="w-14 h-14 rounded-full border-2 border-[#10b981] p-0.5 bg-[#0f172a] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                     <img src="https://i.pravatar.cc/150?u=lina" className="w-full h-full rounded-full object-cover" alt="User" />
@@ -345,7 +345,7 @@ export default function Landing() {
 
                 <div className="absolute top-[14%] left-[15%] -ml-6 -mt-6 flex flex-col items-center animate-orbit-slow-reverse">
                   <div className="absolute -left-20 top-0 whitespace-nowrap bg-[#1e293b]/50 text-white/50 text-[10px] px-2 py-1 rounded-full border border-white/10">
-                    Diversify into bonds 📉
+                    {t.landing.mockupDiversifyBonds}
                   </div>
                   <div className="w-12 h-12 rounded-full border-2 border-[#c084fc] p-0.5 bg-[#0f172a]">
                     <img src="https://i.pravatar.cc/150?u=sarah" className="w-full h-full rounded-full object-cover" alt="User" />
@@ -377,7 +377,7 @@ export default function Landing() {
 
               {/* Total Response Pill */}
               <div className="absolute -bottom-16 left-0 right-0 flex flex-col items-center justify-center z-30">
-                <span className="text-[11px] font-bold tracking-widest text-[#94a3b8] uppercase mb-2">Total Response</span>
+                <span className="text-[11px] font-bold tracking-widest text-[#94a3b8] uppercase mb-2">{t.landing.mockupTotalResponse}</span>
                 <div className="bg-amber-600 text-white font-bold text-xl px-8 py-3 rounded-full shadow-[0_0_30px_rgba(217,119,6,0.4)] border border-amber-500/50">
                   22 / 15
                 </div>
@@ -387,11 +387,11 @@ export default function Landing() {
             {/* Mobile fallback for Orbit */}
             <div className="md:hidden flex flex-col items-center justify-center py-10 bg-[#0f172a] rounded-2xl border border-white/5">
                 <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a] flex flex-col items-center justify-center text-center p-4 shadow-xl">
-                  <span className="text-white/60 text-xs font-semibold mb-1">Q. 2</span>
-                  <h4 className="text-base font-bold text-white mb-2">What sector is your top pick for 2026?</h4>
+                  <span className="text-white/60 text-xs font-semibold mb-1">{t.landing.mockupQ2}</span>
+                  <h4 className="text-base font-bold text-white mb-2">{t.landing.mockupQuestion}</h4>
                 </div>
                 <div className="mt-8 text-center">
-                  <span className="text-[10px] font-bold tracking-widest text-[#94a3b8] uppercase mb-2 block">Total Response</span>
+                  <span className="text-[10px] font-bold tracking-widest text-[#94a3b8] uppercase mb-2 block">{t.landing.mockupTotalResponse}</span>
                   <div className="bg-amber-600 text-white font-bold text-lg px-6 py-2 rounded-full">
                     22 / 15
                   </div>
@@ -767,10 +767,10 @@ export default function Landing() {
       <footer className="border-t border-white/5 pt-16 pb-8 text-center bg-[#0b1120]">
         <div className="flex items-center justify-center gap-2 mb-4">
           <div className="w-6 h-6 rounded-full bg-[#38bdf8] flex items-center justify-center text-[#030914] font-bold italic font-serif text-xs">i</div>
-          <span className="text-white font-bold tracking-wide">Investrade Circles</span>
+          <span className="text-white font-bold tracking-wide">{t.landing.footerBrand}</span>
         </div>
-        <p className="text-[#64748b] text-sm mb-6">Where Communities Create Opportunities.</p>
-        <p className="text-[#475569] text-xs">© 2026 Investrade. All rights reserved.</p>
+        <p className="text-[#64748b] text-sm mb-6">{t.landing.footerTagline}</p>
+        <p className="text-[#475569] text-xs">{t.landing.footerCopyright}</p>
       </footer>
     </div>
   );

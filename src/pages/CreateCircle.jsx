@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Users, ArrowLeft, Landmark, User, Globe, AlertCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import TagPicker from '@/components/circles/TagPicker';
 import InviteFriendsModal from '@/components/circles/InviteFriendsModal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,21 +16,17 @@ import { useQueryClient } from '@tanstack/react-query';
 const CATEGORIES = [
   {
     value: 'institution',
-    label: 'Institution',
     Icon: Landmark,
     gradient: 'linear-gradient(135deg,#0f172a,#1e3a8a)',
     iconColor: 'text-amber-300',
     borderColor: 'border-amber-400/40',
-    tagline: 'Designed for chambers of commerce, stock exchanges, universities, institutions and businesses to convene members, clients and stakeholders in a branded professional space.',
   },
   {
     value: 'individual',
-    label: 'Individual',
     Icon: User,
     gradient: 'linear-gradient(135deg,#1d4ed8,#2563eb)',
     iconColor: 'text-blue-100',
     borderColor: 'border-blue-400/30',
-    tagline: 'For the public to convene their community in a professional space of discussion and congregating Wise Decisions.',
   },
 ];
 
@@ -45,6 +43,8 @@ export default function CreateCircle() {
   const [inviteModal, setInviteModal] = useState({ open: false, circleId: null, circleName: '' });
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState('');
+  const t = useTranslation();
+  const { isArabic } = useLanguage();
 
   const isInstitution = category === 'institution';
   const activeMeta = CATEGORIES.find(c => c.value === category);
@@ -77,7 +77,7 @@ export default function CreateCircle() {
       
       setInviteModal({ open: true, circleId: circleData.id, circleName: circleData.name });
     } catch (err) {
-      setError(err?.message || 'Failed to create circle. Please try again.');
+      setError(err?.message || t.createCircle.error);
     } finally {
       setLoading(false);
     }
@@ -85,28 +85,28 @@ export default function CreateCircle() {
 
   return (
     <>
-      <div className="max-w-xl mx-auto">
-        <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
+      <div className={`max-w-xl mx-auto ${isArabic ? 'text-right' : 'text-left'}`}>
+        <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <ArrowLeft className={`w-4 h-4 ${isArabic ? 'rotate-180' : ''}`} /> {t.createCircle.backToHome}
         </Link>
 
         <div className="bg-card rounded-2xl border shadow-sm p-6 md:p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className={`flex items-center gap-3 mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <Users className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Create Circle</h1>
-              <p className="text-sm text-muted-foreground">Build a community around shared interests</p>
+              <h1 className="text-2xl font-bold">{t.createCircle.title}</h1>
+              <p className="text-sm text-muted-foreground">{t.createCircle.subtitle}</p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className={`space-y-5 ${isArabic ? 'text-right' : 'text-left'}`}>
             {/* Category Selection — prominent cards */}
             <div>
-              <Label className="mb-2 block">Category</Label>
+              <Label className="mb-2 block">{t.createCircle.category}</Label>
               <div className="grid grid-cols-2 gap-3">
-                {CATEGORIES.map(({ value, label, Icon, gradient, iconColor, borderColor, tagline }) => {
+                {CATEGORIES.map(({ value, Icon, gradient, iconColor, borderColor }) => {
                   const selected = category === value;
                   return (
                     <button
@@ -124,8 +124,8 @@ export default function CreateCircle() {
                       >
                         <Icon className={`w-5 h-5 ${iconColor}`} />
                       </div>
-                      <p className="font-semibold text-sm">{label}</p>
-                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-3">{tagline}</p>
+                      <p className="font-semibold text-sm">{value === 'institution' ? t.createCircle.institution : t.createCircle.individual}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-3">{value === 'institution' ? t.createCircle.institutionDesc : t.createCircle.individualDesc}</p>
                       {selected && (
                         <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
                           <span className="w-2 h-2 rounded-full bg-card" />
@@ -138,60 +138,63 @@ export default function CreateCircle() {
             </div>
 
             <div>
-              <Label className="mb-1.5 block">Circle Name</Label>
+              <Label className="mb-1.5 block">{t.createCircle.name}</Label>
               <Input
-                placeholder={isInstitution ? 'e.g. Lagos Chamber of Commerce' : 'e.g. Wise Investors Forum'}
+                placeholder={isInstitution ? t.createCircle.nameInstPlaceholder : t.createCircle.nameIndPlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="h-12"
+                dir={isArabic ? 'rtl' : 'ltr'}
               />
             </div>
 
             <div>
-              <Label className="mb-1.5 block">Description</Label>
+              <Label className="mb-1.5 block">{t.createCircle.description}</Label>
               <Textarea
-                placeholder="What's this circle about?"
+                placeholder={t.createCircle.descriptionPlaceholder}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="min-h-[100px]"
+                dir={isArabic ? 'rtl' : 'ltr'}
               />
             </div>
 
             {/* Website URL — mandatory for Institution */}
             {isInstitution && (
               <div>
-                <Label className="mb-1.5 flex items-center gap-1.5">
+                <Label className={`mb-1.5 flex items-center gap-1.5 ${isArabic ? 'flex-row-reverse' : ''}`}>
                   <Globe className="w-4 h-4 text-muted-foreground" />
-                  Institution Website URL
+                  {t.createCircle.website}
                   <span className="text-red-500 font-bold text-base leading-none">★</span>
                 </Label>
                 <Input
                   type="url"
-                  placeholder="https://www.yourorganisation.com"
+                  placeholder={t.createCircle.websitePlaceholder}
                   value={websiteUrl}
                   onChange={(e) => setWebsiteUrl(e.target.value)}
-                  className="h-12"
+                  className="h-12 text-left"
+                  dir="ltr"
                   required
                 />
-                <p className="text-[11px] text-muted-foreground mt-1">Required for institutional circles. Must be an official URL.</p>
+                <p className="text-[11px] text-muted-foreground mt-1">{t.createCircle.websiteReq}</p>
               </div>
             )}
 
             <div>
-              <Label className="mb-1.5 block">Topics <span className="text-muted-foreground font-normal">(up to 5)</span></Label>
+              <Label className="mb-1.5 block">{t.createCircle.topics} <span className="text-muted-foreground font-normal">{t.createCircle.topicsDesc}</span></Label>
               <TagPicker selected={tags} onChange={setTags} />
             </div>
 
             <div>
-              <Label className="mb-2 block">Privacy</Label>
+              <Label className="mb-2 block">{t.createCircle.visibility}</Label>
               <RadioGroup value={privacy} onValueChange={setPrivacy} className="flex gap-6">
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="public" id="public" />
-                  <Label htmlFor="public">Public</Label>
+                  <Label htmlFor="public">{t.createCircle.public}</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="private" id="private" />
-                  <Label htmlFor="private">Private</Label>
+                  <Label htmlFor="private">{t.createCircle.private}</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -207,7 +210,7 @@ export default function CreateCircle() {
               disabled={loading || !name.trim() || (isInstitution && !websiteUrl.trim())}
               className="w-full h-12 rounded-full bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold text-base shadow-lg"
             >
-              {loading ? 'Creating...' : 'Create Circle'}
+              {loading ? t.createCircle.creating : t.createCircle.create}
             </Button>
           </form>
         </div>
