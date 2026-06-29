@@ -95,14 +95,14 @@ export default function Landing() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
-            FOR INSTITUTIONS
+            {t.landing.forInstitutionsBadge}
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Empower Your Ecosystem</h2>
-          <p className="text-xl text-[#94a3b8] mb-12">Strengthen Your Community. Build Digital Infrastructure.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">{t.landing.empowerTitle}</h2>
+          <p className="text-xl text-[#94a3b8] mb-12">{t.landing.empowerSubtitle}</p>
 
           <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {['Chambers of Commerce', 'Stock Exchanges', 'Universities', 'Business Associations', 'Professional Organizations', 'Government Agencies', 'Economic Development Orgs', 'Industry Federations'].map((tag) => (
+            {t.landing.tags.map((tag) => (
               <div key={tag} className="px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-[#cbd5e1] text-sm hover:border-white/20 hover:bg-white/10 transition-colors cursor-default">
                 {tag}
               </div>
@@ -117,16 +117,16 @@ export default function Landing() {
             <div className="space-y-8">
               {/* Missing Link Card */}
               <div className="bg-[#0f172a] rounded-2xl border border-white/5 p-8">
-                <h3 className="text-2xl font-bold mb-2">The Missing Link</h3>
-                <p className="text-[#94a3b8] mb-6">Most institutions know who their members are. Few truly understand:</p>
+                <h3 className="text-2xl font-bold mb-2">{t.landing.missingLinkTitle}</h3>
+                <p className="text-[#94a3b8] mb-6">{t.landing.missingLinkDesc}</p>
                 
                 <ul className="space-y-4 mb-8">
                   {[
-                    'Which members are growing',
-                    'Which companies need support',
-                    'Which sectors are creating opportunities',
-                    'Which businesses are attracting customers',
-                    'Which communities are most engaged'
+                    t.landing.missingLink1,
+                    t.landing.missingLink2,
+                    t.landing.missingLink3,
+                    t.landing.missingLink4,
+                    t.landing.missingLink5
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <svg className="w-5 h-5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
@@ -135,22 +135,22 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                <p className="text-[#38bdf8] font-bold text-lg">Investrade provides the missing link.</p>
+                <p className="text-[#38bdf8] font-bold text-lg">{t.landing.missingLinkConclusion}</p>
               </div>
 
               {/* Manage Community Card */}
               <div className="bg-[#0f172a] rounded-2xl border border-white/5 p-8">
-                <h3 className="text-2xl font-bold mb-2">Manage Your Community</h3>
-                <p className="text-[#94a3b8] mb-6">Through a single platform, institutions can:</p>
+                <h3 className="text-2xl font-bold mb-2">{t.landing.manageCommunityTitle}</h3>
+                <p className="text-[#94a3b8] mb-6">{t.landing.manageCommunityDesc}</p>
                 
                 <ul className="space-y-4">
                   {[
-                    'Create unlimited circles',
-                    'Engage members continuously',
-                    'Share opportunities and events',
-                    'Promote innovation and entrepreneurship',
-                    'Connect stakeholders across borders',
-                    'Monitor engagement and growth'
+                    t.landing.manageCommunity1,
+                    t.landing.manageCommunity2,
+                    t.landing.manageCommunity3,
+                    t.landing.manageCommunity4,
+                    t.landing.manageCommunity5,
+                    t.landing.manageCommunity6
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full bg-cyan-900/50 flex items-center justify-center shrink-0 border border-cyan-500/30">
@@ -278,13 +278,13 @@ export default function Landing() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#1e3a8a] bg-[#1e3a8a]/30 text-[#60a5fa] text-xs font-semibold uppercase tracking-wider mb-6">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-              CIRCLE EXPERIENCE
+              {t.landing.circleExperienceBadge}
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Your Circle, <span className="text-[#38bdf8]">Live & Alive</span>
+              {t.landing.yourCircleTitle1}<span className="text-[#38bdf8]">{t.landing.yourCircleTitle2}</span>
             </h2>
             <p className="text-xl text-[#94a3b8] max-w-2xl mx-auto">
-              Watch your community engage in real-time — questions, responses, and conversations orbiting your branded circle.
+              {t.landing.yourCircleDesc}
             </p>
           </div>
 
@@ -400,15 +400,15 @@ export default function Landing() {
 
             {/* Features List */}
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold mb-6">What makes a Circle special?</h3>
+              <h3 className="text-2xl font-bold mb-6">{t.landing.whatMakesSpecial}</h3>
               
               <div className="bg-[#0f172a] border border-white/5 rounded-xl p-5 flex gap-4 transition-colors hover:bg-[#1e293b]">
                 <div className="w-12 h-12 rounded-lg bg-[#1e3a8a]/50 flex items-center justify-center shrink-0 border border-[#3b82f6]/30 text-[#60a5fa]">
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold mb-1">Live Discussion Sphere</h4>
-                  <p className="text-[#94a3b8] text-sm leading-relaxed">Members orbit your circle in real-time, posting answers, reactions and insights as they happen.</p>
+                  <h4 className="text-white font-bold mb-1">{t.landing.special1Title}</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">{t.landing.special1Desc}</p>
                 </div>
               </div>
 
@@ -417,8 +417,8 @@ export default function Landing() {
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold mb-1">Question Engine</h4>
-                  <p className="text-[#94a3b8] text-sm leading-relaxed">Post timed questions to your community. Watch responses flood in from orbiting members instantly.</p>
+                  <h4 className="text-white font-bold mb-1">{t.landing.special2Title}</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">{t.landing.special2Desc}</p>
                 </div>
               </div>
 
@@ -427,8 +427,8 @@ export default function Landing() {
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold mb-1">Response Analytics</h4>
-                  <p className="text-[#94a3b8] text-sm leading-relaxed">Track engagement, upvotes, and response quality with a live counter and leaderboard.</p>
+                  <h4 className="text-white font-bold mb-1">{t.landing.special3Title}</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">{t.landing.special3Desc}</p>
                 </div>
               </div>
 
@@ -437,8 +437,8 @@ export default function Landing() {
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold mb-1">Live Events & Webinars</h4>
-                  <p className="text-[#94a3b8] text-sm leading-relaxed">Host discussions, meetings, and webinars directly inside your circle with a single click.</p>
+                  <h4 className="text-white font-bold mb-1">{t.landing.special4Title}</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">{t.landing.special4Desc}</p>
                 </div>
               </div>
 
@@ -447,8 +447,8 @@ export default function Landing() {
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold mb-1">Reputation System</h4>
-                  <p className="text-[#94a3b8] text-sm leading-relaxed">Members earn badges based on their contributions, building credibility and community trust.</p>
+                  <h4 className="text-white font-bold mb-1">{t.landing.special5Title}</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">{t.landing.special5Desc}</p>
                 </div>
               </div>
 
@@ -458,8 +458,8 @@ export default function Landing() {
 
         {/* 5. BUILT FOR EVERY SECTOR */}
         <section className="relative z-10 max-w-7xl mx-auto px-6 mt-32 mb-20 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Built For Every Sector</h2>
-          <p className="text-[#94a3b8] text-lg max-w-2xl mx-auto mb-16">From government institutions to private enterprises, Investrade adapts to your ecosystem.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">{t.landing.builtForEverySector}</h2>
+          <p className="text-[#94a3b8] text-lg max-w-2xl mx-auto mb-16">{t.landing.builtForSubtitle}</p>
 
           <div className="grid md:grid-cols-2 gap-6 text-left">
             {/* Card 1 */}
@@ -467,10 +467,10 @@ export default function Landing() {
               <div className="w-12 h-12 bg-[#0c4a6e]/50 rounded-xl flex items-center justify-center mb-6 border border-cyan-500/20 text-cyan-400">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.504-1.868l-7-4zM6 9a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zm3 1a1 1 0 012 0v3a1 1 0 11-2 0v-3zm5-1a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">Chambers of Commerce</h3>
-              <p className="text-cyan-400 text-sm font-semibold mb-4">The Future of Chamber Management</p>
-              <p className="text-[#94a3b8] text-sm mb-4">Transform your membership directory into a living business ecosystem. Your members need Visibility, Connectivity, Engagement, and Business Opportunities.</p>
-              <p className="text-white text-sm font-serif italic">Stronger Businesses. Stronger Chambers. Stronger Economies.</p>
+              <h3 className="text-xl font-bold text-white mb-1">{t.landing.sector1Title}</h3>
+              <p className="text-cyan-400 text-sm font-semibold mb-4">{t.landing.sector1Subtitle}</p>
+              <p className="text-[#94a3b8] text-sm mb-4">{t.landing.sector1Desc}</p>
+              <p className="text-white text-sm font-serif italic">{t.landing.sector1Quote}</p>
             </div>
             
             {/* Card 2 */}
@@ -478,10 +478,10 @@ export default function Landing() {
               <div className="w-12 h-12 bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 border border-blue-500/20 text-blue-400">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">Stock Exchanges</h3>
-              <p className="text-blue-400 text-sm font-semibold mb-4">Beyond Listed Companies</p>
-              <p className="text-[#94a3b8] text-sm mb-4">Create Investor Circles, Listed Company Circles, SME Growth Circles, Innovation Circles, and Entrepreneur Networks.</p>
-              <p className="text-white text-sm font-serif italic">The future of capital markets is community, trust, and connectivity.</p>
+              <h3 className="text-xl font-bold text-white mb-1">{t.landing.sector2Title}</h3>
+              <p className="text-blue-400 text-sm font-semibold mb-4">{t.landing.sector2Subtitle}</p>
+              <p className="text-[#94a3b8] text-sm mb-4">{t.landing.sector2Desc}</p>
+              <p className="text-white text-sm font-serif italic">{t.landing.sector2Quote}</p>
             </div>
 
             {/* Card 3 */}
@@ -489,10 +489,10 @@ export default function Landing() {
               <div className="w-12 h-12 bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 border border-purple-500/20 text-purple-400">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.168 1.54.66a1 1 0 00.788 0l7-3a1 1 0 000-1.84l-7-3zM3.311 10.604l6.295 2.698a1 1 0 00.788 0l6.295-2.698a1 1 0 00.417-.375L18 10v6.182c0 .41-.21.785-.55 1.01l-7 4.5a1 1 0 01-1.07 0l-7-4.5A1.21 1.21 0 012 16.182V10l.894.229a1 1 0 00.417.375z" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">Universities</h3>
-              <p className="text-purple-400 text-sm font-semibold mb-4">Transform Students into Innovators</p>
-              <p className="text-[#94a3b8] text-sm mb-4">Create Student, Alumni, Research, Innovation, and Entrepreneurship Circles. Connect students, researchers, mentors, investors, and alumni.</p>
-              <p className="text-white text-sm font-serif italic">From learning to opportunity. From ideas to startups. From talent to impact.</p>
+              <h3 className="text-xl font-bold text-white mb-1">{t.landing.sector3Title}</h3>
+              <p className="text-purple-400 text-sm font-semibold mb-4">{t.landing.sector3Subtitle}</p>
+              <p className="text-[#94a3b8] text-sm mb-4">{t.landing.sector3Desc}</p>
+              <p className="text-white text-sm font-serif italic">{t.landing.sector3Quote}</p>
             </div>
 
             {/* Card 4 */}
@@ -500,10 +500,10 @@ export default function Landing() {
               <div className="w-12 h-12 bg-amber-900/30 rounded-xl flex items-center justify-center mb-6 border border-amber-500/20 text-amber-500">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" /><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">Companies</h3>
-              <p className="text-amber-500 text-sm font-semibold mb-4">Your Community Is Your Greatest Asset</p>
-              <p className="text-[#94a3b8] text-sm mb-4">Create your own company circle where customers, partners, suppliers, and followers interact directly with your brand.</p>
-              <p className="text-white text-sm font-serif italic">In today's economy, communities grow faster than advertising.</p>
+              <h3 className="text-xl font-bold text-white mb-1">{t.landing.sector4Title}</h3>
+              <p className="text-amber-500 text-sm font-semibold mb-4">{t.landing.sector4Subtitle}</p>
+              <p className="text-[#94a3b8] text-sm mb-4">{t.landing.sector4Desc}</p>
+              <p className="text-white text-sm font-serif italic">{t.landing.sector4Quote}</p>
             </div>
           </div>
         </section>
@@ -514,13 +514,13 @@ export default function Landing() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-900/30 text-purple-400 text-xs font-semibold uppercase tracking-wider mb-6">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>
-                FOR INDIVIDUALS
+                {t.landing.forIndividualsBadge}
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Where Dreams Become <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Communities</span></h2>
-              <p className="text-[#94a3b8] text-lg mb-8 leading-relaxed max-w-xl">Everyone has a passion, a skill, a talent, a dream. But not everyone has the tools to turn them into opportunities. Investrade gives you those tools.</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">{t.landing.dreamsTitle1}<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">{t.landing.dreamsTitle2}</span></h2>
+              <p className="text-[#94a3b8] text-lg mb-8 leading-relaxed max-w-xl">{t.landing.dreamsDesc}</p>
               
               <ul className="space-y-4 mb-10">
-                {['Build your audience', 'Grow your influence', 'Create value for your community', 'Transform your passion into income'].map((item) => (
+                {[t.landing.dreams1, t.landing.dreams2, t.landing.dreams3, t.landing.dreams4].map((item) => (
                   <li key={item} className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
@@ -687,11 +687,11 @@ export default function Landing() {
         {/* 7. YOUR TIME IS YOUR MOST VALUABLE ASSET */}
         <section className="relative z-10 max-w-5xl mx-auto px-6 mt-32 mb-20 text-center">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-amber-500/30 bg-amber-900/20 text-amber-500 text-sm font-semibold uppercase tracking-wider mb-6 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-            <span className="text-lg leading-none font-bold">$</span> MAKE MONEY MEANWHILE — 3M
+            <span className="text-lg leading-none font-bold">$</span> {t.landing.timeIsAssetBadge}
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Your Time Is Your <span className="text-amber-500">Most Valuable Asset</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">{t.landing.timeTitle1}<span className="text-amber-500">{t.landing.timeTitle2}</span></h2>
           <p className="text-[#94a3b8] text-lg max-w-3xl mx-auto mb-16 leading-relaxed">
-            Most people spend hours every day online creating value for platforms. At Investrade, we believe you should be rewarded for the value you create.
+            {t.landing.timeDesc}
           </p>
 
           <div className="grid md:grid-cols-2 gap-4 text-left max-w-4xl mx-auto">
@@ -710,23 +710,23 @@ export default function Landing() {
 
           <div className="mt-16 max-w-3xl mx-auto border border-amber-500/20 bg-[#0f172a]/50 rounded-2xl p-10 shadow-[0_0_30px_rgba(245,158,11,0.05)]">
             <p className="text-amber-500 text-xl md:text-2xl font-bold italic leading-relaxed">
-              "Serve your community better than anyone else. The more value you create, the more opportunities you attract."
+              {t.landing.timeQuote}
             </p>
           </div>
         </section>
 
         {/* 8. WHAT DRIVES US */}
         <section className="relative z-10 max-w-5xl mx-auto px-6 mt-32 mb-32 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-16">What Drives Us</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-16">{t.landing.whatDrivesUs}</h2>
           
           <div className="grid md:grid-cols-2 gap-8 text-left">
             <div className="bg-[#0b1120] border border-cyan-500/10 rounded-2xl p-10 hover:border-cyan-500/20 transition-colors">
               <div className="w-12 h-12 bg-[#0c4a6e]/50 rounded-xl flex items-center justify-center mb-6 border border-cyan-500/20 text-cyan-400">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">{t.landing.ourMission}</h3>
               <p className="text-[#94a3b8] leading-relaxed">
-                To empower institutions, companies, entrepreneurs, and individuals worldwide to build thriving communities that create opportunities, foster collaboration, and generate sustainable economic growth.
+                {t.landing.ourMissionDesc}
               </p>
             </div>
 
@@ -734,9 +734,9 @@ export default function Landing() {
               <div className="w-12 h-12 bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 border border-blue-500/20 text-blue-400">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">{t.landing.ourVision}</h3>
               <p className="text-[#94a3b8] leading-relaxed">
-                To become the world's leading platform for Business Circles and Community Intelligence, connecting millions of organizations and individuals through trusted ecosystems that transform relationships into opportunities.
+                {t.landing.ourVisionDesc}
               </p>
             </div>
           </div>
@@ -744,13 +744,13 @@ export default function Landing() {
 
         {/* 9. YOUR COMMUNITY STARTS HERE */}
         <section className="relative z-10 max-w-6xl mx-auto px-6 mt-32 mb-20 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-10">Your Community <span className="text-[#38bdf8]">Starts Here</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-10">{t.landing.communityStartsHere}<span className="text-[#38bdf8]">{t.landing.communityStartsHere2}</span></h2>
           
           <ul className="text-xl text-[#e2e8f0] space-y-4 mb-12">
-            <li>Create Your Circle.</li>
-            <li>Grow Your Community.</li>
-            <li>Expand Your Visibility.</li>
-            <li>Connect With The World.</li>
+            <li>{t.landing.starts1}</li>
+            <li>{t.landing.starts2}</li>
+            <li>{t.landing.starts3}</li>
+            <li>{t.landing.starts4}</li>
           </ul>
 
           <Link to="/register" className="inline-flex items-center justify-center gap-2 bg-[#38bdf8] text-[#030914] font-bold px-8 py-3.5 rounded-full text-base transition-all hover:bg-[#7dd3fc] shadow-[0_0_20px_rgba(56,189,248,0.4)] mb-8">
@@ -758,7 +758,7 @@ export default function Landing() {
           </Link>
 
           <div className="text-amber-500 font-bold text-sm tracking-widest uppercase">
-            MAKE MONEY MEANWHILE — 3M
+            {t.landing.timeIsAssetBadge}
           </div>
         </section>
       </main>
