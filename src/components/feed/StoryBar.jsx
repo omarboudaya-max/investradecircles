@@ -6,10 +6,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/lib/AuthContext';
 import StoryViewer from './StoryViewer';
 import CreateStoryModal from './CreateStoryModal';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 export default function StoryBar() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const t = useTranslation();
   const [viewingStories, setViewingStories] = useState(null); // array of stories to view
   const [showCreate, setShowCreate] = useState(false);
 
@@ -68,7 +70,7 @@ export default function StoryBar() {
 
   return (
     <div className="mb-6">
-      <p className="text-sm text-muted-foreground mb-3">Watch stories before they disappear</p>
+      <p className="text-sm text-muted-foreground mb-3">{t.storyBar.watchStories}</p>
       <div className="flex gap-3 overflow-x-auto pb-2">
         {/* My Profile link */}
         <Link to="/profile" className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
@@ -81,7 +83,7 @@ export default function StoryBar() {
               </span>
             )}
           </div>
-          <span className="text-xs text-muted-foreground font-medium truncate max-w-[64px] text-center">My Profile</span>
+          <span className="text-xs text-muted-foreground font-medium truncate max-w-[64px] text-center">{t.storyBar.myProfile}</span>
         </Link>
 
         {/* Create Story */}
@@ -89,7 +91,7 @@ export default function StoryBar() {
           <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary flex items-center justify-center bg-primary/5 hover:bg-primary/10 transition-colors">
             <Plus className="w-6 h-6 text-primary" />
           </div>
-          <span className="text-xs text-primary font-medium">Create Story</span>
+          <span className="text-xs text-primary font-medium">{t.storyBar.createStory}</span>
         </div>
 
         {/* Connection stories */}
@@ -114,7 +116,7 @@ export default function StoryBar() {
                 </div>
               </div>
               <span className="text-xs text-muted-foreground truncate max-w-[64px] text-center">
-                {isOwn ? 'Your Story' : group.author_name?.split(' ')[0]}
+                {isOwn ? t.storyBar.yourStory : group.author_name?.split(' ')[0]}
               </span>
             </div>
           );

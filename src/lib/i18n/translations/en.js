@@ -1,6 +1,5 @@
 // English translations
 const en = {
-  // ─── Navbar (app) ──────────────────────────────────────────────
   navbar: {
     myProfile: 'My Profile',
     savedPosts: 'Saved Posts',
@@ -11,8 +10,6 @@ const en = {
     switchToArabic: 'عربي',
     switchToEnglish: 'English',
   },
-
-  // ─── Sidebar ────────────────────────────────────────────────────
   sidebar: {
     home: 'Home',
     createCircle: 'Create Circle',
@@ -24,16 +21,12 @@ const en = {
     createOne: 'Create one',
     noDescription: 'No description',
   },
-
-  // ─── Bottom Nav ─────────────────────────────────────────────────
   bottomNav: {
     home: 'Home',
     allCircles: 'All Circles',
     create: 'Create',
     myCircles: 'My Circles',
   },
-
-  // ─── Website Navbar (landing) ───────────────────────────────────
   websiteNav: {
     institutions: 'Institutions',
     businesses: 'Businesses',
@@ -42,14 +35,10 @@ const en = {
     signIn: 'Sign In',
     getStarted: 'Get Started',
   },
-
-  // ─── Website Footer ─────────────────────────────────────────────
   footer: {
     tagline: 'Building global communities',
     contact: 'Contact',
   },
-
-  // ─── Login ──────────────────────────────────────────────────────
   login: {
     welcomeBack: 'Welcome back',
     signInSubtitle: 'Sign in to your Investraders account',
@@ -72,8 +61,6 @@ const en = {
     contactUs: 'Contact us',
     support: 'Support',
   },
-
-  // ─── Register ───────────────────────────────────────────────────
   register: {
     createAccount: 'Create Account',
     subtitle: 'Join Investraders today',
@@ -92,9 +79,31 @@ const en = {
     passwordMismatch: 'Passwords do not match.',
     passwordTooShort: 'Password must be at least 8 characters.',
     alreadyMember: 'Already a member?',
+    stepLabels: ['Account', 'Personal', 'Role', 'Interests', 'Verify'],
+    typeInvestor: 'Investor',
+    typeInvestorDesc: 'I invest in businesses, assets or markets',
+    typeInnovator: 'Innovator',
+    typeInnovatorDesc: 'I build products, startups or solutions',
+    typeOther: 'Other',
+    typeOtherDesc: "I have a different role or I'm exploring",
+    verificationSent: 'Verification email sent',
+    checkEmail: 'Check your email',
+    verifyEmailInstructions: "We've sent a verification link to your email. Please click it to verify your account.",
+    alreadyVerified: 'Already verified? Sign in',
+    next: 'Next',
+    back: 'Back',
+    finish: 'Finish',
+    selectRole: 'Select your role',
+    selectInterests: 'Select your interests',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    firstNamePlaceholder: 'e.g. John',
+    lastNamePlaceholder: 'e.g. Doe',
+    step: (n, t) => `Step ${n} of ${t}`,
+    public: 'Public (no circle)',
+    noMatchingCircles: 'No matching circles.',
+    noCirclesYet: "You haven't joined any circles yet.",
   },
-
-  // ─── Forgot Password ────────────────────────────────────────────
   forgotPassword: {
     title: 'Forgot password?',
     subtitle: "Enter your email address and we'll send you a link to reset your password.",
@@ -104,11 +113,9 @@ const en = {
     sending: 'Sending...',
     backToSignIn: 'Back to Sign In',
     checkInbox: 'Check your inbox',
-    sentMessage: "If an account exists for",
+    sentMessage: 'If an account exists for',
     sentMessageEnd: ", we've sent a password reset link.",
   },
-
-  // ─── Reset Password ─────────────────────────────────────────────
   resetPassword: {
     title: 'Reset Password',
     newPassword: 'New Password',
@@ -118,8 +125,6 @@ const en = {
     passwordMismatch: 'Passwords do not match',
     resetFailed: 'Reset failed',
   },
-
-  // ─── Landing (main) ─────────────────────────────────────────────
   landing: {
     globalPlatform: 'GLOBAL PLATFORM',
     heroLine1: 'The Global Business',
@@ -132,8 +137,6 @@ const en = {
     learnMore: 'Learn More',
     signIn: 'Sign In',
   },
-
-  // ─── Landing Individuals ────────────────────────────────────────
   individuals: {
     title: 'For Individuals',
     subtitle: 'Connect with businesses, mentors, and opportunities. Build a professional profile, join circles, and monetize expertise.',
@@ -145,8 +148,6 @@ const en = {
     learningDesc: 'Monetize your knowledge: paid webinars, consulting, and community subscriptions.',
     cta: 'Start as an Individual',
   },
-
-  // ─── Landing Institutions ───────────────────────────────────────
   institutions: {
     title: 'For Institutions',
     subtitle: 'We provide tools tailored for Chambers of Commerce, Stock Exchanges, Universities, and governments to increase visibility, build ecosystems and drive measurable outcomes.',
@@ -162,8 +163,6 @@ const en = {
     onboardingDesc: "We offer onboarding, data migration, and dedicated support to integrate your institution's members and resources.",
     requestDemo: 'Request Institutional Demo',
   },
-
-  // ─── Landing 3M ─────────────────────────────────────────────────
   threeM: {
     title: '3M — Make Money Meanwhile',
     subtitle: '3M is our monetization framework designed to help communities, institutions, and individuals earn revenue while the platform creates value.',
@@ -179,8 +178,6 @@ const en = {
     bullet3: 'Service marketplace fees',
     talkToSales: 'Talk to Sales',
   },
-
-  // ─── Landing Contact ────────────────────────────────────────────
   contact: {
     title: 'Contact Us',
     subtitle: 'Get in touch to request a demo, partner, or get support.',
@@ -195,30 +192,22 @@ const en = {
     orEmail: 'Or email hello@investraders.com',
     thankYou: 'Thanks — your message was prepared. Your default mail client should open shortly.',
   },
-
-  // ─── Home ───────────────────────────────────────────────────────
   home: {
     noPostsTitle: 'No posts yet',
     noPostsSubtitle: 'Be the first to share something with your circles!',
   },
-
-  // ─── Saved Posts ────────────────────────────────────────────────
   savedPosts: {
     title: 'Saved Posts',
     savedCount: (n) => `${n} saved`,
     emptyTitle: 'No saved posts yet',
     emptySubtitle: 'Bookmark posts to find them here later.',
   },
-
-  // ─── Post Detail ────────────────────────────────────────────────
   postDetail: {
     backToFeed: 'Back to feed',
     notFoundTitle: 'Post not found',
     notFoundSubtitle: 'This post may have been deleted or is private.',
     goHome: 'Go home',
   },
-
-  // ─── My Circles ─────────────────────────────────────────────────
   myCircles: {
     title: 'My Circles',
     yourCreatedCircles: 'Your Created Circles',
@@ -231,23 +220,20 @@ const en = {
     members: 'members',
     noDescription: 'No description',
   },
-
-  // ─── All Circles ────────────────────────────────────────────────
   allCircles: {
     title: 'All Circles',
-    search: 'Search circles...',
+    search: 'Search circles by name, category, or tag...',
     noCircles: 'No circles found.',
+    noDescription: 'No description',
     members: 'members',
     join: 'Join',
     view: 'View',
     joined: 'Joined',
-    createCircle: 'Create a Circle',
-    noResults: 'No circles match your search.',
+    createCircle: 'New Circle',
+    noResults: 'Try a different keyword',
     institutional: 'INSTITUTIONAL',
     official: 'Official',
   },
-
-  // ─── Create Circle ──────────────────────────────────────────────
   createCircle: {
     title: 'Create Circle',
     name: 'Circle Name',
@@ -262,8 +248,6 @@ const en = {
     creating: 'Creating...',
     cancel: 'Cancel',
   },
-
-  // ─── Create Poll ────────────────────────────────────────────────
   createPoll: {
     title: 'Create Poll',
     question: 'Question',
@@ -274,8 +258,6 @@ const en = {
     cancel: 'Cancel',
     options: 'Options',
   },
-
-  // ─── Messages ───────────────────────────────────────────────────
   messages: {
     title: 'Messages',
     searchPlaceholder: 'Search conversations...',
@@ -287,8 +269,6 @@ const en = {
     noConversations: 'No conversations yet.',
     selectConversation: 'Select a conversation to start messaging.',
   },
-
-  // ─── User Profile ───────────────────────────────────────────────
   profile: {
     editProfile: 'Edit Profile',
     followers: 'Followers',
@@ -309,9 +289,13 @@ const en = {
     fullName: 'Full Name',
     username: 'Username',
     profileUpdated: 'Profile updated successfully.',
+    connect: 'Connect',
+    connected: 'Connected',
+    pending: 'Pending',
+    removeConnection: 'Remove Connection',
+    connections: 'Connections',
+    noCircles: 'No circles yet.',
   },
-
-  // ─── Onboarding ─────────────────────────────────────────────────
   onboarding: {
     welcome: 'Welcome to Investraders',
     subtitle: "Let's set up your profile",
@@ -323,8 +307,6 @@ const en = {
     finish: 'Get Started',
     step: (n, total) => `Step ${n} of ${total}`,
   },
-
-  // ─── Admin Dashboard ────────────────────────────────────────────
   admin: {
     title: 'Admin Dashboard',
     users: 'Users',
@@ -341,8 +323,6 @@ const en = {
     deleteCircle: 'Delete Circle',
     resolve: 'Resolve',
   },
-
-  // ─── Circle Detail ──────────────────────────────────────────────
   circleDetail: {
     members: 'Members',
     posts: 'Posts',
@@ -360,8 +340,6 @@ const en = {
     public: 'Public',
     joinToSee: 'Join this circle to see its content.',
   },
-
-  // ─── Join Circle ────────────────────────────────────────────────
   joinCircle: {
     title: 'Join Circle',
     enterCode: 'Enter invite code',
@@ -369,8 +347,82 @@ const en = {
     joining: 'Joining...',
     invalidCode: 'Invalid or expired invite code.',
   },
-
-  // ─── Common ─────────────────────────────────────────────────────
+  postCard: {
+    copyLink: 'Copy Link',
+    linkCopied: 'Link copied!',
+    deletePost: 'Delete Post',
+    postDeleted: 'Post deleted',
+    reportPost: 'Report Post',
+    postReported: 'Post reported',
+    reportThankYou: 'Thank you for your report.',
+    comment: 'Comment',
+    attachedDocument: 'Attached Document',
+    clickToOpen: 'Click to open',
+    unknown: 'Unknown',
+    public: 'Public',
+  },
+  commentSection: {
+    placeholder: 'Write a comment...',
+    send: 'Send',
+    sortRelevant: 'Most Relevant',
+    sortRecent: 'Most Recent',
+    comments: 'comments',
+    noComments: 'No comments yet. Be the first!',
+    deleteComment: 'Delete',
+    reply: 'Reply',
+    viewReplies: (n) => `View ${n} replies`,
+    hideReplies: 'Hide replies',
+    react: 'React',
+    loadMore: 'Load more comments',
+  },
+  createPost: {
+    placeholder: "What's on your mind?",
+    photo: 'Photo',
+    video: 'Video',
+    file: 'File',
+    uploading: 'Uploading...',
+    post: 'Post',
+    circle: 'Circle',
+    public: 'Public (no circle)',
+    searchCircles: 'Search circles...',
+    noMatchingCircles: 'No matching circles.',
+    noCirclesYet: "You haven't joined any circles yet.",
+    postSuccess: 'Post created!',
+    postError: 'Failed to create post.',
+    tooManyPosts: 'Too many posts. Try again later.',
+    contentRequired: 'Content cannot be empty.',
+  },
+  storyBar: {
+    watchStories: 'Watch stories before they disappear',
+    myProfile: 'My Profile',
+    createStory: 'Create Story',
+    yourStory: 'Your Story',
+  },
+  circleDiscovery: {
+    title: 'Circles For You',
+    subtitle: 'Based on your interests',
+    seeAll: 'See all',
+    join: 'Join',
+    members: 'members',
+  },
+  leaderboard: {
+    title: 'Weekly Leaderboard',
+    topContributors: 'Top contributors this week',
+    posts: (n) => `${n} post${n !== 1 ? 's' : ''}`,
+    responses: (n) => `${n} response${n !== 1 ? 's' : ''}`,
+    pts: 'pts',
+  },
+  pendingInvites: {
+    title: 'Pending Invites',
+    accept: 'Accept',
+    decline: 'Decline',
+  },
+  sharePost: {
+    title: 'Share Post',
+    copyLink: 'Copy Link',
+    copied: 'Copied!',
+    shareVia: 'Share via',
+  },
   common: {
     loading: 'Loading...',
     error: 'Something went wrong.',
@@ -386,6 +438,11 @@ const en = {
     search: 'Search',
     noResults: 'No results found.',
     submit: 'Submit',
+    noDescription: 'No description',
+    members: 'members',
+    verified: 'Verified',
+    official: 'Official',
+    posting: 'Posting to:',
   },
 };
 

@@ -7,6 +7,7 @@ import { Send, Smile } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { CACHE } from '@/lib/query-client';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 const REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥', '💡'];
 const COMMENT_EMOJIS = ['😀','😂','❤️','🔥','👍','🎉','💰','📈','💡','🚀','😎','🤔','💪','🙏','✅','⚡','🌟','😮','👏','🤑'];
@@ -53,6 +54,7 @@ export default function CommentSection({ postId, postAuthorId }) {
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
   const [sort, setSort] = useState('relevant');
+  const t = useTranslation();
   const [pickerFor, setPickerFor] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef();
@@ -210,7 +212,7 @@ export default function CommentSection({ postId, postAuthorId }) {
       {/* Sort + count */}
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs text-muted-foreground font-medium">
-          {comments.length} comment{comments.length !== 1 ? 's' : ''}
+          {comments.length} {t.commentSection.comments || (comments.length !== 1 ? 'comments' : 'comment')}
         </span>
         <div className="flex gap-1">
           {['newest', 'relevant'].map((s) => (
@@ -221,7 +223,7 @@ export default function CommentSection({ postId, postAuthorId }) {
                 sort === s ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'
               }`}
             >
-              {s === 'newest' ? 'Newest' : 'Most Relevant'}
+              {s === 'newest' ? t.commentSection.sortRecent : t.commentSection.sortRelevant}
             </button>
           ))}
         </div>
@@ -275,7 +277,7 @@ export default function CommentSection({ postId, postAuthorId }) {
                       onClick={() => setPickerFor(pickerFor === c.id ? null : c.id)}
                       className="text-[10px] text-muted-foreground hover:text-primary font-medium transition-colors"
                     >
-                      + React
+                      + {t.commentSection.react}
                     </button>
                     {pickerFor === c.id && (
                       <div className="absolute bottom-5 left-0 bg-card rounded-full border shadow-lg flex gap-1 p-1.5 z-20">
@@ -319,7 +321,7 @@ export default function CommentSection({ postId, postAuthorId }) {
         <div className="flex-1 relative">
           <Input
             ref={inputRef}
-            placeholder="Write a comment..."
+            placeholder={t.commentSection.placeholder}
             value={comment}
             onChange={handleCommentChange}
             className="h-8 text-sm rounded-full pr-8"

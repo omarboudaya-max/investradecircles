@@ -11,12 +11,14 @@ import { checkRateLimit } from '@/lib/rateLimiter';
 import { validate, validators, sanitize } from '@/lib/validation';
 import { logger } from '@/lib/logger';
 import { CACHE } from '@/lib/query-client';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 const ACCEPTED_FILE = '.pdf,.xls,.xlsx,.csv,.doc,.docx';
 
 export default function CreatePostBox() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const t = useTranslation();
 
   const [content, setContent] = useState('');
   const [attachedFile, setAttachedFile] = useState(null); // { url, name, type }
@@ -305,9 +307,9 @@ export default function CreatePostBox() {
         </Link>
         <div className="flex-1">
           <Link to={`/profile/${user?.id}`} className="hover:underline">
-            <p className="text-sm font-semibold">Hello! {displayName}</p>
+            <p className="text-sm font-semibold">{displayName}</p>
           </Link>
-          <p className="text-xs text-muted-foreground">What's in your mind to post today..</p>
+          <p className="text-xs text-muted-foreground">{t.createPost.placeholder}</p>
         </div>
         <button
           onClick={() => navigate('/create-circle')}
@@ -316,14 +318,14 @@ export default function CreatePostBox() {
         >
           <CircleDot className="w-3.5 h-3.5" />
           <Plus className="w-3 h-3" />
-          New Circle
+          {t.createCircle?.title || 'New Circle'}
         </button>
       </div>
 
       {/* Circle badge if selected */}
       {selectedCircle && (
         <div className="flex items-center gap-1.5 mb-2">
-          <span className="text-xs text-muted-foreground">Posting to:</span>
+          <span className="text-xs text-muted-foreground">{t.common.posting || 'Posting to:'}</span>
           <span className="flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
             <CircleDot className="w-3 h-3" /> {selectedCircle.name}
             <button onClick={() => setSelectedCircle(null)} className="ml-1 hover:text-red-500">
@@ -336,7 +338,7 @@ export default function CreatePostBox() {
       <div className="relative">
         <Textarea
           ref={textareaRef}
-          placeholder="Write something what you want post..."
+          placeholder={t.createPost.placeholder}
           value={content}
           onChange={handleContentChange}
           className={`min-h-[80px] border-border resize-none mb-1 ${validationError ? 'border-destructive' : ''}`}
@@ -421,6 +423,7 @@ export default function CreatePostBox() {
             >
               <CircleDot className="w-3.5 h-3.5" />
               Circle
+              {selectedCircle && <span className="ml-1 font-semibold truncate max-w-[80px]">{selectedCircle.name}</span>}
               <ChevronDown className="w-3 h-3" />
             </button>
 
@@ -437,7 +440,7 @@ export default function CreatePostBox() {
                       type="text"
                       value={circleSearch}
                       onChange={(e) => setCircleSearch(e.target.value)}
-                      placeholder="Search circles..."
+                      placeholder={t.createPost.searchCircles}
                       className="w-full h-8 text-xs rounded-lg border border-border bg-muted/50 px-2.5 outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-muted-foreground/60"
                       autoFocus
                     />
@@ -448,12 +451,12 @@ export default function CreatePostBox() {
                       onClick={() => { setSelectedCircle(null); setShowCirclePicker(false); setCircleSearch(''); }}
                       className="w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:bg-secondary text-left"
                     >
-                      <span className="flex-1">Public (no circle)</span>
+                      <span className="flex-1">{t.createPost.public}</span>
                       {!selectedCircle && <Check className="w-3.5 h-3.5 text-primary" />}
                     </button>
                     {filtered.length === 0 ? (
                       <p className="px-3 py-2 text-xs text-muted-foreground">
-                        {circleSearch.trim() ? 'No matching circles.' : "You haven't joined any circles yet."}
+                        {circleSearch.trim() ? t.createPost.noMatchingCircles : t.createPost.noCirclesYet}
                       </p>
                     ) : (
                       filtered.map((c) => (
@@ -481,7 +484,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 text-xs font-medium hover:bg-green-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'photo' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Image className="w-3.5 h-3.5" />}
-            Photo
+            {t.createPost.photo}
           </button>
 
           {/* Video button */}
@@ -491,7 +494,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-600 text-xs font-medium hover:bg-purple-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'video' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Video className="w-3.5 h-3.5" />}
-            Video
+            {t.createPost.video}
           </button>
 
           {/* File button */}
@@ -502,7 +505,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-medium hover:bg-amber-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'file' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
-            {uploading && uploadingType === 'file' ? 'Uploading...' : 'File'}
+            {uploading && uploadingType === 'file' ? t.createPost.uploading : t.createPost.file}
           </button>
         </div>
 
@@ -512,7 +515,7 @@ export default function CreatePostBox() {
           size="sm"
           className="rounded-full bg-primary hover:bg-primary/90 px-5"
         >
-          {createPost.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Post'}
+          {createPost.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : t.createPost.post}
         </Button>
       </div>
 
