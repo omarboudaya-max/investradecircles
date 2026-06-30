@@ -24,6 +24,7 @@ import CircleMonetization from '@/components/circles/CircleMonetization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 function ResponseVotes({ response, userId }) {
   const queryClient = useQueryClient();
@@ -71,6 +72,7 @@ function ResponseVotes({ response, userId }) {
 }
 
 export default function CircleDetail() {
+  const t = useTranslation();
   const { id } = useParams();
   const { user } = useAuth();
   const queryClient = useQueryClient();
