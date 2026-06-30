@@ -183,7 +183,7 @@ export default function Messages() {
 
   const sendMessage = useMutation({
     mutationFn: async () => {
-      await supabase.from('DirectMessage').insert({
+      const { error } = await supabase.from('DirectMessage').insert({
         conversation_id: activeConvId,
         sender_id: user.id,
         recipient_id: activeParticipant.id,
@@ -192,6 +192,7 @@ export default function Messages() {
         sender_avatar: user.avatar_url || null,
         is_read: false,
       });
+      if (error) throw error;
     },
     onSuccess: () => {
       setNewMessage('');

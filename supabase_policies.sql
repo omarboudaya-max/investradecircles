@@ -102,3 +102,4 @@ CREATE INDEX IF NOT EXISTS idx_dm_conversation_id ON public."DirectMessage"(conv
 -- Enable realtime for Post and Comment tables (for live likes and comments)
 ALTER PUBLICATION supabase_realtime ADD TABLE public."Post";
 ALTER PUBLICATION supabase_realtime ADD TABLE public."Comment";
+ALTER PUBLICATION supabase_realtime ADD TABLE public."DirectMessage";
