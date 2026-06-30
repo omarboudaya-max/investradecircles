@@ -19,15 +19,15 @@ export default function WebsiteNavbar() {
 
   return (
     <header className="relative z-20">
-      <nav className={`max-w-6xl mx-auto px-6 py-6 flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
+      <nav className={`max-w-6xl mx-auto px-6 py-6 flex items-center justify-between`}>
         <div className="flex items-center gap-3">
-          <Link to="/" className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <Link to="/" className={`flex items-center gap-3`}>
             <div className="w-8 h-8 rounded-full bg-[#38bdf8] flex items-center justify-center text-[#030914] font-bold italic font-serif">i</div>
             <div className="font-bold tracking-tight text-white text-xl">investrade</div>
           </Link>
         </div>
 
-        <div className={`hidden sm:flex items-center gap-8 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div className={`hidden sm:flex items-center gap-8`}>
           {links.map(link => (
             <Link 
               key={link.path} 
@@ -39,7 +39,7 @@ export default function WebsiteNavbar() {
           ))}
         </div>
         
-        <div className={`hidden sm:flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div className={`hidden sm:flex items-center gap-4`}>
           {/* Language toggle */}
           <button
             onClick={toggleLanguage}

@@ -86,12 +86,12 @@ export default function CreateCircle() {
   return (
     <>
       <div className={`max-w-xl mx-auto ${isArabic ? 'text-right' : 'text-left'}`}>
-        <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6`}>
           <ArrowLeft className={`w-4 h-4 ${isArabic ? 'rotate-180' : ''}`} /> {t.createCircle.backToHome}
         </Link>
 
         <div className="bg-card rounded-2xl border shadow-sm p-6 md:p-8">
-          <div className={`flex items-center gap-3 mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center gap-3 mb-6`}>
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <Users className="w-6 h-6 text-primary" />
             </div>
@@ -162,7 +162,7 @@ export default function CreateCircle() {
             {/* Website URL — mandatory for Institution */}
             {isInstitution && (
               <div>
-                <Label className={`mb-1.5 flex items-center gap-1.5 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <Label className={`mb-1.5 flex items-center gap-1.5`}>
                   <Globe className="w-4 h-4 text-muted-foreground" />
                   {t.createCircle.website}
                   <span className="text-red-500 font-bold text-base leading-none">★</span>

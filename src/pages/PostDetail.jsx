@@ -37,7 +37,7 @@ export default function PostDetail() {
         </Helmet>
       )}
 
-      <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors ${isArabic ? 'flex-row-reverse' : ''}`}>
+      <Link to="/home" className={`flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors`}>
         <ArrowLeft className={`w-4 h-4 ${isArabic ? 'rotate-180' : ''}`} /> {t.postDetail.backToFeed}
       </Link>
 

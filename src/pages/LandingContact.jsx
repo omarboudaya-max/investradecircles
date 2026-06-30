@@ -51,7 +51,7 @@ export default function LandingContact() {
             <textarea name="message" required className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10 focus:outline-none focus:border-cyan-500 transition-colors" rows="5" placeholder={t.contact.messagePlaceholder} dir={isArabic ? 'rtl' : 'ltr'}></textarea>
           </label>
 
-          <div className={`flex items-center gap-4 pt-2 flex-wrap ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center gap-4 pt-2 flex-wrap`}>
             <button type="submit" className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-100 transition-colors">{t.contact.send}</button>
             <a href="mailto:hello@investraders.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">{t.contact.orEmail}</a>
           </div>

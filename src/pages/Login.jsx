@@ -121,7 +121,7 @@ export default function Login() {
                 {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
               </div>
               <div>
-                <div className={`flex items-center justify-between mb-1.5 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex items-center justify-between mb-1.5`}>
                   <label className="text-sm font-medium text-foreground">{t.login.password}</label>
                   <Link to="/forgot-password" className="text-xs text-blue-600 hover:underline font-medium">
                     {t.login.forgotPassword}

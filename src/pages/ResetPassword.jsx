@@ -33,7 +33,7 @@ export default function ResetPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 flex items-center justify-center p-4">
       <div className={`w-full max-w-md bg-card rounded-2xl shadow-2xl p-8 md:p-12 ${isArabic ? 'text-right' : 'text-left'}`}>
-        <div className={`flex items-center gap-2 mb-8 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex items-center gap-2 mb-8`}>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>

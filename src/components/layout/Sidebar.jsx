@@ -47,7 +47,7 @@ export default function Sidebar() {
               to={item.path}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              } ${isArabic ? 'flex-row-reverse' : ''}`}
+              }`}
             >
               <item.icon className="w-5 h-5 shrink-0" />
               {item.label}
@@ -59,7 +59,7 @@ export default function Sidebar() {
 
       {/* Your Circles */}
       <div className="border-t pt-4">
-        <div className={`flex items-center justify-between px-3 mb-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div className="flex items-center justify-between px-3 mb-3">
           <h3 className="text-sm font-semibold text-foreground">{t.sidebar.yourCreatedCircles}</h3>
           <Link to="/my-circles?filter=created" className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
             <Eye className="w-3 h-3 text-primary" />
@@ -73,11 +73,11 @@ export default function Sidebar() {
               <Link
                 key={circle.id}
                 to={`/circle/${circle.id}`}
-                className={`flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-colors group ${isArabic ? 'flex-row-reverse' : ''}`}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-colors group"
               >
                 <CircleIcon category={circle.category} size="md" websiteUrl={circle.website_url} />
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium text-foreground truncate flex items-center gap-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                  <p className="text-sm font-medium text-foreground truncate flex items-center gap-1">
                     {circle.name}
                     {unreadCount > 0 && (
                       <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{unreadCount}</span>
@@ -94,7 +94,7 @@ export default function Sidebar() {
         </div>
 
         {createdCircles.length > 5 && (
-          <Link to="/my-circles?filter=created" className={`flex items-center gap-1 px-3 mt-3 text-sm text-primary hover:underline font-medium ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <Link to="/my-circles?filter=created" className="flex items-center gap-1 px-3 mt-3 text-sm text-primary hover:underline font-medium">
             {t.sidebar.viewAllCircles}
           </Link>
         )}
