@@ -208,7 +208,7 @@ export default function Register() {
             <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
               <TrendingUp className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Investraders</h1>
+            <h1 className="text-3xl font-bold text-white mb-2"><a href="https://www.investraders.net/" target="_blank" rel="noopener noreferrer">Investraders</a></h1>
             <p className="text-white/80 text-sm mb-10">Make Money Meanwhile -3M</p>
             <div className="w-px h-8 bg-white/30 mx-auto mb-8" />
             <p className="text-white/90 font-medium mb-2">Already have an account?</p>
