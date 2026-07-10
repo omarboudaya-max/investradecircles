@@ -266,7 +266,7 @@ export default function Onboarding() {
                             {person.avatar_url ? <img src={person.avatar_url} className="w-full h-full object-cover" /> : (person.full_name || 'U').charAt(0)}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-sm truncate">{person.full_name || person.email.split('@')[0]}</p>
+                            <p className="font-medium text-sm truncate">{person.full_name || person.email?.split('@')[0] || 'User'}</p>
                             <p className="text-xs text-muted-foreground truncate">{person.headline || 'User'}</p>
                           </div>
                         </div>

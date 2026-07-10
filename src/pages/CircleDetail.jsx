@@ -20,6 +20,7 @@ import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import CircleFeed from '@/components/circles/CircleFeed';
 import { TagBadge } from '@/components/circles/TagPicker';
 import InstitutionalCircleLayout from '@/components/circles/InstitutionalCircleLayout';
+import ChamberOfCommerceLayout from '@/components/circles/ChamberOfCommerceLayout';
 import CircleMonetization from '@/components/circles/CircleMonetization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -275,7 +276,8 @@ export default function CircleDetail() {
     );
   }
 
-  const isInstitutional = circle?.category === 'institution';
+  const isInstitutional = circle?.category === 'institution' || circle?.category === 'chamber_of_commerce';
+  const isChamberOfCommerce = circle?.category === 'chamber_of_commerce';
 
   // Shared institutional layout props
   const institutionalProps = {
@@ -340,6 +342,8 @@ export default function CircleDetail() {
               <h3 className="text-lg font-bold text-foreground mb-1">{t.circleDetail.privateInstitution}</h3>
               <p className="text-sm max-w-md mx-auto">{t.circleDetail.mustBeMemberInst}</p>
             </div>
+          ) : isChamberOfCommerce ? (
+            <ChamberOfCommerceLayout {...institutionalProps} />
           ) : (
             <InstitutionalCircleLayout {...institutionalProps} />
           )}

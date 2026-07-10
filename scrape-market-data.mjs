@@ -4,8 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 
 // Load env variables from .env.local
 const envPath = path.join(process.cwd(), '.env.local');
-let supabaseUrl = '';
-let supabaseAnonKey = '';
+let supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
 
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
@@ -15,14 +15,14 @@ if (fs.existsSync(envPath)) {
     if (parts.length >= 2) {
       const key = parts[0].trim();
       const val = parts.slice(1).join('=').trim();
-      if (key === 'VITE_SUPABASE_URL') supabaseUrl = val;
-      if (key === 'VITE_SUPABASE_ANON_KEY') supabaseAnonKey = val;
+      if (key === 'VITE_SUPABASE_URL' && !supabaseUrl) supabaseUrl = val;
+      if (key === 'VITE_SUPABASE_ANON_KEY' && !supabaseAnonKey) supabaseAnonKey = val;
     }
   }
 }
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Error: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be defined in .env.local');
+  console.error('Error: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be defined in environment or .env.local');
   process.exit(1);
 }
 

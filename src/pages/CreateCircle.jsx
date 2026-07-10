@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Users, ArrowLeft, Landmark, User, Globe, AlertCircle } from 'lucide-react';
+import { Users, ArrowLeft, Landmark, User, Globe, AlertCircle, Briefcase } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import TagPicker from '@/components/circles/TagPicker';
@@ -20,6 +20,13 @@ const CATEGORIES = [
     gradient: 'linear-gradient(135deg,#0f172a,#1e3a8a)',
     iconColor: 'text-amber-300',
     borderColor: 'border-amber-400/40',
+  },
+  {
+    value: 'chamber_of_commerce',
+    Icon: Briefcase,
+    gradient: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
+    iconColor: 'text-blue-200',
+    borderColor: 'border-blue-400/40',
   },
   {
     value: 'individual',
@@ -46,7 +53,7 @@ export default function CreateCircle() {
   const t = useTranslation();
   const { isArabic } = useLanguage();
 
-  const isInstitution = category === 'institution';
+  const isInstitution = category === 'institution' || category === 'chamber_of_commerce';
   const activeMeta = CATEGORIES.find(c => c.value === category);
 
   const handleSubmit = async (e) => {
@@ -124,8 +131,8 @@ export default function CreateCircle() {
                       >
                         <Icon className={`w-5 h-5 ${iconColor}`} />
                       </div>
-                      <p className="font-semibold text-sm">{value === 'institution' ? t.createCircle.institution : t.createCircle.individual}</p>
-                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-3">{value === 'institution' ? t.createCircle.institutionDesc : t.createCircle.individualDesc}</p>
+                      <p className="font-semibold text-sm">{value === 'institution' ? t.createCircle.institution : value === 'chamber_of_commerce' ? t.createCircle.chamberOfCommerce : t.createCircle.individual}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-3">{value === 'institution' ? t.createCircle.institutionDesc : value === 'chamber_of_commerce' ? t.createCircle.chamberOfCommerceDesc : t.createCircle.individualDesc}</p>
                       {selected && (
                         <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
                           <span className="w-2 h-2 rounded-full bg-card" />

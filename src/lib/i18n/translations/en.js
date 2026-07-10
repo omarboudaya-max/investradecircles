@@ -353,6 +353,8 @@ const en = {
     subtitle: 'Build a community around shared interests',
     institution: 'Institution',
     institutionDesc: 'Designed for chambers of commerce, stock exchanges, universities, institutions and businesses to convene members, clients and stakeholders in a branded professional space.',
+    chamberOfCommerce: 'Chamber of Commerce',
+    chamberOfCommerceDesc: 'Connect businesses, trade resources, and local opportunities.',
     individual: 'Individual',
     individualDesc: 'For the public to convene their community in a professional space of discussion and congregating Wise Decisions.',
     name: 'Circle Name',
