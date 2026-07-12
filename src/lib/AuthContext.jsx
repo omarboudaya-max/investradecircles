@@ -37,9 +37,20 @@ export const AuthProvider = ({ children }) => {
     checkUserAuth().finally(() => clearTimeout(fallbackTimer));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         try {
           if (session?.user) {
+            if (event === 'TOKEN_REFRESHED') {
+              // Only update the session data, don't re-fetch profile from DB 
+              // to prevent race conditions and unnecessary DB calls that can freeze the app
+              setUser(prevUser => {
+                if (!prevUser) return null;
+                return { ...prevUser, ...session.user };
+              });
+              setIsAuthenticated(true);
+              return;
+            }
+
             const profile = await fetchProfile(session.user.id);
             const metadata = session.user.user_metadata || {};
             const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
