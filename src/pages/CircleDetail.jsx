@@ -21,6 +21,7 @@ import CircleFeed from '@/components/circles/CircleFeed';
 import { TagBadge } from '@/components/circles/TagPicker';
 import InstitutionalCircleLayout from '@/components/circles/InstitutionalCircleLayout';
 import ChamberOfCommerceLayout from '@/components/circles/ChamberOfCommerceLayout';
+import CCITunisLayout from '@/components/circles/CCITunisLayout';
 import CircleMonetization from '@/components/circles/CircleMonetization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -342,6 +343,8 @@ export default function CircleDetail() {
               <h3 className="text-lg font-bold text-foreground mb-1">{t.circleDetail.privateInstitution}</h3>
               <p className="text-sm max-w-md mx-auto">{t.circleDetail.mustBeMemberInst}</p>
             </div>
+          ) : isChamberOfCommerce && (circle?.name === 'CCI Tunis' || circle?.name === 'CCITunis') ? (
+            <CCITunisLayout {...institutionalProps} />
           ) : isChamberOfCommerce ? (
             <ChamberOfCommerceLayout {...institutionalProps} />
           ) : (
