@@ -72,8 +72,24 @@ const AuthenticatedApp = () => {
             ) : null
           ) : (
             <Routes>
-              {/* Default root path redirects to home if logged in, or login if guest */}
-              <Route path="/" element={user ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} />
+              {/* Root path '/': renders Landing page for web visitors, or redirects to login/home in mobile app container */}
+              <Route 
+                path="/" 
+                element={
+                  user ? (
+                    <Navigate to="/home" replace />
+                  ) : (typeof window !== 'undefined' && (
+                    window.matchMedia('(display-mode: standalone)').matches ||
+                    window.navigator.standalone === true ||
+                    !!window.ReactNativeWebView ||
+                    !!window.Capacitor
+                  )) ? (
+                    <Navigate to="/login" replace />
+                  ) : (
+                    <Landing />
+                  )
+                } 
+              />
               <Route path="/institutions" element={<LandingInstitutions />} />
               <Route path="/individuals" element={<LandingIndividuals />} />
               <Route path="/3m" element={<Landing3M />} />

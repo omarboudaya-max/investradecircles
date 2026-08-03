@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/AuthContext';
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
 import WebsiteFooter from '@/components/layout/WebsiteFooter';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import DownloadAppButton from '@/components/layout/DownloadAppButton';
 
 export default function Landing() {
   const { user, isLoadingAuth } = useAuth();
@@ -79,12 +80,10 @@ export default function Landing() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/register" className="inline-flex items-center justify-center gap-2 bg-[#38bdf8] text-[#030914] font-bold px-8 py-3.5 rounded-full text-base transition-all hover:bg-[#7dd3fc] shadow-[0_0_20px_rgba(56,189,248,0.4)]">
-              {t.landing.getStarted}
+            <DownloadAppButton className="px-8 py-3.5 rounded-full text-base" />
+            <Link to="/login" className="inline-flex items-center justify-center gap-2 bg-[#38bdf8] text-[#030914] font-bold px-8 py-3.5 rounded-full text-base transition-all hover:bg-[#7dd3fc] shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+              Sign In / Open Web App
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Link>
-            <Link to="/login" className="inline-flex items-center justify-center gap-2 border border-white/20 text-white font-medium px-8 py-3.5 rounded-full text-base transition-colors hover:bg-white/5">
-              {t.landing.learnMore}
             </Link>
           </div>
         </section>

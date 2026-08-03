@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import DownloadAppButton from '@/components/layout/DownloadAppButton';
 
 export default function WebsiteNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +49,7 @@ export default function WebsiteNavbar() {
           >
             {isArabic ? 'EN' : 'ع'}
           </button>
+          <DownloadAppButton variant="compact" />
           <Link to="/login" className="text-sm text-gray-300 hover:text-white font-medium transition-colors">{t.websiteNav.signIn}</Link>
           <Link to="/register" className="px-5 py-2 rounded-full bg-[#38bdf8] text-[#030914] font-bold text-sm hover:bg-[#7dd3fc] transition-colors shadow-[0_0_15px_rgba(56,189,248,0.3)]">{t.websiteNav.getStarted}</Link>
         </div>
@@ -84,6 +86,7 @@ export default function WebsiteNavbar() {
               >
                 {isArabic ? 'English' : 'عربي'}
               </button>
+              <DownloadAppButton className="w-full" />
               <Link to="/login" className="text-white font-semibold py-2 text-center rounded-lg bg-white/5 hover:bg-white/10" onClick={() => setIsOpen(false)}>{t.websiteNav.signIn}</Link>
               <Link to="/register" className="text-[#030914] font-bold py-2 text-center rounded-lg bg-[#38bdf8] hover:bg-[#7dd3fc]" onClick={() => setIsOpen(false)}>{t.websiteNav.getStarted}</Link>
             </div>
