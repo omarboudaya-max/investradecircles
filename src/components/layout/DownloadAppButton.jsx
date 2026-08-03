@@ -5,12 +5,17 @@ import { Button } from '@/components/ui/button';
 export default function DownloadAppButton({ variant = 'default', className = '' }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [installed, setInstalled] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Detect mobile device
-    const mobileCheck = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    setIsMobile(mobileCheck);
+    // Check if running inside mobile container / installed standalone app
+    const inStandalone = (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true ||
+      !!window.ReactNativeWebView ||
+      !!window.Capacitor
+    );
+    setIsStandalone(inStandalone);
 
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
@@ -31,22 +36,37 @@ export default function DownloadAppButton({ variant = 'default', className = '' 
     };
   }, []);
 
-  const handleInstallClick = async () => {
+  // HIDE completely if already inside mobile app container!
+  if (isStandalone) {
+    return null;
+  }
+
+  const handleInstallClick = async (e) => {
+    e.preventDefault();
+
+    // 1. Try PWA installation prompt if available
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setInstalled(true);
-      }
-      setDeferredPrompt(null);
-    } else {
-      // Fallback guide or direct download prompt
-      if (isMobile) {
-        alert('To download & install Investraders on your phone:\n1. Tap your browser menu (3 dots or Share icon)\n2. Select "Add to Home screen" or "Install App"');
-      } else {
-        alert('To install Investraders on your computer:\nTap the install icon in your browser address bar.');
+      try {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          setInstalled(true);
+          setDeferredPrompt(null);
+          return;
+        }
+      } catch (err) {
+        console.log('PWA prompt error:', err);
       }
     }
+
+    // 2. Direct APK Download link fallback
+    const apkUrl = '/downloads/Investraders.apk';
+    const link = document.createElement('a');
+    link.href = apkUrl;
+    link.download = 'Investraders.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (installed) {
@@ -59,25 +79,31 @@ export default function DownloadAppButton({ variant = 'default', className = '' 
 
   if (variant === 'compact') {
     return (
-      <button
+      <a
+        href="/downloads/Investraders.apk"
+        download="Investraders.apk"
         onClick={handleInstallClick}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-all shadow-sm ${className}`}
-        title="Download & Install App"
+        title="Download APK / Install Mobile App"
       >
         <Download className="w-3.5 h-3.5" />
         <span>Download App</span>
-      </button>
+      </a>
     );
   }
 
   return (
-    <Button
+    <a
+      href="/downloads/Investraders.apk"
+      download="Investraders.apk"
       onClick={handleInstallClick}
-      className={`rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold shadow-md gap-2 ${className}`}
+      className={`rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold shadow-md gap-2 flex items-center justify-between px-4 py-3 ${className}`}
     >
-      <Smartphone className="w-4 h-4" />
-      <span>Download App</span>
-      <Download className="w-4 h-4 ml-auto" />
-    </Button>
+      <div className="flex items-center gap-2">
+        <Smartphone className="w-4 h-4" />
+        <span>Download Mobile App</span>
+      </div>
+      <Download className="w-4 h-4" />
+    </a>
   );
 }
