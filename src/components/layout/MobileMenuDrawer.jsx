@@ -106,7 +106,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                 </button>
               </div>
 
-              <div className="p-4 space-y-5 flex-1">
+              <div className="p-4 pb-28 sm:pb-12 space-y-5 flex-1">
                 
                 {/* User Profile Card */}
                 <div 
