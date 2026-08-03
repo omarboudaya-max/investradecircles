@@ -1,0 +1,28 @@
+# Ignore dependencies & node_modules
+node_modules/
+.npm-cache/
+.cache/
+
+# Ignore local Expo & build caches
+.expo/
+dist/
+web-build/
+
+# Ignore native folders
+android/
+ios/
+mobile/android/
+mobile/ios/
+mobile/node_modules/
+mobile/.npm-cache/
+mobile/.expo/
+
+# Ignore binaries & logs
+*.apk
+*.aab
+*.tar.gz
+*.zip
+*.log
+
+# Ignore Git
+.git/

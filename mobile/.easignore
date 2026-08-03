@@ -1,0 +1,37 @@
+# Ignore dependencies & node_modules (EAS installs clean npm modules on the build server)
+node_modules/
+.npm-cache/
+.cache/
+
+# Ignore local Expo & Metro build caches
+.expo/
+dist/
+web-build/
+.metro-health-check*
+
+# Ignore generated native build folders (EAS generates fresh native projects on the server)
+android/
+ios/
+
+# Ignore binaries, keys & logs
+*.apk
+*.aab
+*.tar.gz
+*.zip
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Ignore Git
+.git/
+.github/
+
+# OS files
+.DS_Store
+Thumbs.db
