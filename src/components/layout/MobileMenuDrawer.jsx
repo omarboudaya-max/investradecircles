@@ -211,6 +211,23 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     <User className="w-6 h-6 text-rose-600" />
                     <span className="text-sm font-semibold text-foreground">My Profile</span>
                   </div>
+
+                  {/* Admin Dashboard Tile for Admin Accounts */}
+                  {(user?.role === 'admin' || user?.is_admin || userProfile?.role === 'admin' || userProfile?.is_admin || user?.app_metadata?.role === 'admin') && (
+                    <div 
+                      onClick={() => handleNav('/admin')}
+                      className="bg-amber-500/10 dark:bg-amber-500/20 rounded-2xl p-3.5 shadow-sm border border-amber-500/40 flex flex-col gap-2 cursor-pointer hover:bg-amber-500/20 transition-all col-span-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="w-6 h-6 text-amber-500" />
+                          <span className="text-sm font-bold text-foreground">Admin Dashboard</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-full">Admin Only</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Manage users, circles, posts, and audit logs</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Expandable Section 1: Settings and privacy */}

@@ -42,6 +42,8 @@ export function hasPermission(user, permission) {
 export function hasRole(user, requiredRole) {
   if (!user) return false;
   if (requiredRole === 'user') return true;
-  if (requiredRole === 'admin') return user.role === 'admin';
+  if (requiredRole === 'admin') {
+    return user.role === 'admin' || user.is_admin === true || user.app_metadata?.role === 'admin' || user.user_metadata?.role === 'admin';
+  }
   return false;
 }
