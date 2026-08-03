@@ -309,9 +309,9 @@ export default function CircleDetail() {
         </Helmet>
       )}
 
-      <Link to="/home" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
-        <ArrowLeft className="w-4 h-4" /> Back to Home
-      </Link>
+      <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 p-1">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
 
       {/* ── Institutional/Business: premium AI-finance layout ── */}
       {isInstitutional ? (

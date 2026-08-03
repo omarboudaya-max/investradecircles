@@ -69,8 +69,7 @@ export default function StoryBar() {
   const avatarUrl = userProfile?.avatar_url || null;
 
   return (
-    <div className="mb-6">
-      <p className="text-sm text-muted-foreground mb-3">{t.storyBar.watchStories}</p>
+    <div className="mb-5">
       <div className="flex gap-3 overflow-x-auto pb-2">
         {/* My Profile link */}
         <Link to="/profile" className="flex flex-col items-center gap-1 cursor-pointer shrink-0">

@@ -224,6 +224,11 @@ export default function Messages() {
     return groups;
   }, [convMessages]);
 
+  useEffect(() => {
+    window.__activeChatOpen = !!activeConvId;
+    return () => { window.__activeChatOpen = false; };
+  }, [activeConvId]);
+
   return (
     <div className="max-w-5xl mx-auto px-2 md:px-0">
       <div className="bg-card border rounded-2xl shadow-sm overflow-hidden flex" style={{ height: 'calc(100vh - 6rem)' }}>
@@ -313,7 +318,11 @@ export default function Messages() {
               {/* Header */}
               <div className="px-4 py-3 border-b flex items-center gap-3 bg-card/80">
                 <button
-                  onClick={() => { setActiveConvId(null); setActiveParticipant(null); }}
+                  onClick={() => { 
+                    setActiveConvId(null); 
+                    setActiveParticipant(null); 
+                    window.__activeChatOpen = false;
+                  }}
                   className="md:hidden p-1.5 rounded-full hover:bg-muted transition-colors"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -345,16 +354,47 @@ export default function Messages() {
                   }
                   const msg = item.msg;
                   const isMine = msg.sender_id === user?.id;
+
+                  // Clustering check: consecutive messages < 2 minutes apart from same sender
+                  const prevMsgItem = idx > 0 && groupedMessages[idx - 1]?.type === 'msg' ? groupedMessages[idx - 1].msg : null;
+                  const nextMsgItem = idx < groupedMessages.length - 1 && groupedMessages[idx + 1]?.type === 'msg' ? groupedMessages[idx + 1].msg : null;
+
+                  const msgTime = new Date(msg.created_date || 0).getTime();
+                  const nextTime = nextMsgItem ? new Date(nextMsgItem.created_date || 0).getTime() : 0;
+                  const prevTime = prevMsgItem ? new Date(prevMsgItem.created_date || 0).getTime() : 0;
+
+                  const sameSenderAsNext = nextMsgItem && nextMsgItem.sender_id === msg.sender_id;
+                  const sameSenderAsPrev = prevMsgItem && prevMsgItem.sender_id === msg.sender_id;
+
+                  const isGroupedWithNext = sameSenderAsNext && Math.abs(nextTime - msgTime) <= 120000;
+                  const isGroupedWithPrev = sameSenderAsPrev && Math.abs(msgTime - prevTime) <= 120000;
+
                   return (
-                    <div key={msg.id} className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}>
-                      {!isMine && <Avatar src={msg.sender_avatar} name={msg.sender_name} size="sm" />}
-                      <div className={`max-w-[72%] flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
-                        <div className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm ${isMine ? 'bg-blue-600 text-white rounded-br-md' : 'bg-card text-foreground rounded-bl-md border'}`}>
+                    <div 
+                      key={msg.id} 
+                      className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-2'}`}
+                    >
+                      {!isMine && (
+                        <div className="w-7 h-7 shrink-0">
+                          {!isGroupedWithNext && <Avatar src={msg.sender_avatar} name={msg.sender_name} size="sm" />}
+                        </div>
+                      )}
+                      <div className={`max-w-[75%] flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
+                        <div 
+                          className={`px-3.5 py-2 text-sm shadow-sm ${
+                            isMine 
+                              ? 'bg-blue-600 text-white rounded-2xl rounded-br-xs' 
+                              : 'bg-card text-foreground rounded-2xl rounded-bl-xs border'
+                          }`}
+                        >
                           <p className="leading-relaxed break-words">{msg.content}</p>
                         </div>
-                        <p className="text-[10px] mt-1 px-1 text-muted-foreground">
-                          {msg.created_date ? format(new Date(msg.created_date), 'HH:mm') : ''}
-                        </p>
+                        {/* Only show timestamp if NOT grouped with next message */}
+                        {!isGroupedWithNext && (
+                          <p className="text-[9px] mt-0.5 px-1 text-muted-foreground/70">
+                            {msg.created_date ? format(new Date(msg.created_date), 'HH:mm') : ''}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );

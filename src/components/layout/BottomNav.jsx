@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, PlusCircle, Globe, Users } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import { triggerHaptic } from '@/utils/haptics';
 
 export default function BottomNav() {
   const location = useLocation();
   const t = useTranslation();
+  const [hideNav, setHideNav] = useState(false);
+
+  useEffect(() => {
+    // Check if user is in an active chat conversation or typing
+    const searchParams = new URLSearchParams(location.search);
+    const hasActiveChat = location.pathname === '/messages' && (searchParams.has('with') || window.__activeChatOpen);
+    setHideNav(hasActiveChat);
+  }, [location]);
+
+  if (hideNav) return null;
 
   const NAV_ITEMS = [
     { label: t.bottomNav.home, icon: Home, path: '/home' },
@@ -15,20 +26,23 @@ export default function BottomNav() {
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-      <div className="flex items-center justify-around h-16 px-2">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border z-50 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center justify-around h-16 px-3">
         {NAV_ITEMS.map((item) => {
           const active = location.pathname === item.path || (item.path === '/home' && location.pathname === '/');
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+              onClick={() => triggerHaptic('light')}
+              className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all ${
+                active 
+                  ? 'bg-blue-600/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold scale-105 shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <item.icon className={`w-5 h-5 ${active ? 'fill-primary/20' : ''}`} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <item.icon className={`w-5 h-5 transition-transform ${active ? 'fill-blue-600/20 text-blue-600 dark:text-blue-400 scale-110' : ''}`} />
+              <span className="text-[10px] font-semibold mt-0.5">{item.label}</span>
             </Link>
           );
         })}

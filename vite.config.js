@@ -7,6 +7,10 @@ export default defineConfig({
   plugins: [
     react(),
   ],
+  server: {
+    host: true, // Expose to local network so mobile devices can access it
+    port: 5173,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

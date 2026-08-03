@@ -38,8 +38,10 @@ import GlobalLoader from '@/components/layout/GlobalLoader';
 
 import Onboarding from '@/pages/Onboarding';
 
+import Notifications from '@/pages/Notifications';
+
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const [animationDone, setAnimationDone] = useState(false);
 
   useEffect(() => {
@@ -49,9 +51,7 @@ const AuthenticatedApp = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const location = useLocation();
-  const isWebsiteRoute = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/institutions', '/individuals', '/3m', '/contact'].includes(location.pathname);
-  const showLoader = isLoadingPublicSettings || isLoadingAuth || (!isWebsiteRoute && !animationDone);
+  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
 
   return (
     <>
@@ -72,7 +72,8 @@ const AuthenticatedApp = () => {
             ) : null
           ) : (
             <Routes>
-              <Route path="/" element={<Landing />} />
+              {/* Default root path redirects to home if logged in, or login if guest */}
+              <Route path="/" element={user ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} />
               <Route path="/institutions" element={<LandingInstitutions />} />
               <Route path="/individuals" element={<LandingIndividuals />} />
               <Route path="/3m" element={<Landing3M />} />
@@ -82,7 +83,7 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/" replace />} />}>
+              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route element={<AppLayout />}>
                   <Route path="/home" element={<Home />} />
@@ -93,6 +94,7 @@ const AuthenticatedApp = () => {
                   <Route path="/profile" element={<UserProfile />} />
                   <Route path="/profile/:userId" element={<UserProfile />} />
                   <Route path="/messages" element={<Messages />} />
+                  <Route path="/notifications" element={<Notifications />} />
                   <Route path="/join-circle" element={<JoinCircle />} />
                   <Route path="/saved" element={<SavedPosts />} />
                   <Route path="/post/:id" element={<PostDetail />} />

@@ -309,7 +309,6 @@ export default function CreatePostBox() {
           <Link to={`/profile/${user?.id}`} className="hover:underline">
             <p className="text-sm font-semibold">{displayName}</p>
           </Link>
-          <p className="text-xs text-muted-foreground">{t.createPost.placeholder}</p>
         </div>
         <button
           onClick={() => navigate('/create-circle')}

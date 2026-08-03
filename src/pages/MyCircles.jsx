@@ -35,25 +35,25 @@ export default function MyCircles() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-3xl mx-auto pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
-          <Link to="/home" className="text-muted-foreground hover:text-foreground">
+          <Link to="/home" className="text-muted-foreground hover:text-foreground p-1">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold">{showCreatedOnly ? t.myCircles.yourCreatedCircles || 'Your Created Circles' : t.myCircles.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold truncate">{showCreatedOnly ? t.myCircles.yourCreatedCircles || 'Your Created Circles' : t.myCircles.title}</h1>
         </div>
-        <Link to="/create-circle">
-          <Button className="rounded-full bg-primary gap-2">
+        <Link to="/create-circle" className="shrink-0 self-start sm:self-auto">
+          <Button className="rounded-full bg-primary gap-1.5 text-xs sm:text-sm h-9 sm:h-10">
             <Plus className="w-4 h-4" /> {t.createCircle.title}
           </Button>
         </Link>
       </div>
 
       {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
           {Array(4).fill(0).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-2xl" />
+            <Skeleton key={i} className="h-36 rounded-2xl" />
           ))}
         </div>
       ) : (() => {
@@ -63,19 +63,19 @@ export default function MyCircles() {
             : c.created_by_id === user?.id || (c.member_ids || []).includes(user?.id)
         );
         if (myCircles.length === 0) return (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="w-10 h-10 text-primary" />
+          <div className="text-center py-16 px-4">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Users className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">{showCreatedOnly ? t.myCircles.emptyCreated : t.myCircles.emptyJoined}</h3>
-            <p className="text-muted-foreground mb-4">{showCreatedOnly ? t.myCircles.createOne : t.myCircles.exploreCircles}</p>
+            <h3 className="text-base font-semibold mb-2">{showCreatedOnly ? t.myCircles.emptyCreated : t.myCircles.emptyJoined}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{showCreatedOnly ? t.myCircles.createOne : t.myCircles.exploreCircles}</p>
             <Link to="/all-circles">
-              <Button className="rounded-full bg-primary">{t.allCircles.title}</Button>
+              <Button className="rounded-full bg-primary text-xs sm:text-sm">{t.allCircles.title}</Button>
             </Link>
           </div>
         );
         return (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
           {myCircles.map((circle, i) => (
             <motion.div
               key={circle.id}
