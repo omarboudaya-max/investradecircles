@@ -14,6 +14,9 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://earhypzdxwbohdncdzvz.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcmh5cHpkeHdib2hkbmNkenZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1Mzg2OTksImV4cCI6MjA5NzExNDY5OX0.gMKrm7I88A5N-9YS_bi1HnMN1nrVfXMU7ilgrHGGgXw",
+        "EXPO_PUBLIC_WEB_APP_URL": "http://192.168.100.239:5173",
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
     },
@@ -22,6 +25,9 @@
         "buildType": "app-bundle"
       },
       "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://earhypzdxwbohdncdzvz.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcmh5cHpkeHdib2hkbmNkenZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1Mzg2OTksImV4cCI6MjA5NzExNDY5OX0.gMKrm7I88A5N-9YS_bi1HnMN1nrVfXMU7ilgrHGGgXw",
+        "EXPO_PUBLIC_WEB_APP_URL": "http://192.168.100.239:5173",
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
     }
