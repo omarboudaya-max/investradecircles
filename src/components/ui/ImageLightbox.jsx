@@ -54,10 +54,6 @@ export default function ImageLightbox({ src, alt = '', onClose }) {
           draggable={false}
         />
       </div>
-
-      <p className="absolute bottom-4 left-0 right-0 text-center text-white/40 text-xs">
-        Click outside or press Esc to close
-      </p>
     </div>
   );
 }

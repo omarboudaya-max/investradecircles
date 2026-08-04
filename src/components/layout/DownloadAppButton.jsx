@@ -2,19 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Download, Smartphone, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+function checkIsStandalone() {
+  if (typeof window === 'undefined') return false;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true ||
+    !!window.ReactNativeWebView ||
+    !!window.Capacitor ||
+    window.location.search.includes('isMobileApp=true') ||
+    (window.navigator.userAgent && window.navigator.userAgent.includes('InvestradersMobileApp'))
+  );
+}
+
 export default function DownloadAppButton({ variant = 'default', className = '' }) {
   const [installed, setInstalled] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(checkIsStandalone);
 
   useEffect(() => {
-    // Check if running inside mobile container / installed standalone app
-    const inStandalone = (
-      window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true ||
-      !!window.ReactNativeWebView ||
-      !!window.Capacitor
-    );
-    setIsStandalone(inStandalone);
+    // Synchronously check on mount and URL changes
+    setIsStandalone(checkIsStandalone());
 
     const handleAppInstalled = () => {
       setInstalled(true);
@@ -26,13 +32,12 @@ export default function DownloadAppButton({ variant = 'default', className = '' 
     };
   }, []);
 
-  // HIDE completely if user is already inside the mobile app!
+  // HIDE completely if user is already inside the mobile app container!
   if (isStandalone) {
     return null;
   }
 
   const handleDownloadClick = (e) => {
-    // Direct APK Download execution
     const apkUrl = '/downloads/Investraders.apk';
     const link = document.createElement('a');
     link.href = apkUrl;

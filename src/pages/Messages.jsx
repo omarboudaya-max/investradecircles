@@ -403,13 +403,18 @@ export default function Messages() {
               </div>
 
               {/* Input */}
-              <div className="px-4 py-3 border-t bg-card flex items-center gap-2">
+              <div className="px-4 py-3 border-t bg-card flex items-center gap-2 sticky bottom-0">
                 <Input
                   ref={inputRef}
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
+                  onFocus={() => {
+                    setTimeout(() => {
+                      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    }, 200);
+                  }}
                   placeholder={`Message ${activeParticipant?.name}...`}
-                  className="rounded-full flex-1 h-10 bg-muted/50 border-muted focus-visible:ring-1"
+                  className="rounded-full flex-1 h-10 bg-muted/50 border-muted focus-visible:ring-1 text-sm"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey && newMessage.trim()) {
                       e.preventDefault();

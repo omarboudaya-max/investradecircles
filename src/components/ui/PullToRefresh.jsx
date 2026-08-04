@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { triggerHaptic } from '@/utils/haptics';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function PullToRefresh({ onRefresh, children }) {
   const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const containerRef = useRef(null);
+  const queryClient = useQueryClient();
 
   const PULL_THRESHOLD = 70;
 
@@ -33,14 +35,19 @@ export default function PullToRefresh({ onRefresh, children }) {
     if (pullDistance >= PULL_THRESHOLD && !refreshing) {
       setRefreshing(true);
       triggerHaptic('medium');
-      if (onRefresh) {
-        await onRefresh();
+      try {
+        await queryClient.invalidateQueries();
+        if (onRefresh) {
+          await onRefresh();
+        }
+      } catch (err) {
+        console.error('Refresh error:', err);
       }
       setTimeout(() => {
         setRefreshing(false);
         setPullDistance(0);
         setStartY(0);
-      }, 500);
+      }, 600);
     } else {
       setPullDistance(0);
       setStartY(0);

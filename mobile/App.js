@@ -39,7 +39,8 @@ export default function App() {
       <StatusBar style="light" />
       <WebView
         ref={webViewRef}
-        source={{ uri: WEB_APP_URL }}
+        source={{ uri: `${WEB_APP_URL}${WEB_APP_URL.includes('?') ? '&' : '?'}isMobileApp=true` }}
+        userAgent="InvestradersMobileApp/1.0"
         style={styles.webview}
         javaScriptEnabled={true}
         domStorageEnabled={true}

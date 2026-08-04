@@ -215,8 +215,8 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
 
       <div className="px-6 pb-6">
         <div className="border rounded-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
-            <h3 className="text-sm font-semibold flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-900 border-b">
+            <h3 className="text-sm font-semibold flex items-center gap-2 text-foreground">
               <CalendarDays className="w-4 h-4 text-primary" /> Events
             </h3>
             {isMember && (
@@ -229,30 +229,30 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
           <div className="p-4 space-y-4">
             {/* Create Form */}
             {showForm && (
-              <div className="border rounded-xl p-4 space-y-3 bg-muted/30">
+              <div className="border rounded-xl p-4 space-y-3 bg-muted/30 dark:bg-slate-900/60 dark:border-slate-800">
                 <Input
                   placeholder="Event title"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="h-9 text-sm"
+                  className="h-9 text-sm text-foreground bg-background"
                 />
                 <Textarea
                   placeholder="Description (optional)"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="min-h-[60px] text-sm"
+                  className="min-h-[60px] text-sm text-foreground bg-background"
                 />
                 <div className="flex gap-2">
                   <input
                     type="datetime-local"
                     value={form.event_date}
                     onChange={(e) => setForm({ ...form, event_date: e.target.value })}
-                    className="flex-1 h-9 text-sm border border-input rounded-md px-3 bg-background"
+                    className="flex-1 h-9 text-sm border border-input rounded-md px-3 bg-background text-foreground dark:text-white dark:bg-slate-900"
                   />
                   <select
                     value={form.event_type}
                     onChange={(e) => setForm({ ...form, event_type: e.target.value })}
-                    className="h-9 text-sm border border-input rounded-md px-2 bg-background"
+                    className="h-9 text-sm border border-input rounded-md px-2 bg-background text-foreground dark:text-white dark:bg-slate-900"
                   >
                     <option value="discussion">Discussion</option>
                     <option value="meeting">Meeting</option>

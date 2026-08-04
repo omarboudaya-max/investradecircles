@@ -9,10 +9,11 @@ const CANVAS_SCALE = 4; // 4x internal resolution for crisp output
  * - Display size is fixed at 320px; internal canvas renders at CANVAS_SCALE × that
  * - Resulting blob is high-res and matches exactly what the user saw in the preview
  */
-export default function ImageCropModal({ src, aspect, onConfirm, onCancel }) {
+export default function ImageCropModal({ src, aspect = 1, onConfirm, onCancel }) {
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
 
+  const [currentAspect, setCurrentAspect] = useState(aspect || 1);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -22,7 +23,7 @@ export default function ImageCropModal({ src, aspect, onConfirm, onCancel }) {
 
   // Display crop area (CSS size)
   const DISPLAY_W = 320;
-  const DISPLAY_H = aspect ? Math.round(DISPLAY_W / aspect) : 320;
+  const DISPLAY_H = currentAspect ? Math.round(DISPLAY_W / currentAspect) : 320;
 
   // Internal canvas resolution
   const INTERNAL_W = DISPLAY_W * CANVAS_SCALE;
@@ -170,7 +171,32 @@ export default function ImageCropModal({ src, aspect, onConfirm, onCancel }) {
           </button>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground pb-1">
+        {/* Aspect Ratio Selector Pills */}
+        <div className="flex items-center justify-center gap-1.5 px-4 pt-2">
+          <button
+            type="button"
+            onClick={() => setCurrentAspect(1)}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${currentAspect === 1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-muted/60 text-muted-foreground border-border'}`}
+          >
+            1:1 Square
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentAspect(4/3)}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${Math.abs(currentAspect - 4/3) < 0.05 ? 'bg-blue-600 text-white border-blue-600' : 'bg-muted/60 text-muted-foreground border-border'}`}
+          >
+            4:3 Standard
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentAspect(16/9)}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${Math.abs(currentAspect - 16/9) < 0.05 ? 'bg-blue-600 text-white border-blue-600' : 'bg-muted/60 text-muted-foreground border-border'}`}
+          >
+            16:9 Landscape
+          </button>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground pb-1 pt-1">
           Drag to reposition · Use slider to zoom
         </p>
 

@@ -129,18 +129,18 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                 {/* Download App Action Button */}
                 <DownloadAppButton className="w-full py-3 text-sm shadow-md" />
 
-                {/* Your Shortcuts */}
-                <div>
-                  <h4 className="text-xs font-semibold text-muted-foreground mb-2.5 px-1 uppercase tracking-wider">Your Shortcuts</h4>
-                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+                {/* Horizontal Shortcuts Header */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">{t.menuDrawer?.shortcuts || 'Shortcuts'}</span>
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
                     <div 
                       onClick={() => handleNav('/all-circles')}
-                      className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-20"
+                      className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-20 group"
                     >
                       <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-sm">
                         <Globe className="w-7 h-7" />
                       </div>
-                      <span className="text-xs font-medium text-center truncate w-full text-foreground">All Circles</span>
+                      <span className="text-xs font-medium text-center truncate w-full text-foreground">{t.menuDrawer?.allCircles || 'All Circles'}</span>
                     </div>
 
                     {myCircles.map((circle) => (
@@ -169,7 +169,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <Bookmark className="w-6 h-6 text-blue-600" />
-                    <span className="text-sm font-semibold text-foreground">Saved Posts</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.savedPosts || 'Saved Posts'}</span>
                   </div>
 
                   <div 
@@ -177,7 +177,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <Users className="w-6 h-6 text-emerald-600" />
-                    <span className="text-sm font-semibold text-foreground">My Circles</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.myCircles || 'My Circles'}</span>
                   </div>
 
                   <div 
@@ -185,7 +185,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <Globe className="w-6 h-6 text-purple-600" />
-                    <span className="text-sm font-semibold text-foreground">Explore Circles</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.exploreCircles || 'Explore Circles'}</span>
                   </div>
 
                   <div 
@@ -193,7 +193,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <MessageCircle className="w-6 h-6 text-sky-600" />
-                    <span className="text-sm font-semibold text-foreground">Messages</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.messages || 'Messages'}</span>
                   </div>
 
                   <div 
@@ -201,7 +201,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <Bell className="w-6 h-6 text-amber-600" />
-                    <span className="text-sm font-semibold text-foreground">Notifications</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.notifications || 'Notifications'}</span>
                   </div>
 
                   <div 
@@ -209,7 +209,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"
                   >
                     <User className="w-6 h-6 text-rose-600" />
-                    <span className="text-sm font-semibold text-foreground">My Profile</span>
+                    <span className="text-sm font-semibold text-foreground">{t.menuDrawer?.myProfile || 'My Profile'}</span>
                   </div>
 
                   {/* Admin Dashboard Tile for Admin Accounts */}
@@ -221,11 +221,11 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <ShieldCheck className="w-6 h-6 text-amber-500" />
-                          <span className="text-sm font-bold text-foreground">Admin Dashboard</span>
+                          <span className="text-sm font-bold text-foreground">{t.menuDrawer?.adminDashboard || 'Admin Dashboard'}</span>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-full">Admin Only</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-full">{t.menuDrawer?.adminOnly || 'Admin Only'}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground">Manage users, circles, posts, and audit logs</p>
+                      <p className="text-xs text-muted-foreground">{t.menuDrawer?.adminDesc || 'Manage users, circles, posts, and audit logs'}</p>
                     </div>
                   )}
                 </div>
@@ -238,7 +238,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                   >
                     <div className="flex items-center gap-3">
                       <Settings className="w-5 h-5 text-muted-foreground" />
-                      <span>Settings and privacy</span>
+                      <span>{t.menuDrawer?.settingsAndPrivacy || 'Settings & Privacy'}</span>
                     </div>
                     {settingsOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                   </button>
@@ -252,7 +252,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                       >
                         <div className="flex items-center gap-2.5">
                           <Languages className="w-4 h-4 text-blue-600" />
-                          <span>Language</span>
+                          <span>{t.menuDrawer?.language || 'Language'}</span>
                         </div>
                         <span className="text-xs font-bold bg-muted px-2 py-0.5 rounded-full">{isArabic ? 'العربية' : 'English'}</span>
                       </button>
@@ -264,7 +264,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                       >
                         <div className="flex items-center gap-2.5">
                           {isDark ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-purple-600" />}
-                          <span>Theme</span>
+                          <span>{isDark ? t.menuDrawer?.lightMode || 'Light Mode' : t.menuDrawer?.darkMode || 'Dark Mode'}</span>
                         </div>
                         <span className="text-xs font-bold bg-muted px-2 py-0.5 rounded-full">{isDark ? 'Dark' : 'Light'}</span>
                       </button>
@@ -275,7 +275,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         className="w-full flex items-center gap-2.5 py-2 text-xs font-medium text-foreground hover:text-primary transition-colors"
                       >
                         <Lock className="w-4 h-4 text-emerald-600" />
-                        <span>Password & Security</span>
+                        <span>{t.menuDrawer?.passwordAndSecurity || 'Password & Security'}</span>
                       </button>
 
                       {/* Privacy Settings Modal Trigger */}
@@ -284,7 +284,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         className="w-full flex items-center gap-2.5 py-2 text-xs font-medium text-foreground hover:text-primary transition-colors"
                       >
                         <Eye className="w-4 h-4 text-sky-600" />
-                        <span>Privacy Settings</span>
+                        <span>{t.menuDrawer?.privacySettings || 'Privacy Settings'}</span>
                       </button>
                     </div>
                   )}
@@ -298,7 +298,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                   >
                     <div className="flex items-center gap-3">
                       <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                      <span>Help and support</span>
+                      <span>{t.menuDrawer?.helpAndSupport || 'Help & Support'}</span>
                     </div>
                     {helpOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                   </button>
@@ -311,7 +311,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         className="w-full flex items-center gap-2 py-1.5 text-muted-foreground hover:text-foreground font-medium transition-colors"
                       >
                         <MessageSquare className="w-4 h-4 text-blue-600" />
-                        <span>Contact Support</span>
+                        <span>{t.menuDrawer?.contactSupport || 'Contact Support'}</span>
                       </button>
 
                       {/* Terms & Privacy Policy Trigger */}
@@ -320,7 +320,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         className="w-full flex items-center gap-2 py-1.5 text-muted-foreground hover:text-foreground font-medium transition-colors"
                       >
                         <FileText className="w-4 h-4 text-emerald-600" />
-                        <span>Terms & Privacy Policy</span>
+                        <span>{t.menuDrawer?.termsAndPrivacy || 'Terms & Privacy Policy'}</span>
                       </button>
                     </div>
                   )}
@@ -335,7 +335,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                   className="w-full py-3.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-600 font-semibold text-sm flex items-center justify-center gap-2 transition-colors border border-red-500/20"
                 >
                   <LogOut className="w-4 h-4" />
-                  Sign Out
+                  {t.menuDrawer?.signOut || 'Sign Out'}
                 </button>
 
               </div>

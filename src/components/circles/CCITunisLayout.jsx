@@ -180,11 +180,25 @@ function B2BMatchmakingTab({ isDark }) {
 
 // 3. EPC Academy
 function EPCAcademyTab({ isDark }) {
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', company: '' });
+
   const courses = [
     { title: 'Executive Master en Commerce Électronique', type: 'Formation Longue', status: 'Inscriptions Ouvertes' },
     { title: 'Maîtrisez l’Intelligence Artificielle (IA)', type: 'Formation Courte', status: 'Nouveau' },
     { title: 'Transport et Logistique Internationale (TLI)', type: 'Cycle de formation', status: 'Bientôt' }
   ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setSelectedCourse(null);
+      setFormData({ fullName: '', email: '', phone: '', company: '' });
+    }, 2500);
+  };
 
   return (
     <div className="p-5 space-y-4">
@@ -198,14 +212,101 @@ function EPCAcademyTab({ isDark }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {courses.map((c, i) => (
-          <div key={i} className={`p-4 rounded-xl border ${isDark ? 'bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20' : 'bg-gradient-to-br from-amber-50 to-white border-amber-200'}`}>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-800'}`}>{c.status}</span>
-            <p className={`text-sm font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>{c.title}</p>
-            <p className={`text-xs mt-1 ${isDark ? 'text-amber-200/60' : 'text-slate-500'}`}>{c.type}</p>
-            <Button size="sm" className="w-full mt-3 h-8 text-xs bg-amber-600 hover:bg-amber-700 text-white">S'inscrire</Button>
+          <div key={i} className={`p-4 rounded-xl border flex flex-col justify-between ${isDark ? 'bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20' : 'bg-gradient-to-br from-amber-50 to-white border-amber-200'}`}>
+            <div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-800'}`}>{c.status}</span>
+              <p className={`text-sm font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>{c.title}</p>
+              <p className={`text-xs mt-1 ${isDark ? 'text-amber-200/60' : 'text-slate-500'}`}>{c.type}</p>
+            </div>
+            <Button 
+              onClick={() => setSelectedCourse(c)}
+              size="sm" 
+              className="w-full mt-4 h-9 text-xs bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-sm"
+            >
+              S'inscrire à la formation
+            </Button>
           </div>
         ))}
       </div>
+
+      {/* Course Registration Modal */}
+      {selectedCourse && (
+        <div className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setSelectedCourse(null)}>
+          <div className={`w-full max-w-md rounded-2xl p-6 shadow-2xl border ${isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'}`} onClick={(e) => e.stopPropagation()}>
+            {submitted ? (
+              <div className="text-center py-6 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+                <h4 className="text-lg font-bold">Demande d'inscription envoyée !</h4>
+                <p className="text-xs text-muted-foreground">Notre équipe EPC Tunis vous contactera dans les plus brefs délais pour valider votre dossier.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex items-center justify-between border-b pb-3 border-border">
+                  <div>
+                    <h4 className="font-bold text-sm">Inscription Formation</h4>
+                    <p className="text-xs text-amber-500 font-medium">{selectedCourse.title}</p>
+                  </div>
+                  <button type="button" onClick={() => setSelectedCourse(null)} className="text-muted-foreground hover:text-foreground text-sm p-1">✕</button>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <label className="block mb-1 font-semibold">Nom & Prénom *</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="Ex: Mohamed Ben Ali"
+                      value={formData.fullName} 
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} 
+                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-semibold">Adresse Email *</label>
+                    <input 
+                      required 
+                      type="email" 
+                      placeholder="votre@email.com"
+                      value={formData.email} 
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-semibold">Téléphone *</label>
+                    <input 
+                      required 
+                      type="tel" 
+                      placeholder="+216 27 777 751"
+                      value={formData.phone} 
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
+                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-semibold">Entreprise / Organisme (Optionnel)</label>
+                    <input 
+                      type="text" 
+                      placeholder="Nom de votre société"
+                      value={formData.company} 
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })} 
+                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={() => setSelectedCourse(null)} className="w-1/2 text-xs">Annuler</Button>
+                  <Button type="submit" className="w-1/2 text-xs bg-amber-600 hover:bg-amber-700 text-white">Confirmer l'inscription</Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
