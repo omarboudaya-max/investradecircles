@@ -15,6 +15,7 @@
     },
     "android": {
       "package": "com.investraders.app",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#0f172a",
         "foregroundImage": "./assets/android-icon-foreground.png",

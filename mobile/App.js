@@ -37,6 +37,7 @@ export default function App() {
         startInLoadingState={true}
         allowFileAccess={true}
         allowsInlineMediaPlayback={true}
+        mixedContentMode="always"
         originWhitelist={['*']}
         onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
         onLoadEnd={() => setLoading(false)}
