@@ -8,15 +8,41 @@ export default function BottomNav() {
   const location = useLocation();
   const t = useTranslation();
   const [hideNav, setHideNav] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user is in an active chat conversation or typing
+    // Hide nav inside messages page or active chat
     const searchParams = new URLSearchParams(location.search);
-    const hasActiveChat = location.pathname === '/messages' && (searchParams.has('with') || window.__activeChatOpen);
-    setHideNav(hasActiveChat);
+    const inMessages = location.pathname === '/messages';
+    const hasActiveChat = inMessages && (searchParams.has('with') || window.__activeChatOpen);
+    setHideNav(inMessages || hasActiveChat);
   }, [location]);
 
-  if (hideNav) return null;
+  useEffect(() => {
+    // Detect soft keyboard popping up when typing in inputs/textareas
+    const handleFocusIn = (e) => {
+      const tagName = e.target?.tagName?.toLowerCase();
+      if (tagName === 'input' || tagName === 'textarea' || e.target?.isContentEditable) {
+        setIsKeyboardVisible(true);
+      }
+    };
+
+    const handleFocusOut = () => {
+      setIsKeyboardVisible(false);
+    };
+
+    window.addEventListener('focusin', handleFocusIn);
+    window.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      window.removeEventListener('focusin', handleFocusIn);
+      window.removeEventListener('focusout', handleFocusOut);
+    };
+  }, []);
+
+  if (hideNav || isKeyboardVisible) {
+    return null;
+  }
 
   const NAV_ITEMS = [
     { label: t.bottomNav.home, icon: Home, path: '/home' },

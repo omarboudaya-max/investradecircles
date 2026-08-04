@@ -355,12 +355,12 @@ export default function CircleDetail() {
         /* ── Standard layout for all other categories ── */
         <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
           {/* Circle Header */}
-          <div className="p-6 border-b flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
               <CircleIcon category={circle?.category} size="xl" />
-              <div>
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-xl font-bold">{circle?.name}</h1>
+                  <h1 className="text-lg sm:text-2xl font-bold leading-snug break-words text-foreground">{circle?.name}</h1>
                   {circle?.is_verified && (
                     <VerifiedBadge
                       label={circle.verified_label || 'Verified'}
@@ -369,31 +369,33 @@ export default function CircleDetail() {
                     />
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5" />
-                  {allMemberIds.length} members · {circle?.privacy}
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                  <Users className="w-3.5 h-3.5 shrink-0" />
+                  <span>{allMemberIds.length} members · {circle?.privacy}</span>
                 </p>
                 {(circle?.tags || []).length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
+                  <div className="flex flex-wrap gap-1 mt-1.5">
                     {circle.tags.map((tag) => <TagBadge key={tag} tag={tag} />)}
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => setShowShareModal(true)}>
-                <Share2 className="w-4 h-4" /> Share
+            
+            <div className="flex items-center gap-2 flex-wrap shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+              <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs sm:text-sm" onClick={() => setShowShareModal(true)}>
+                <Share2 className="w-3.5 h-3.5" /> Share
               </Button>
               {isMember && (
-                <Button variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => setShowInviteModal(true)}>
-                  <UserPlus className="w-4 h-4" /> Invite
+                <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs sm:text-sm" onClick={() => setShowInviteModal(true)}>
+                  <UserPlus className="w-3.5 h-3.5" /> Invite
                 </Button>
               )}
               {!isMember && (
                 <Button
                   onClick={() => joinCircle.mutate()}
                   disabled={joinCircle.isPending || isRequestPending}
-                  className={`rounded-full ${circle?.privacy?.toLowerCase() === 'private' ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary'}`}
+                  size="sm"
+                  className={`rounded-full text-xs sm:text-sm ${circle?.privacy?.toLowerCase() === 'private' ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary'}`}
                 >
                   {joinCircle.isPending ? 'Processing...' : isRequestPending ? 'Request Pending' : circle?.privacy?.toLowerCase() === 'private' ? 'Request to Join' : 'Join Circle'}
                 </Button>

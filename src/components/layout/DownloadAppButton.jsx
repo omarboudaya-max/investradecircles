@@ -4,7 +4,10 @@ import { Button } from '@/components/ui/button';
 
 function checkIsStandalone() {
   if (typeof window === 'undefined') return false;
-  return (
+  if (sessionStorage.getItem('isMobileContainer') === 'true' || window.__isMobileApp === true) {
+    return true;
+  }
+  const isMobile = (
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true ||
     !!window.ReactNativeWebView ||
@@ -12,6 +15,13 @@ function checkIsStandalone() {
     window.location.search.includes('isMobileApp=true') ||
     (window.navigator.userAgent && window.navigator.userAgent.includes('InvestradersMobileApp'))
   );
+  if (isMobile) {
+    try {
+      sessionStorage.setItem('isMobileContainer', 'true');
+    } catch (e) {}
+    window.__isMobileApp = true;
+  }
+  return isMobile;
 }
 
 export default function DownloadAppButton({ variant = 'default', className = '' }) {
@@ -19,7 +29,6 @@ export default function DownloadAppButton({ variant = 'default', className = '' 
   const [isStandalone, setIsStandalone] = useState(checkIsStandalone);
 
   useEffect(() => {
-    // Synchronously check on mount and URL changes
     setIsStandalone(checkIsStandalone());
 
     const handleAppInstalled = () => {
@@ -32,8 +41,8 @@ export default function DownloadAppButton({ variant = 'default', className = '' 
     };
   }, []);
 
-  // HIDE completely if user is already inside the mobile app container!
-  if (isStandalone) {
+  // HIDE completely if user is inside the mobile app container or persisted session!
+  if (checkIsStandalone() || isStandalone) {
     return null;
   }
 
