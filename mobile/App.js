@@ -3,8 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, SafeAreaVi
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 
-// Default to local network IP or process env
-const WEB_APP_URL = process.env.EXPO_PUBLIC_WEB_APP_URL || 'http://192.168.100.239:5173';
+// Default to live production domain
+const WEB_APP_URL = process.env.EXPO_PUBLIC_WEB_APP_URL || 'https://www.investraders.net';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -73,9 +73,9 @@ export default function App() {
             <Text style={styles.errorTitle}>Connection Error</Text>
             <Text style={styles.errorText}>
               Unable to connect to Investraders server.{'\n'}
-              Please ensure your computer and phone are on the same Wi-Fi and Vite server is running.
+              Please check your internet connection and try again.
             </Text>
-            <Text style={styles.errorSubtext}>Target URL: {WEB_APP_URL}</Text>
+            <Text style={styles.errorSubtext}>Target: {WEB_APP_URL}</Text>
             <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
               <Text style={styles.retryButtonText}>🔄 Retry Connection</Text>
             </TouchableOpacity>
