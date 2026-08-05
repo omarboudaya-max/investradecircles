@@ -37,32 +37,39 @@ export default function CreateStoryModal({ onClose, onCreated }) {
   const submit = async () => {
     if (!text && !mediaFile) return;
     setLoading(true);
-    let image_url = null;
-    let video_url = null;
-    if (mediaFile) {
-      const filePath = `stories/${Date.now()}_${mediaFile.name}`;
-      await supabase.storage.from('media').upload(filePath, mediaFile);
-      const file_url = supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl;
-      if (mediaType === 'video') video_url = file_url;
-      else image_url = file_url;
+    try {
+      let image_url = null;
+      let video_url = null;
+      if (mediaFile) {
+        const filePath = `stories/${Date.now()}_${mediaFile.name}`;
+        const { error: uploadError } = await supabase.storage.from('media').upload(filePath, mediaFile);
+        if (uploadError) throw uploadError;
+        const file_url = supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl;
+        if (mediaType === 'video') video_url = file_url;
+        else image_url = file_url;
+      }
+      const userData = await supabase.from('profiles').select('*').match({ id: user.id }).then(res => res.data || []);
+      const profile = userData?.[0];
+      const { error: insertError } = await supabase.from('Story').insert({
+        author_id: user.id,
+        author_name: user.full_name || user.email?.split('@')[0],
+        author_avatar: profile?.avatar_url || null,
+        image_url,
+        video_url,
+        text: text || null,
+        bg_gradient: !mediaFile ? bgGradient : null,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      });
+      if (insertError) throw insertError;
+      
+      onCreated?.();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to post story: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    const userData = await supabase.from('profiles').select('*').match({ id: user.id }).then(res => res.data || []);
-    const profile = userData?.[0];
-    await supabase.from('Story').insert({
-      author_id: user.id,
-      author_name: user.full_name || user.email?.split('@')[0],
-      author_avatar: profile?.avatar_url || null,
-      image_url,
-      video_url,
-      text: text || null,
-      bg_gradient: !mediaFile ? bgGradient : null,
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      viewed_by: [],
-      reactions: {},
-    });
-    setLoading(false);
-    onCreated?.();
-    onClose();
   };
 
   return (

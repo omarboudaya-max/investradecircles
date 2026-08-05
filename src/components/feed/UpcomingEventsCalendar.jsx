@@ -14,10 +14,10 @@ const EVENT_TYPE_COLORS = {
 };
 
 const EVENT_TYPE_LIGHT = {
-  discussion: 'bg-blue-50 text-blue-700 border-blue-100',
-  meeting: 'bg-purple-50 text-purple-700 border-purple-100',
-  webinar: 'bg-green-50 text-green-700 border-green-100',
-  analysis: 'bg-amber-50 text-amber-700 border-amber-100',
+  discussion: 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+  meeting: 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+  webinar: 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+  analysis: 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800',
 };
 
 function getGoogleCalendarUrl(event) {
@@ -147,7 +147,7 @@ export default function UpcomingEventsCalendar() {
               {selectedDayEvents.map((event) => {
                 const circle = circleMap[event.circle_id];
                 return (
-                  <div key={event.id} className={`flex items-start gap-3 p-3 rounded-xl border ${EVENT_TYPE_LIGHT[event.event_type] || 'bg-slate-50 text-slate-700 border-slate-100'}`}>
+                  <div key={event.id} className={`flex items-start gap-3 p-3 rounded-xl border ${EVENT_TYPE_LIGHT[event.event_type] || 'bg-slate-50 text-slate-700 border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'}`}>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">{event.title}</p>
                       <div className="flex items-center gap-3 mt-1 flex-wrap">

@@ -7,13 +7,25 @@ function checkIsStandalone() {
   if (sessionStorage.getItem('isMobileContainer') === 'true' || window.__isMobileApp === true) {
     return true;
   }
+  
+  let isCapacitor = false;
+  try {
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      isCapacitor = true;
+    }
+  } catch (e) {}
+
   const isMobile = (
+    isCapacitor ||
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true ||
     !!window.ReactNativeWebView ||
-    !!window.Capacitor ||
     window.location.search.includes('isMobileApp=true') ||
-    (window.navigator.userAgent && window.navigator.userAgent.includes('InvestradersMobileApp'))
+    (window.navigator.userAgent && (
+      window.navigator.userAgent.includes('InvestradersMobileApp') ||
+      window.navigator.userAgent.includes('Capacitor') ||
+      /wv/i.test(window.navigator.userAgent)
+    ))
   );
   if (isMobile) {
     try {
