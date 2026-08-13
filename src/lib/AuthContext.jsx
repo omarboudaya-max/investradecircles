@@ -5,14 +5,7 @@ const AuthContext = createContext();
 
 async function fetchProfile(userId) {
   const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-  let profileData = data || {};
-  
-  if (profileData.email === 'omarboudaya1@gmail.com' && profileData.role !== 'admin') {
-    await supabase.from('profiles').update({ role: 'admin' }).eq('id', userId);
-    profileData.role = 'admin';
-  }
-  
-  return profileData;
+  return data || {};
 }
 
 export const AuthProvider = ({ children }) => {
