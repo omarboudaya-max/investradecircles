@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
-import { BarChart2, FileText, MessageCircle, Users, Zap, UserPlus, CheckCircle, X } from 'lucide-react';
+import { BarChart2, FileText, MessageCircle, Users, Zap, UserPlus, CheckCircle, X, Landmark, Sparkles } from 'lucide-react';
 import { subWeeks, startOfWeek, format, isWithinInterval, endOfWeek } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import UTICABusinessCommandCenter from '@/components/circles/UTICABusinessCommandCenter';
 
 function buildWeeklyData(posts, responses, weeks = 6) {
   const data = [];
@@ -38,6 +39,9 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
 );
 
 export default function CircleAdminDashboard({ circleId, circle }) {
+  const isUticaCircle = circle?.name?.toLowerCase()?.includes('utica') || circle?.category === 'institution';
+  const [viewMode, setViewMode] = useState(isUticaCircle ? 'utica_command' : 'standard');
+
   const { data: posts = [] } = useQuery({
     queryKey: ['admin-posts', circleId],
     queryFn: () => supabase.from('Post').select('*').match({ circle_id: circleId }).order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
@@ -88,14 +92,46 @@ export default function CircleAdminDashboard({ circleId, circle }) {
     (p) => p.created_date && isWithinInterval(new Date(p.created_date), { start: thisWeekStart, end: thisWeekEnd })
   ).length;
 
+  if (viewMode === 'utica_command') {
+    return (
+      <div className="px-2 pb-6 space-y-4">
+        <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-amber-500/10 via-blue-500/10 to-transparent border border-amber-500/20 rounded-xl">
+          <div className="flex items-center gap-2 text-xs font-bold text-amber-500">
+            <Landmark className="w-4 h-4" /> Mode : UTICA National Business Intelligence & Stakeholder Command Center
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setViewMode('standard')}
+            className="text-xs h-7"
+          >
+            Vue Analytics Standard
+          </Button>
+        </div>
+
+        <UTICABusinessCommandCenter circle={circle} />
+      </div>
+    );
+  }
+
   return (
     <div className="px-6 pb-6">
       <div className="border rounded-2xl overflow-hidden">
         {/* Header */}
-        <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-b flex items-center gap-2">
-          <BarChart2 className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold">Admin Dashboard</h3>
-          <span className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Admin Only</span>
+        <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-b flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <BarChart2 className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold">Admin Dashboard</h3>
+            <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Admin Only</span>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={() => setViewMode('utica_command')}
+            className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs h-7 gap-1"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> UTICA Command Center
+          </Button>
         </div>
 
         <div className="p-4 space-y-4">
@@ -171,3 +207,4 @@ export default function CircleAdminDashboard({ circleId, circle }) {
     </div>
   );
 }
+

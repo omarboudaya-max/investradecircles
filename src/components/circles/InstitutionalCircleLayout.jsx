@@ -23,6 +23,7 @@ import CircleMemberRoles from '@/components/circles/CircleMemberRoles';
 import CircleAdminDashboard from '@/components/circles/CircleAdminDashboard';
 import CircleVisual from '@/components/circles/CircleVisual';
 import CircleMonetization from '@/components/circles/CircleMonetization';
+import UTICABusinessCommandCenter from '@/components/circles/UTICABusinessCommandCenter';
 
 function formatPrice(symbol, price) {
   if (!price && price !== 0) return '—';
@@ -998,6 +999,14 @@ export default function InstitutionalCircleLayout({
     });
   }, [marketData]);
 
+  const tabsList = React.useMemo(() => {
+    const list = [...INST_TABS];
+    if (isAdmin || isModerator || circle?.name?.toLowerCase()?.includes('utica') || circle?.category === 'institution') {
+      list.push({ id: 'utica_command', label: 'UTICA Command Center AI', Icon: Landmark });
+    }
+    return list;
+  }, [isAdmin, isModerator, circle?.name, circle?.category]);
+
   return (
     <div className="rounded-2xl overflow-hidden shadow-2xl transition-all duration-300" style={{ background: isDark ? 'linear-gradient(160deg,#070a13 0%,#0e1726 50%,#060910 100%)' : 'linear-gradient(160deg,#fbf7ee 0%,#f6ecd2 50%,#e8d7af 100%)' }}>
 
@@ -1050,7 +1059,7 @@ export default function InstitutionalCircleLayout({
           borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(180,120,20,0.15)' 
         }}
       >
-        {INST_TABS.map(({ id, label, Icon }) => (
+        {tabsList.map(({ id, label, Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
@@ -1246,6 +1255,7 @@ export default function InstitutionalCircleLayout({
             </div>
           )}
 
+          {activeTab === 'utica_command' && <UTICABusinessCommandCenter circle={circle} user={user} isDark={isDark} />}
           {activeTab === 'feed' && <CircleFeed circle={circle} user={user} />}
         </motion.div>
       </AnimatePresence>
