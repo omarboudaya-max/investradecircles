@@ -12,6 +12,7 @@ export default function WebsiteNavbar() {
   const { isArabic, toggleLanguage } = useLanguage();
 
   const links = [
+    { name: isArabic ? 'الملتقى 07 أكتوبر' : 'Event 07 Oct', path: '/event', badge: 'AI' },
     { name: t.websiteNav.institutions, path: '/institutions' },
     { name: t.websiteNav.businesses, path: '/contact' },
     { name: t.websiteNav.individuals, path: '/individuals' },
@@ -33,9 +34,14 @@ export default function WebsiteNavbar() {
             <Link 
               key={link.path} 
               to={link.path} 
-              className={`text-sm ${path === link.path ? 'text-white font-semibold' : 'text-gray-300 hover:text-white'}`}
+              className={`text-sm flex items-center gap-1.5 ${path === link.path ? 'text-white font-semibold' : 'text-gray-300 hover:text-white'}`}
             >
-              {link.name}
+              <span>{link.name}</span>
+              {link.badge && (
+                <span className="px-1.5 py-0.5 text-[10px] font-black rounded-md bg-cyan-500 text-slate-950 shadow-[0_0_8px_rgba(6,182,212,0.6)] animate-pulse">
+                  {link.badge}
+                </span>
+              )}
             </Link>
           ))}
         </div>

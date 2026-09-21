@@ -33,6 +33,7 @@ import LandingInstitutions from '@/pages/LandingInstitutions';
 import LandingIndividuals from '@/pages/LandingIndividuals';
 import Landing3M from '@/pages/Landing3M';
 import LandingContact from '@/pages/LandingContact';
+import EventRegistrationLanding from '@/pages/EventRegistrationLanding';
 
 import GlobalLoader from '@/components/layout/GlobalLoader';
 
@@ -94,6 +95,8 @@ const AuthenticatedApp = () => {
               <Route path="/individuals" element={<LandingIndividuals />} />
               <Route path="/3m" element={<Landing3M />} />
               <Route path="/contact" element={<LandingContact />} />
+              <Route path="/event" element={<EventRegistrationLanding />} />
+              <Route path="/event-registration" element={<EventRegistrationLanding />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
