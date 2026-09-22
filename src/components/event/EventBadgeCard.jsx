@@ -11,11 +11,38 @@ import {
   UserPlus, 
   ShieldCheck, 
   Sparkles,
-  Copy
+  Copy,
+  User
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import EventQRCode from './EventQRCode';
 import html2canvas from 'html2canvas';
+
+// ── Transparent Vector Logo for Wisdom Net / Investraders ──
+const WisdomNetLogo = ({ className = "h-8 w-auto" }) => (
+  <div className={`flex items-center gap-2 ${className}`}>
+    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
+      <Sparkles className="w-4 h-4 text-white" />
+    </div>
+    <div className="text-left leading-none dir-ltr font-sans">
+      <span className="text-[11px] font-black tracking-widest text-slate-900 block uppercase font-mono">WISDOM NET</span>
+      <span className="text-[8px] font-bold tracking-wider text-cyan-600 uppercase block">INVESTRADERS</span>
+    </div>
+  </div>
+);
+
+// ── Transparent Vector Logo for UTICA ──
+const UticaLogo = ({ className = "h-8 w-auto" }) => (
+  <div className={`flex items-center gap-2 ${className}`}>
+    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 via-rose-600 to-amber-500 flex items-center justify-center text-white font-black text-xs border border-red-700 shadow-sm">
+      <span className="font-serif tracking-tighter">UT</span>
+    </div>
+    <div className="text-right leading-none dir-rtl font-sans">
+      <span className="text-[12px] font-black tracking-wider text-red-700 block font-serif">UTICA</span>
+      <span className="text-[7px] font-bold text-slate-600 block">الإتحاد التونسي للصناعة والتجارة</span>
+    </div>
+  </div>
+);
 
 export default function EventBadgeCard({
   registration,
@@ -42,7 +69,7 @@ export default function EventBadgeCard({
 
   if (!registration) return null;
 
-  const { full_name, company, role, sector, badge_code, email } = registration;
+  const { full_name, company, role, sector, photo_url, badge_code, email } = registration;
   const displayPassCode = badge_code || `INV-2026-OCT7-${Math.floor(1000 + Math.random() * 9000)}`;
   const qrPayload = JSON.stringify({
     passId: displayPassCode,
@@ -60,14 +87,14 @@ export default function EventBadgeCard({
     try {
       setDownloading(true);
       const canvas = await html2canvas(badgeRef.current, {
-        scale: 2,
-        backgroundColor: '#030914',
+        scale: 3,
+        backgroundColor: '#FFFFFF',
         useCORS: true
       });
       const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = image;
-      link.download = `Investraders_Event_Badge_${full_name.replace(/\s+/g, '_')}.png`;
+      link.download = `Investraders_WisdomNet_Badge_${full_name.replace(/\s+/g, '_')}.png`;
       link.click();
     } catch (err) {
       console.error('Badge download failed:', err);
@@ -83,7 +110,7 @@ export default function EventBadgeCard({
   };
 
   const handleAddToCalendar = () => {
-    const title = encodeURIComponent("التمكين الرقمي للمؤسسات التونسية في عصر الذكاء الاصطناعي - Investraders & UTICA");
+    const title = encodeURIComponent("التمكين الرقمي للمؤسسات التونسية في عصر الذكاء الاصطناعي - Wisdom Net & UTICA");
     const details = encodeURIComponent("الملتقى الوطني للتكمين الرقمي والتكامل الاقتصادي في تونس. المكان: مقر الاتحاد التونسي للصناعة والتجارة والصناعات التقليدية UTICA.");
     const location = encodeURIComponent("UTICA HQ, Cité El Khadra, Tunis");
     const startTime = "20261007T073000Z";
@@ -93,9 +120,9 @@ export default function EventBadgeCard({
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto my-4 font-sans dir-rtl text-right">
+    <div className="w-full max-w-lg mx-auto my-4 font-sans text-center">
       
-      {/* Outer Card Glow */}
+      {/* Outer Glow */}
       <div className="relative group">
         <div className={`absolute -inset-0.5 rounded-3xl opacity-60 blur-lg transition-all duration-700 ${
           isAuthenticated
@@ -103,102 +130,98 @@ export default function EventBadgeCard({
             : 'bg-gradient-to-r from-amber-500/50 via-purple-600/40 to-cyan-500/50'
         }`} />
 
-        {/* Badge Card Main Structure */}
-        <div className="relative rounded-3xl bg-[#06101E] border border-cyan-500/30 overflow-hidden shadow-2xl backdrop-blur-xl">
+        {/* Outer Container */}
+        <div className="relative rounded-3xl bg-slate-900 border border-slate-700 overflow-hidden shadow-2xl backdrop-blur-xl">
           
-          {/* Top Banner */}
-          <div className="bg-gradient-to-r from-cyan-950/90 via-[#0A1A30] to-indigo-950/90 px-5 py-4 border-b border-cyan-500/20 text-white flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 font-bold font-serif text-lg shadow-[0_0_12px_rgba(6,182,212,0.3)]">
-                i
-              </div>
-              <div>
-                <span className="text-[10px] sm:text-xs font-semibold tracking-wider text-cyan-400 uppercase block">
-                  Investraders × UTICA
-                </span>
-                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                  الملتقى الوطني 07 أكتوبر 2026
-                </h3>
-              </div>
-            </div>
+          {/* Top Status Header */}
+          <div className="bg-slate-900 px-5 py-3 border-b border-slate-800 text-white flex items-center justify-between gap-3 text-right dir-rtl">
+            <span className="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              معاينة الشارة الرقمية • Pass Officiel
+            </span>
 
-            {/* Status Pill */}
             <div>
               {isAuthenticated ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  شارة عضو مفعّلة وصالحة
+                  مفعّلة وصالحة
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                   <Lock className="w-3.5 h-3.5" />
-                  خاصة بالأعضاء 🔒 (يتطلب حساب)
+                  خاصة بالأعضاء 🔒
                 </span>
               )}
             </div>
           </div>
 
-          {/* Badge Content (Target for PNG download) */}
-          <div ref={badgeRef} className="p-4 sm:p-7 bg-[#06101E] relative">
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-25 pointer-events-none" />
+          {/* Badge Content Target (Pure White Corporate Pass) */}
+          <div ref={badgeRef} className="p-6 sm:p-8 bg-white text-slate-900 relative rounded-2xl border-2 border-slate-200 shadow-xl overflow-hidden m-3">
+            
+            {/* Top Accent Ribbon */}
+            <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-red-600 via-cyan-500 to-blue-600" />
+            <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
 
-            <div className="relative z-10 space-y-5">
+            <div className="relative z-10 space-y-4">
               
+              {/* Header Logos: Top Right = Wisdom Net, Top Left = UTICA */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dir-ltr">
+                {/* Top Left: UTICA Logo */}
+                <UticaLogo />
+
+                {/* Top Right: Wisdom Net Logo */}
+                <WisdomNetLogo />
+              </div>
+
               {/* Event Subheader */}
-              <div className="text-center border-b border-slate-800/80 pb-3">
-                <p className="text-cyan-300 text-xs sm:text-sm font-semibold">
+              <div>
+                <span className="px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 font-mono text-[10px] font-bold border border-cyan-200 inline-block uppercase tracking-wider">
+                  Badge Officiel d'Accès • Official Pass
+                </span>
+                <h4 className="text-xs sm:text-sm font-bold text-slate-800 mt-1">
                   التمكين الرقمي للمؤسسات التونسية في عصر الذكاء الاصطناعي
+                </h4>
+                <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  UTICA HQ • 07 OCTOBRE 2026 • TUNIS
                 </p>
-                <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                  UTICA HQ • 07 Octobre 2026 • 08:30 AM
+              </div>
+
+              {/* Delegate Photo in Circular Frame */}
+              <div className="relative inline-block my-1">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-cyan-500 p-0.5 bg-white shadow-xl mx-auto overflow-hidden">
+                  {photo_url ? (
+                    <img src={photo_url} alt={full_name} className="w-full h-full object-cover rounded-full" />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-slate-100 flex flex-col items-center justify-center text-slate-400">
+                      <User className="w-12 h-12 text-slate-400" />
+                    </div>
+                  )}
+                </div>
+                <span className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow">
+                  ✓
                 </span>
               </div>
 
-              {/* Participant Profile Details & QR Section */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center bg-slate-900/80 p-4 sm:p-5 rounded-2xl border border-cyan-500/20">
-                
-                {/* Profile Details */}
-                <div className="sm:col-span-7 md:col-span-8 space-y-2.5 text-right">
-                  <div>
-                    <span className="text-[10px] sm:text-xs text-cyan-400 font-medium block">اسم المشارك / Delegate</span>
-                    <h4 className="text-lg sm:text-2xl font-black text-white tracking-wide break-words">
-                      {full_name}
-                    </h4>
-                  </div>
+              {/* Full Name & Role / Company Details */}
+              <div className="space-y-1">
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">
+                  {full_name}
+                </h3>
+                {(company || role) && (
+                  <p className="text-xs sm:text-sm font-bold text-cyan-700">
+                    {role && <span>{role}</span>} {role && company && <span>•</span>} {company && <span>{company}</span>}
+                  </p>
+                )}
+                {sector && (
+                  <p className="text-[11px] font-medium text-slate-500">
+                    {sector}
+                  </p>
+                )}
+              </div>
 
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300">
-                    {company && (
-                      <div className="flex items-center gap-1 bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-700">
-                        <Building2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                        <span className="truncate max-w-[140px] sm:max-w-none">{company}</span>
-                      </div>
-                    )}
-                    {role && (
-                      <div className="flex items-center gap-1 bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-700">
-                        <Briefcase className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                        <span className="truncate max-w-[140px] sm:max-w-none">{role}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {sector && (
-                    <div className="text-[11px] text-slate-400">
-                      القطاع: <span className="text-cyan-300 font-medium">{sector}</span>
-                    </div>
-                  )}
-
-                  {/* Serial Code */}
-                  <div className="pt-1">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-black/70 border border-cyan-500/30 font-mono text-xs text-cyan-300">
-                      <span className="text-slate-400 text-[10px]">رمز التذكرة:</span>
-                      <span className="font-bold text-white tracking-wider">{displayPassCode}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* QR Code Container with Blurred Pass State for Non-Members */}
-                <div className="sm:col-span-5 md:col-span-4 flex flex-col items-center justify-center p-3 bg-black/50 rounded-2xl border border-cyan-500/30 relative min-h-[160px] overflow-hidden">
+              {/* QR Code Positioned DIRECTLY UNDER THE NAME */}
+              <div className="pt-2 flex flex-col items-center justify-center">
+                <div className="p-3 bg-slate-50 rounded-2xl border-2 border-slate-200 relative min-h-[150px] w-44 flex flex-col items-center justify-center shadow-inner">
                   <AnimatePresence mode="wait">
                     {isAuthenticated ? (
                       <motion.div
@@ -208,9 +231,9 @@ export default function EventBadgeCard({
                         exit={{ opacity: 0, scale: 0.8 }}
                         className="flex flex-col items-center"
                       >
-                        <EventQRCode value={qrPayload} size={120} fgColor="#00F0FF" bgColor="#050D1A" />
-                        <span className="text-[10px] text-cyan-400 font-mono mt-2">
-                          رمز الدخول الرسمي للأعضاء ✓
+                        <EventQRCode value={qrPayload} size={120} fgColor="#000000" bgColor="#FFFFFF" />
+                        <span className="text-[9px] text-emerald-600 font-bold font-mono mt-1">
+                          ACCÈS CONFIRMÉ ✓
                         </span>
                       </motion.div>
                     ) : (
@@ -219,45 +242,38 @@ export default function EventBadgeCard({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col items-center text-center p-1 relative w-full"
+                        className="flex flex-col items-center text-center relative w-full"
                       >
                         {/* Blurred QR Code preview */}
                         <div className="relative p-1 filter blur-md opacity-30 select-none pointer-events-none">
-                          <EventQRCode value={qrPayload} size={110} fgColor="#00F0FF" bgColor="#050D1A" />
+                          <EventQRCode value={qrPayload} size={110} fgColor="#000000" bgColor="#FFFFFF" />
                         </div>
                         {/* Lock Icon Banner over blurred QR */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-2">
-                          <div className="w-10 h-10 rounded-full bg-slate-900/90 border border-amber-400/50 flex items-center justify-center text-amber-400 shadow-lg mb-1">
-                            <Lock className="w-5 h-5 animate-bounce" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
+                          <div className="w-8 h-8 rounded-full bg-slate-900 border border-amber-400 flex items-center justify-center text-amber-400 shadow-lg mb-1">
+                            <Lock className="w-4 h-4 animate-bounce" />
                           </div>
-                          <span className="text-[10px] font-bold text-amber-300 bg-black/80 px-2 py-1 rounded-full border border-amber-500/30 shadow-md">
+                          <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
                             خاصة بالأعضاء 🔒
-                          </span>
-                          <span className="text-[9px] text-slate-300 mt-1">
-                            سجل الدخول لعرض الشارة
                           </span>
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-
               </div>
 
-              {/* Watermark Footer */}
-              <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-3">
-                <span className="flex items-center gap-1 text-emerald-400 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  دعوة رسمية مؤكدة
-                </span>
-                <span className="font-mono text-slate-400 text-[10px]">WWW.INVESTRADERS.NET</span>
+              {/* Watermark & Serial Code Footer */}
+              <div className="flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-200 pt-3 font-mono">
+                <span className="font-bold text-slate-700">{displayPassCode}</span>
+                <span className="text-cyan-700 font-bold uppercase">WISDOM NET × UTICA</span>
               </div>
 
             </div>
           </div>
 
-          {/* Action Section */}
-          <div className="bg-slate-950 p-4 border-t border-cyan-500/20">
+          {/* Action Footer */}
+          <div className="bg-slate-950 p-4 border-t border-slate-800">
             {isAuthenticated ? (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -267,7 +283,7 @@ export default function EventBadgeCard({
                     className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-[0_0_12px_rgba(6,182,212,0.3)] disabled:opacity-50 cursor-pointer"
                   >
                     <Download className="w-4 h-4" />
-                    {downloading ? 'جاري التحميل...' : 'تحميل الشارة (PNG)'}
+                    {downloading ? 'جاري التحميل...' : 'Télécharger le Badge (PNG)'}
                   </button>
 
                   <button
@@ -288,8 +304,7 @@ export default function EventBadgeCard({
                 </button>
               </div>
             ) : (
-              /* Account Action Card when unauthenticated */
-              <div className="bg-gradient-to-r from-slate-900 via-[#0A1728] to-slate-900 p-4 rounded-2xl border border-cyan-500/30 space-y-3">
+              <div className="bg-gradient-to-r from-slate-900 via-[#0A1728] to-slate-900 p-4 rounded-2xl border border-cyan-500/30 space-y-3 text-right dir-rtl">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-xs">
                   <span className="font-bold text-white flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -324,3 +339,4 @@ export default function EventBadgeCard({
     </div>
   );
 }
+

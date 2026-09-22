@@ -19,7 +19,8 @@ import {
   Network, 
   Users, 
   Scan,
-  Ticket
+  Ticket,
+  Camera
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { supabase } from '@/lib/supabase';
@@ -40,6 +41,8 @@ export default function EventRegistrationLanding() {
     company: '',
     role: '',
     sector: 'التكنولوجيا والذكاء الاصطناعي',
+    photoPreview: user?.user_metadata?.avatar_url || user?.avatar_url || null,
+    photoFile: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -62,7 +65,8 @@ export default function EventRegistrationLanding() {
       setFormData(prev => ({
         ...prev,
         fullName: prev.fullName || user.full_name || user.user_metadata?.full_name || '',
-        email: prev.email || user.email || ''
+        email: prev.email || user.email || '',
+        photoPreview: prev.photoPreview || user.avatar_url || user.user_metadata?.avatar_url || null
       }));
     }
   }, [user]);
@@ -70,6 +74,21 @@ export default function EventRegistrationLanding() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          photoPreview: reader.result,
+          photoFile: file
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSectorSelect = (sector) => {
@@ -84,6 +103,24 @@ export default function EventRegistrationLanding() {
     }
 
     setLoading(true);
+
+    let finalPhotoUrl = formData.photoPreview || user?.user_metadata?.avatar_url || user?.avatar_url || null;
+
+    if (formData.photoFile && user) {
+      try {
+        const filePath = `event_photos/${user.id}_${Date.now()}.jpg`;
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from('media')
+          .upload(filePath, formData.photoFile);
+        if (!uploadErr && uploadData) {
+          const publicUrl = supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl;
+          finalPhotoUrl = publicUrl;
+        }
+      } catch (err) {
+        console.warn('Photo upload fallback to preview:', err);
+      }
+    }
+
     const badgeCode = `INV-2026-OCT7-${Math.floor(1000 + Math.random() * 9000)}`;
     const regPayload = {
       full_name: formData.fullName,
@@ -92,6 +129,7 @@ export default function EventRegistrationLanding() {
       company: formData.company,
       role: formData.role,
       sector: formData.sector,
+      photo_url: finalPhotoUrl,
       badge_code: badgeCode,
       user_id: user?.id || null,
       created_at: new Date().toISOString()
@@ -120,108 +158,108 @@ export default function EventRegistrationLanding() {
   const programAgenda = [
     {
       time: '08:30 – 09:00',
-      title: 'التسجيل واستقبال المشاركين',
-      speaker: 'فريق التنظيم Investraders & UTICA',
+      title: 'Accueil & Enregistrement des participants',
+      speaker: 'Équipe d\'organisation Investraders & UTICA',
       type: 'registration',
-      description: 'استقبال الحاضرين وتسليم شارات الدخول والملفات التعريفية.'
+      description: 'Accueil des invités, remise des badges d\'accès interactifs et des dossiers de bienvenue.'
     },
     {
       time: '09:00 – 09:15',
-      title: 'الجلسة الافتتاحية الرسمية',
-      speaker: 'السيد هشام اللومي',
-      role: 'نائب رئيس الإتحاد التونسي للصناعة والتجارة والصناعات التقليدية (UTICA)',
+      title: 'Session d\'Ouverture Officielle',
+      speaker: 'M. Hichem Elloumi',
+      role: 'Vice-Président de l\'Union Tunisienne de l\'Industrie, du Commerce et de l\'Artisanat (UTICA)',
       type: 'keynote',
-      description: 'كلمة ترحيبية وتحديد محاور الرؤية الوطنية للتكامل الرقمي للمؤسسات.'
+      description: 'Discours d\'ouverture et vision stratégique pour l\'intégration numérique des entreprises.'
     },
     {
       time: '09:15 – 09:45',
-      title: 'الجلسة الأولى: الاقتصاد التفاعلي الجديد - التمكين التقني للتكامل الاقتصادي',
-      speaker: 'د. ماهر خضر',
-      role: 'خبير التحول الرقمي والذكاء الاصطناعي',
+      title: 'Session 1 : La nouvelle économie interactive - L\'habilitation technologique pour l\'intégration économique',
+      speaker: 'Dr. Maher Khedher',
+      role: 'Expert en Transformation Numérique & Intelligence Artificielle',
       type: 'speaker',
       topics: [
-        'لماذا تحتاج تونس إلى اقتصاد مترابط؟',
-        'من الاقتصاد التقليدي إلى اقتصاد الفرص والتفاعلية',
-        'From Silos to Interactivity: الانتقال من الأنشطة المنعزلة إلى المنظومة الوطنية',
-        'منصة Investraders كبنية تحتية موحدة لبناء المجتمعات الاقتصادية (Business Circles)'
+        'Pourquoi la Tunisie a besoin d\'une économie interconnectée ?',
+        'Passage de l\'économie traditionnelle à l\'économie d\'opportunités et d\'interactivité',
+        'From Silos to Interactivity : Transition des activités isolées vers un écosystème national',
+        'La plateforme Investraders comme infrastructure unifiée pour les Business Circles'
       ]
     },
     {
       time: '09:45 – 10:15',
-      title: 'الامتثال الوطني والدولي وتعزيز شفافية المؤسسات',
-      speaker: 'السيد بلال سحنون',
-      role: 'المدير العام لبورصة تونس (Bourse de Tunis)',
+      title: 'Conformité nationale & internationale et renforcement de la transparence des entreprises',
+      speaker: 'M. Bilel Sahnoun',
+      role: 'Directeur Général de la Bourse de Tunis',
       type: 'speaker',
       topics: [
-        'متطلبات المستثمرين الدوليين وحوكمة المؤسسات Corporate Governance & ESG',
-        'التحول الرقمي كركيزة أساسية للامتثال والشفافية المالية',
-        'أهمية المنصة التفاعلية الموحدة Investraders للشركات المدرجة والواعدة'
+        'Exigences des investisseurs internationaux et gouvernance d\'entreprise (ESG)',
+        'La transformation numérique comme pilier fondamental de la conformité financière',
+        'Rôle de la plateforme interactive Investraders pour les entreprises cotées et d\'avenir'
       ]
     },
     {
       time: '10:00 – 10:15',
-      title: 'دور الريادة النسائية في التمكين الرقمي للمؤسسة التونسية',
-      speaker: 'السيدة ليلى بلخيرية جابر',
-      role: 'رئيسة الغرفة الوطنية للنساء صاحبات الأعمال ونائبة رئيسة جامعة الكوميسا',
+      title: 'Le rôle du leadership féminin dans l\'autonomisation numérique de l\'entreprise tunisienne',
+      speaker: 'Mme Leila Belkhiria Jaber',
+      role: 'Présidente de la CNFCE & Vice-Présidente de la COMESA',
       type: 'speaker',
-      description: 'تعزيز مشاركة سيدات الأعمال في التحول الرقمي واقتناص الفرص الإقليمية والدولية.'
+      description: 'Renforcement de la participation des femmes cheffes d\'entreprises dans la transition numérique et les opportunités régionales.'
     },
     {
       time: '10:15 – 10:35',
-      title: 'دور الغرف التجارية المشتركة في تحقيق التكامل الاقتصادي الإقليمي',
-      speaker: 'السيد خليل الشايبي',
-      role: 'رئيس الغرفة التونسية الفرنسية للصناعة والتجارة',
+      title: 'Le rôle des Chambres de Commerce Mixtes dans la réalisation de l\'intégration économique régionale',
+      speaker: 'M. Khelil Chaibi',
+      role: 'Président de la Chambre Tunisienne-Française de Commerce et d\'Industrie (CTFCI)',
       type: 'speaker',
       topics: [
-        'تجربة الغرف التجارية المشتركة في دعم الاستثمار وزيادة المبادلات',
-        'بناء شبكات الأعمال الرقمية والتعاون الدولي عبر Investraders'
+        'Expérience des chambres mixtes dans le soutien à l\'investissement et l\'accroissement des échanges',
+        'Développement des réseaux d\'affaires numériques et de la coopération internationale via Investraders'
       ]
     },
     {
       time: '10:35 – 10:50',
-      title: 'استراحة قهوة وشبكات التواصل (Networking Break)',
+      title: 'Pause Café & Networking',
       type: 'break',
-      description: 'فرصة للتواصل المباشر وتبادل بطاقات الأعمال بين أصحاب القرار والمستثمرين.'
+      description: 'Opportunité d\'échanges directs et d\'échange de cartes de visite entre décideurs et investisseurs.'
     },
     {
       time: '10:50 – 11:20',
-      title: 'الجلسة الثانية: البيانات والذكاء الاصطناعي - نحو إطار رقمي وطني موحد',
-      speaker: 'السيد محمد عادل الشواري',
-      role: 'المدير العام للسجل الوطني للمؤسسات (RNE)',
+      title: 'Session 2 : Données & Intelligence Artificielle - Vers un cadre numérique national unifié',
+      speaker: 'M. Mohamed Adel Chouari',
+      role: 'Directeur Général du Registre National des Entreprises (RNE)',
       type: 'speaker',
       topics: [
-        'توحيد قواعد البيانات وتبادل المعلومات بين المؤسسات',
-        'رصد الفرص الاستثمارية القائمة على البيانات والذكاء الاصطناعي'
+        'Unification des bases de données et échange sécurisé d\'informations inter-entreprises',
+        'Détection des opportunités d\'investissement basées sur la Data et l\'IA'
       ]
     },
     {
       time: '11:20 – 11:50',
-      title: 'الذكاء الاصطناعي وجذب الاستثمارات الدولية',
-      speaker: 'السيد جلال الطبيب',
-      role: 'المدير العام لهيئة الاستثمار التونسية (TIA)',
+      title: 'L\'IA et l\'attraction des investissements internationaux',
+      speaker: 'M. Jalal Tebib',
+      role: 'Directeur Général de l\'Instance Tunisienne de l\'Investissement (TIA)',
       type: 'speaker',
       topics: [
-        'التعرف المبكر على الفرص الاستثمارية عالية القيمة',
-        'دور المنصات التفاعلية (Investraders) في جعل تونس منصة استثمار دولية'
+        'Détection précoce des opportunités d\'investissement à forte valeur ajoutée',
+        'Rôle des plateformes interactives (Investraders) pour faire de la Tunisie un hub d\'investissement international'
       ]
     },
     {
       time: '11:50 – 12:10',
-      title: 'الجلسة الثالثة: العرض الحي لمنصة Investraders',
-      speaker: 'فريق تطوير منصة Investraders',
+      title: 'Session 3 : Démonstration en direct de la plateforme Investraders',
+      speaker: 'Équipe de Développement Investraders',
       type: 'demo',
       topics: [
-        'Business Circles & Corporate Communities',
-        'Digital Chambers & Investor Networks',
-        'AI Analytics & Opportunity Marketplace'
+        'Business Circles & Communautés d\'Entreprises',
+        'Chambres Numériques & Réseaux d\'Investisseurs',
+        'Analytique IA & Marketplace d\'Opportunités'
       ]
     },
     {
       time: '12:10 – 12:30',
-      title: 'توزيع الجوائز وإعلان تونس (إطلاق المبادرة الوطنية)',
-      speaker: 'الهيئات والشركاء المشاركون',
+      title: 'Remise des Prix & Déclaration de Tunis (Lancement de l\'Initiative Nationale)',
+      speaker: 'Institutions et Partenaires',
       type: 'awards',
-      description: 'تكريم المؤسسات المتميزة وإعلان بيان تونس نحو منظومة اقتصادية رقمية مترابطة.'
+      description: 'Hommage aux entreprises d\'excellence et annonce de la déclaration de Tunis vers un écosystème économique numérique interconnecté.'
     }
   ];
 
@@ -458,6 +496,32 @@ export default function EventRegistrationLanding() {
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-4 text-right">
+                {/* Photo Upload Section */}
+                <div className="flex flex-col items-center justify-center mb-5 pb-4 border-b border-slate-800">
+                  <label className="block text-xs font-bold text-cyan-300 mb-2 text-center">
+                    الصورة الشخصية / Photo de profil <span className="text-rose-400">*</span>
+                  </label>
+                  <div className="relative group cursor-pointer">
+                    <div className="w-24 h-24 rounded-full border-2 border-cyan-400/80 bg-slate-950 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all group-hover:border-cyan-400">
+                      {formData.photoPreview ? (
+                        <img src={formData.photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-slate-400 text-center p-2">
+                          <Camera className="w-7 h-7 text-cyan-400 mb-1" />
+                          <span className="text-[10px] font-bold text-slate-300">إضافة صورة</span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-2">انقر لرفع صورتك الشخصية للشارة الرسمية</span>
+                </div>
+
                 <div>
                   <label className="block text-xs font-bold text-cyan-300 mb-1.5">
                     الاسم واللقب / Full Name <span className="text-rose-400">*</span>
