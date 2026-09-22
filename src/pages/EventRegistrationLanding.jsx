@@ -280,7 +280,7 @@ export default function EventRegistrationLanding() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold mb-6 shadow-[0_0_20px_rgba(6,182,212,0.2)] backdrop-blur-md"
           >
             <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" />
-            <span>Investraders × UTICA • 07 Octobre 2026</span>
+            <span>Investraders × UTICA • 13 Octobre 2026</span>
           </motion.div>
 
           <motion.h1 
@@ -312,7 +312,7 @@ export default function EventRegistrationLanding() {
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
               <Calendar className="w-5 h-5 text-cyan-400 mb-1" />
               <span className="text-[10px] text-slate-400 block">التاريخ</span>
-              <span className="text-xs sm:text-sm font-bold text-white">07 أكتـوبر 2026</span>
+              <span className="text-xs sm:text-sm font-bold text-white">13 أكتـوبر 2026</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
@@ -481,7 +481,7 @@ export default function EventRegistrationLanding() {
               تأكيد الحضور وتوليد شارة الـ QR
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
-              قم بملء بياناتك للحصول على شارة الدخول الرقمية لملتقى 07 أكتوبر بمقر UTICA.
+              قم بملء بياناتك للحصول على شارة الدخول الرقمية لملتقى 13 أكتوبر بمقر UTICA.
             </p>
           </div>
 
@@ -674,7 +674,7 @@ export default function EventRegistrationLanding() {
                   </div>
                   <h4 className="text-base font-bold text-white">تذكرتك في انتظار التسجيل</h4>
                   <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-                    قم بملء البيانات لمعاينة الشارة وتفعيل رمز الـ QR للدخول يوم 07 أكتوبر 2026 بمقر UTICA.
+                    قم بملء البيانات لمعاينة الشارة وتفعيل رمز الـ QR للدخول يوم 13 أكتوبر 2026 بمقر UTICA.
                   </p>
                 </div>
               )}

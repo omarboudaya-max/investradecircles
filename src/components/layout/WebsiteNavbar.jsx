@@ -12,7 +12,7 @@ export default function WebsiteNavbar() {
   const { isArabic, toggleLanguage } = useLanguage();
 
   const links = [
-    { name: isArabic ? 'الملتقى 07 أكتوبر' : 'Event 07 Oct', path: '/event', badge: 'AI' },
+    { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event', badge: 'AI' },
     { name: t.websiteNav.institutions, path: '/institutions' },
     { name: t.websiteNav.businesses, path: '/contact' },
     { name: t.websiteNav.individuals, path: '/individuals' },

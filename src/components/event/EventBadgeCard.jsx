@@ -70,14 +70,14 @@ export default function EventBadgeCard({
   if (!registration) return null;
 
   const { full_name, company, role, sector, photo_url, badge_code, email } = registration;
-  const displayPassCode = badge_code || `INV-2026-OCT7-${Math.floor(1000 + Math.random() * 9000)}`;
+  const displayPassCode = badge_code || `INV-2026-OCT13-${Math.floor(1000 + Math.random() * 9000)}`;
   const qrPayload = JSON.stringify({
     passId: displayPassCode,
     name: full_name,
     email: email,
     company: company || 'Enterprise',
     role: role || 'Delegate',
-    eventDate: '2026-10-07',
+    eventDate: '2026-10-13',
     venue: 'UTICA HQ, Tunis',
     status: 'VERIFIED_INVITATION'
   });
@@ -113,8 +113,8 @@ export default function EventBadgeCard({
     const title = encodeURIComponent("التمكين الرقمي للمؤسسات التونسية في عصر الذكاء الاصطناعي - Wisdom Net & UTICA");
     const details = encodeURIComponent("الملتقى الوطني للتكمين الرقمي والتكامل الاقتصادي في تونس. المكان: مقر الاتحاد التونسي للصناعة والتجارة والصناعات التقليدية UTICA.");
     const location = encodeURIComponent("UTICA HQ, Cité El Khadra, Tunis");
-    const startTime = "20261007T073000Z";
-    const endTime = "20261007T113000Z";
+    const startTime = "20261013T073000Z";
+    const endTime = "20261013T113000Z";
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startTime}/${endTime}&details=${details}&location=${location}`;
     window.open(googleCalendarUrl, '_blank');
   };
@@ -182,7 +182,7 @@ export default function EventBadgeCard({
                   التمكين الرقمي للمؤسسات التونسية في عصر الذكاء الاصطناعي
                 </h4>
                 <p className="text-[10px] text-slate-500 font-mono mt-0.5">
-                  UTICA HQ • 07 OCTOBRE 2026 • TUNIS
+                  UTICA HQ • 13 OCTOBRE 2026 • TUNIS
                 </p>
               </div>
 

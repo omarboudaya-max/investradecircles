@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 export default function EventQRCode({ value, size = 180, fgColor = '#00F0FF', bgColor = '#050D1A', className = '' }) {
   // Simple deterministic QR matrix generator algorithm for client-side SVG rendering
   const modules = useMemo(() => {
-    const text = value || 'INV-2026-OCT7';
+    const text = value || 'INV-2026-OCT13';
     const N = 25; // 25x25 grid
     const grid = Array.from({ length: N }, () => Array(N).fill(false));
 
