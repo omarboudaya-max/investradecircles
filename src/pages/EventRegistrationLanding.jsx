@@ -157,109 +157,61 @@ export default function EventRegistrationLanding() {
 
   const programAgenda = [
     {
-      time: '08:30 – 09:00',
-      title: 'Accueil & Enregistrement des participants',
-      speaker: 'Équipe d\'organisation Investraders & UTICA',
+      time: '08h30 – 09h00',
+      title: 'Inscription',
       type: 'registration',
-      description: 'Accueil des invités, remise des badges d\'accès interactifs et des dossiers de bienvenue.'
+      description: 'Accueil et enregistrement des participants.'
     },
     {
-      time: '09:00 – 09:15',
-      title: 'Session d\'Ouverture Officielle',
-      speaker: 'M. Hichem Elloumi',
-      role: 'Vice-Président de l\'Union Tunisienne de l\'Industrie, du Commerce et de l\'Artisanat (UTICA)',
+      time: '09h00 – 09h15',
+      title: 'Allocutions d\'ouverture',
       type: 'keynote',
-      description: 'Discours d\'ouverture et vision stratégique pour l\'intégration numérique des entreprises.'
-    },
-    {
-      time: '09:15 – 09:45',
-      title: 'Session 1 : La nouvelle économie interactive - L\'habilitation technologique pour l\'intégration économique',
-      speaker: 'Dr. Maher Khedher',
-      role: 'Expert en Transformation Numérique & Intelligence Artificielle',
-      type: 'speaker',
-      topics: [
-        'Pourquoi la Tunisie a besoin d\'une économie interconnectée ?',
-        'Passage de l\'économie traditionnelle à l\'économie d\'opportunités et d\'interactivité',
-        'From Silos to Interactivity : Transition des activités isolées vers un écosystème national',
-        'La plateforme Investraders comme infrastructure unifiée pour les Business Circles'
+      speakersList: [
+        { name: 'M. le représentant de l\'UTICA', role: 'Union Tunisienne de l\'Industrie, du Commerce et de l\'Artisanat' },
+        { name: 'M. Slim JAOUED', role: 'Chargé de programme, Konrad-Adenauer-Stiftung – KAS Tunisie' }
       ]
     },
     {
-      time: '09:45 – 10:15',
-      title: 'Conformité nationale & internationale et renforcement de la transparence des entreprises',
-      speaker: 'M. Bilel Sahnoun',
-      role: 'Directeur Général de la Bourse de Tunis',
+      time: '09h15 – 09h45',
+      title: 'Première session : Vers une entreprise tunisienne intelligente, connectée et compétitive',
+      speaker: 'Dr. Maher KHEDHER',
+      role: 'Fondateur d\'Investraders',
       type: 'speaker',
-      topics: [
-        'Exigences des investisseurs internationaux et gouvernance d\'entreprise (ESG)',
-        'La transformation numérique comme pilier fondamental de la conformité financière',
-        'Rôle de la plateforme interactive Investraders pour les entreprises cotées et d\'avenir'
+      description: 'Sujet : « Le cerveau numérique de l\'entreprise tunisienne à l\'ère de l\'intelligence artificielle »'
+    },
+    {
+      time: '09h45 – 11h00',
+      title: 'Deuxième session – Panel de discussion',
+      type: 'panel',
+      description: 'Thème : L\'autonomisation numérique de l\'entreprise tunisienne à l\'ère de l\'intelligence artificielle — De la transformation numérique à l\'intelligence organisationnelle, à la compétitivité et à l\'investissement',
+      moderator: 'Mme Wafa DAHMANI',
+      panelists: [
+        { name: 'M. Bilel SAHNOUN', role: 'Directeur Général de la Bourse de Tunis' },
+        { name: 'Mme Leïla BELKHIRIA JABER', role: 'Présidente de la CNFCE & Vice-Présidente de la Fédération COMESA' },
+        { name: 'M. Moncef BEN JOMAA', role: 'Président de la Chambre de Commerce et d\'Industrie de Tunis' },
+        { name: 'M. Mohamed Adel CHOUARI', role: 'Directeur Général du Registre National des Entreprises (RNE)' },
+        { name: 'M. Jalel TEBIB', role: 'Directeur Général de la FIPA (Agence de Promotion de l\'Investissement Extérieur)' },
+        { name: 'Mme Néjia GHARBI', role: 'Directrice Générale de la Caisse des Dépôts et Consignations – CDC' }
       ]
     },
     {
-      time: '10:00 – 10:15',
-      title: 'Le rôle du leadership féminin dans l\'autonomisation numérique de l\'entreprise tunisienne',
-      speaker: 'Mme Leila Belkhiria Jaber',
-      role: 'Présidente de la CNFCE & Vice-Présidente de la COMESA',
-      type: 'speaker',
-      description: 'Renforcement de la participation des femmes cheffes d\'entreprises dans la transition numérique et les opportunités régionales.'
-    },
-    {
-      time: '10:15 – 10:35',
-      title: 'Le rôle des Chambres de Commerce Mixtes dans la réalisation de l\'intégration économique régionale',
-      speaker: 'M. Khelil Chaibi',
-      role: 'Président de la Chambre Tunisienne-Française de Commerce et d\'Industrie (CTFCI)',
-      type: 'speaker',
-      topics: [
-        'Expérience des chambres mixtes dans le soutien à l\'investissement et l\'accroissement des échanges',
-        'Développement des réseaux d\'affaires numériques et de la coopération internationale via Investraders'
-      ]
-    },
-    {
-      time: '10:35 – 10:50',
-      title: 'Pause Café & Networking',
-      type: 'break',
-      description: 'Opportunité d\'échanges directs et d\'échange de cartes de visite entre décideurs et investisseurs.'
-    },
-    {
-      time: '10:50 – 11:20',
-      title: 'Session 2 : Données & Intelligence Artificielle - Vers un cadre numérique national unifié',
-      speaker: 'M. Mohamed Adel Chouari',
-      role: 'Directeur Général du Registre National des Entreprises (RNE)',
-      type: 'speaker',
-      topics: [
-        'Unification des bases de données et échange sécurisé d\'informations inter-entreprises',
-        'Détection des opportunités d\'investissement basées sur la Data et l\'IA'
-      ]
-    },
-    {
-      time: '11:20 – 11:50',
-      title: 'L\'IA et l\'attraction des investissements internationaux',
-      speaker: 'M. Jalal Tebib',
-      role: 'Directeur Général de l\'Instance Tunisienne de l\'Investissement (TIA)',
-      type: 'speaker',
-      topics: [
-        'Détection précoce des opportunités d\'investissement à forte valeur ajoutée',
-        'Rôle des plateformes interactives (Investraders) pour faire de la Tunisie un hub d\'investissement international'
-      ]
-    },
-    {
-      time: '11:50 – 12:10',
-      title: 'Session 3 : Démonstration en direct de la plateforme Investraders',
-      speaker: 'Équipe de Développement Investraders',
+      time: '11h00 – 11h30',
+      title: 'Troisième session – Présentation de la plateforme Investraders',
+      speaker: 'Équipe Investraders & Wisdom Net',
       type: 'demo',
-      topics: [
-        'Business Circles & Communautés d\'Entreprises',
-        'Chambres Numériques & Réseaux d\'Investisseurs',
-        'Analytique IA & Marketplace d\'Opportunités'
-      ]
+      description: 'Démonstration Investraders, le centre d\'intelligence et de pilotage de l\'entreprise à l\'ère de l\'intelligence artificielle.'
     },
     {
-      time: '12:10 – 12:30',
-      title: 'Remise des Prix & Déclaration de Tunis (Lancement de l\'Initiative Nationale)',
-      speaker: 'Institutions et Partenaires',
+      time: '11h30 – 12h45',
+      title: 'Débats',
+      type: 'discussion',
+      description: 'Questions, discussions et échanges avec les participants.'
+    },
+    {
+      time: '12h45 – 12h55',
+      title: 'Clôture',
       type: 'awards',
-      description: 'Hommage aux entreprises d\'excellence et annonce de la déclaration de Tunis vers un écosystème économique numérique interconnecté.'
+      description: 'Synthèse et recommandations de la matinée.'
     }
   ];
 
@@ -277,29 +229,40 @@ export default function EventRegistrationLanding() {
           <motion.div 
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold mb-6 shadow-[0_0_20px_rgba(6,182,212,0.2)] backdrop-blur-md"
+            className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold mb-6 shadow-[0_0_20px_rgba(6,182,212,0.2)] backdrop-blur-md"
           >
-            <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" />
-            <span>Investraders × UTICA • 13 Octobre 2026</span>
+            <Sparkles className="w-4 h-4 text-cyan-400 animate-spin shrink-0" />
+            <span>Wisdom Net × UTICA × KAS Tunisie • Mardi 13 Octobre 2026</span>
           </motion.div>
 
           <motion.h1 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight mb-4 sm:mb-6"
+            className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight mb-4 sm:mb-6"
           >
-            التمكين الرقمي للمؤسسات التونسية <br />
-            في عصر <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">الذكاء الاصطناعي</span>
+            Entreprises tunisiennes à l'ère de l'Intelligence Artificielle : <br />
+            <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">
+              de la transformation numérique à l'autonomie et à l'innovation
+            </span>
           </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="inline-block px-4 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold mb-6"
+          >
+            🎤 Animation générale : Les séances seront animées par <span className="text-white font-extrabold">M. Anas BEN SAID</span>
+          </motion.div>
 
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="text-sm sm:text-lg text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed"
+            className="text-xs sm:text-base text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed"
           >
-            نحو منظومة وطنية مترابطة لتحقيق التكامل الاقتصادي وتعزيز تنافسية المؤسسة التونسية من خلال الذكاء الاصطناعي ومجتمعات الأعمال الرقمية.
+            Demi-journée d'échange, de dialogue, de démonstration et de partage d'expériences réunissant entreprises, experts et acteurs économiques pour faire de l'IA un véritable levier d'autonomie, de compétitivité et d'innovation.
           </motion.p>
 
           {/* Mobile-Friendly Grid Badges */}
@@ -311,26 +274,26 @@ export default function EventRegistrationLanding() {
           >
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
               <Calendar className="w-5 h-5 text-cyan-400 mb-1" />
-              <span className="text-[10px] text-slate-400 block">التاريخ</span>
-              <span className="text-xs sm:text-sm font-bold text-white">13 أكتـوبر 2026</span>
+              <span className="text-[10px] text-slate-400 block">Date</span>
+              <span className="text-xs sm:text-sm font-bold text-white">Mardi 13 Oct 2026</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
               <Clock className="w-5 h-5 text-cyan-400 mb-1" />
-              <span className="text-[10px] text-slate-400 block">التوقيت</span>
-              <span className="text-xs sm:text-sm font-bold text-white">08:30 – 12:30</span>
+              <span className="text-[10px] text-slate-400 block">Horaire</span>
+              <span className="text-xs sm:text-sm font-bold text-white">08:30 – 12:55</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
               <MapPin className="w-5 h-5 text-cyan-400 mb-1" />
-              <span className="text-[10px] text-slate-400 block">المكان</span>
-              <span className="text-xs sm:text-sm font-bold text-white">مقر UTICA تونس</span>
+              <span className="text-[10px] text-slate-400 block">Lieu</span>
+              <span className="text-xs sm:text-sm font-bold text-white">Siège UTICA Tunis</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md">
               <Award className="w-5 h-5 text-cyan-400 mb-1" />
-              <span className="text-[10px] text-slate-400 block">التنظيم</span>
-              <span className="text-xs sm:text-sm font-bold text-white">Investraders & UTICA</span>
+              <span className="text-[10px] text-slate-400 block">Organisation</span>
+              <span className="text-xs sm:text-sm font-bold text-white">Wisdom Net • UTICA • KAS</span>
             </div>
           </motion.div>
 
@@ -346,60 +309,60 @@ export default function EventRegistrationLanding() {
               className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-slate-950 font-black text-sm shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2"
             >
               <Zap className="w-4 h-4 fill-current" />
-              احجز شارتك الرقمية الآن
+              Obtenir mon Badge Officiel
             </a>
 
             <a
               href="#agenda-section"
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-sm border border-slate-700 transition-all text-center"
             >
-              برنامج اليوم الدراسي
+              Programme détaillé
             </a>
           </motion.div>
 
         </div>
       </section>
 
-      {/* Vision Cards */}
+      {/* Vision & Context Argumentaire Cards */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-950/70 border-y border-cyan-500/10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-1">
-              الرؤية والأهداف الاستراتيجية
+              Contexte & Enjeux Stratégiques
             </span>
             <h2 className="text-xl sm:text-3xl font-extrabold text-white">
-              من العمل المنعزل إلى اقتصاد البيانات التفاعلي
+              L'IA au service de l'autonomie et de la compétitivité
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-right">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-left dir-ltr">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-3">
                 <Network className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-white mb-2">التكامل الاقتصادي المترابط</h3>
+              <h3 className="text-base font-bold text-white mb-2">Transformations & Compétitivité</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                ربط المؤسسات التونسية والغرف التجارية ضمن منظومة رقمية موحدة تعتمد على الذكاء الاصطناعي.
+                L'IA ouvre de nouvelles perspectives en productivité, innovation et création de valeur pour l'économie tunisienne.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-right">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-left dir-ltr">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-white mb-2">الامتثال والحوكمة (ESG)</h3>
+              <h3 className="text-base font-bold text-white mb-2">Autonomie Numérique</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                مناقشة متطلبات الامتثال الوطني (RNE) والدولي وبورصة تونس لتعزيز شفافية المؤسسات.
+                Valorisation des données, compétences locales et maîtrise stratégique des technologies émergentes d'IA.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-right">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-cyan-500/20 text-left dir-ltr">
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-3">
                 <Cpu className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-white mb-2">مجتمعات الأعمال (Business Circles)</h3>
+              <h3 className="text-base font-bold text-white mb-2">Plateforme Investraders</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                تحويل كل مؤسسة إلى مجتمع اقتصادي تفاعلي يتيح رصد واستغلال الفرص الاستثمارية المباشرة.
+                Présentation et démonstration du centre d'intelligence et de pilotage numérique développé par Wisdom Net.
               </p>
             </div>
           </div>
@@ -410,38 +373,39 @@ export default function EventRegistrationLanding() {
       <section id="agenda-section" className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-1">
-            برنامج الملتقى
+            Déroulement du programme
           </span>
           <h2 className="text-xl sm:text-3xl font-extrabold text-white">
-            مواعيد الجلسات والمتحدثين
+            Mardi 13 Octobre 2026 • Siège UTICA
           </h2>
+          <p className="text-xs text-slate-400 mt-2">
+            Animation générale assurée par <span className="text-cyan-300 font-bold">M. Anas BEN SAID</span>
+          </p>
         </div>
 
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           {programAgenda.map((item, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className={`p-4 sm:p-5 rounded-2xl border transition-all text-right ${
-                item.type === 'keynote' || item.type === 'demo'
-                  ? 'bg-slate-900/90 border-cyan-500/40'
-                  : item.type === 'break'
-                  ? 'bg-slate-950/40 border-slate-800'
+              className={`p-5 rounded-2xl border transition-all text-left dir-ltr ${
+                item.type === 'keynote' || item.type === 'panel' || item.type === 'demo'
+                  ? 'bg-slate-900/90 border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
                   : 'bg-slate-900/50 border-slate-800'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                <div className="flex items-center gap-2.5">
-                  <span className="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 font-mono text-[11px] font-bold border border-cyan-500/30">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <span className="inline-block px-3 py-1 rounded-md bg-cyan-500/10 text-cyan-400 font-mono text-xs font-bold border border-cyan-500/30">
                     {item.time}
                   </span>
-                  <h4 className="text-sm sm:text-base font-bold text-white">{item.title}</h4>
+                  <h4 className="text-base sm:text-lg font-bold text-white">{item.title}</h4>
                 </div>
 
                 {item.speaker && (
-                  <div className="text-right">
+                  <div className="sm:text-right bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 shrink-0">
                     <span className="text-xs font-bold text-cyan-300 block">{item.speaker}</span>
                     {item.role && <span className="text-[11px] text-slate-400 block">{item.role}</span>}
                   </div>
@@ -449,20 +413,49 @@ export default function EventRegistrationLanding() {
               </div>
 
               {item.description && (
-                <p className="mt-2 text-xs text-slate-300 leading-relaxed border-t border-slate-800/80 pt-2">
+                <p className="mt-3 text-xs text-slate-300 leading-relaxed border-t border-slate-800/80 pt-3">
                   {item.description}
                 </p>
               )}
 
-              {item.topics && (
-                <ul className="mt-2 space-y-1 border-t border-slate-800/80 pt-2">
-                  {item.topics.map((tp, i) => (
-                    <li key={i} className="text-[11px] text-slate-300 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                      <span>{tp}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Speakers List */}
+              {item.speakersList && (
+                <div className="mt-3 border-t border-slate-800/80 pt-3 space-y-2">
+                  <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block">Allocutions :</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {item.speakersList.map((sp, i) => (
+                      <div key={i} className="p-2 rounded-lg bg-slate-950/70 border border-slate-800 text-xs">
+                        <span className="font-bold text-white block">{sp.name}</span>
+                        <span className="text-[11px] text-slate-400 block">{sp.role}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Moderator & Panelists */}
+              {item.moderator && (
+                <div className="mt-3 border-t border-slate-800/80 pt-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold border border-amber-500/30">
+                      Modératrice : {item.moderator}
+                    </span>
+                  </div>
+
+                  {item.panelists && (
+                    <div className="pt-2">
+                      <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block mb-2">Panélistes :</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {item.panelists.map((p, i) => (
+                          <div key={i} className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+                            <span className="font-bold text-white block">{p.name}</span>
+                            <span className="text-[10px] text-slate-400 block mt-0.5">{p.role}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </motion.div>
           ))}
