@@ -226,6 +226,62 @@ export default function EventRegistrationLanding() {
 
         <div className="max-w-6xl mx-auto relative z-10 text-center">
           
+          {/* Top Organizing Partners Logos: UTICA (Left) | Wisdom Net (Centre) | KAS (Right) */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-4xl mx-auto mb-8 sm:mb-10 px-4 sm:px-8 py-3.5 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-900/60 border border-cyan-500/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-between gap-4 sm:gap-8 dir-ltr"
+          >
+            {/* Top Left: UTICA */}
+            <div className="flex-1 flex items-center justify-start">
+              <a 
+                href="https://www.utica.org.tn" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group block transition-transform hover:scale-105"
+                title="UTICA - Union Tunisienne de l'Industrie, du Commerce et de l'Artisanat"
+              >
+                <img
+                  src="/images/logos/utica-logo.png"
+                  alt="UTICA"
+                  className="h-10 sm:h-16 md:h-20 w-auto max-w-[85px] sm:max-w-[130px] md:max-w-[160px] object-contain drop-shadow-[0_2px_10px_rgba(0,161,228,0.3)]"
+                />
+              </a>
+            </div>
+
+            {/* Top Centre: Wisdom Net */}
+            <div className="flex-1 flex items-center justify-center">
+              <div 
+                className="group block transition-transform hover:scale-110"
+                title="Wisdom Net - شبكة الحكمة"
+              >
+                <img
+                  src="/images/logos/wisdomnet-logo.png"
+                  alt="Wisdom Net"
+                  className="h-14 sm:h-22 md:h-28 w-auto max-w-[90px] sm:max-w-[130px] md:max-w-[160px] object-contain drop-shadow-[0_0_25px_rgba(6,182,212,0.45)]"
+                />
+              </div>
+            </div>
+
+            {/* Top Right: KAS */}
+            <div className="flex-1 flex items-center justify-end">
+              <a 
+                href="https://www.kas.de/fr/web/tunesien" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group block transition-transform hover:scale-105"
+                title="Konrad-Adenauer-Stiftung - KAS Tunisie"
+              >
+                <img
+                  src="/images/logos/kas-logo-white.png"
+                  alt="Konrad-Adenauer-Stiftung"
+                  className="h-8 sm:h-12 md:h-16 w-auto max-w-[100px] sm:max-w-[160px] md:max-w-[190px] object-contain drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]"
+                />
+              </a>
+            </div>
+          </motion.div>
+
           <motion.div 
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}

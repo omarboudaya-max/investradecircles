@@ -18,31 +18,11 @@ import confetti from 'canvas-confetti';
 import EventQRCode from './EventQRCode';
 import html2canvas from 'html2canvas';
 
-// ── Transparent Vector Logo for Wisdom Net / Investraders ──
-const WisdomNetLogo = ({ className = "h-8 w-auto" }) => (
-  <div className={`flex items-center gap-2 ${className}`}>
-    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
-      <Sparkles className="w-4 h-4 text-white" />
-    </div>
-    <div className="text-left leading-none dir-ltr font-sans">
-      <span className="text-[11px] font-black tracking-widest text-slate-900 block uppercase font-mono">WISDOM NET</span>
-      <span className="text-[8px] font-bold tracking-wider text-cyan-600 uppercase block">INVESTRADERS</span>
-    </div>
-  </div>
-);
+// Official logos for Badge
+const UTICA_LOGO = "/images/logos/utica-logo.png";
+const WISDOMNET_LOGO = "/images/logos/wisdomnet-logo.png";
+const KAS_LOGO = "/images/logos/kas-logo.png";
 
-// ── Transparent Vector Logo for UTICA ──
-const UticaLogo = ({ className = "h-8 w-auto" }) => (
-  <div className={`flex items-center gap-2 ${className}`}>
-    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 via-rose-600 to-amber-500 flex items-center justify-center text-white font-black text-xs border border-red-700 shadow-sm">
-      <span className="font-serif tracking-tighter">UT</span>
-    </div>
-    <div className="text-right leading-none dir-rtl font-sans">
-      <span className="text-[12px] font-black tracking-wider text-red-700 block font-serif">UTICA</span>
-      <span className="text-[7px] font-bold text-slate-600 block">الإتحاد التونسي للصناعة والتجارة</span>
-    </div>
-  </div>
-);
 
 export default function EventBadgeCard({
   registration,
@@ -164,13 +144,34 @@ export default function EventBadgeCard({
 
             <div className="relative z-10 space-y-4">
               
-              {/* Header Logos: Top Right = Wisdom Net, Top Left = UTICA */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dir-ltr">
-                {/* Top Left: UTICA Logo */}
-                <UticaLogo />
+              {/* Header Logos: Top Left = UTICA, Top Centre = Wisdom Net, Top Right = KAS */}
+              <div className="flex items-center justify-between gap-2 pb-3.5 border-b border-slate-200 dir-ltr">
+                {/* Left: UTICA Logo */}
+                <div className="flex-1 flex items-center justify-start">
+                  <img
+                    src={UTICA_LOGO}
+                    alt="UTICA"
+                    className="h-9 sm:h-11 w-auto max-w-[85px] sm:max-w-[105px] object-contain"
+                  />
+                </div>
 
-                {/* Top Right: Wisdom Net Logo */}
-                <WisdomNetLogo />
+                {/* Centre: Wisdom Net Logo */}
+                <div className="flex-1 flex items-center justify-center">
+                  <img
+                    src={WISDOMNET_LOGO}
+                    alt="Wisdom Net"
+                    className="h-11 sm:h-14 w-auto max-w-[65px] sm:max-w-[75px] object-contain"
+                  />
+                </div>
+
+                {/* Right: KAS Logo */}
+                <div className="flex-1 flex items-center justify-end">
+                  <img
+                    src={KAS_LOGO}
+                    alt="Konrad-Adenauer-Stiftung"
+                    className="h-8 sm:h-10 w-auto max-w-[95px] sm:max-w-[120px] object-contain"
+                  />
+                </div>
               </div>
 
               {/* Event Subheader */}
