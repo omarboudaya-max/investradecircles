@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -37,11 +37,27 @@ import EventRegistrationLanding from '@/pages/EventRegistrationLanding';
 
 import GlobalLoader from '@/components/layout/GlobalLoader';
 
-import Onboarding from '@/pages/Onboarding';
-
+import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
+import WebsiteFooter from '@/components/layout/WebsiteFooter';
 import Notifications from '@/pages/Notifications';
 import InvestmentMap from '@/pages/InvestmentMap';
 import ProjectDetail from '@/pages/ProjectDetail';
+
+const SmartInvestmentLayout = () => {
+  const { user } = useAuth();
+  if (user) {
+    return <AppLayout />;
+  }
+  return (
+    <div className="min-h-screen flex flex-col text-white bg-[#030914] antialiased font-sans">
+      <WebsiteNavbar />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <WebsiteFooter />
+    </div>
+  );
+};
 
 const AuthenticatedApp = () => {
   const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -104,6 +120,13 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
+              {/* Public & Authenticated Investment Map & Project Details */}
+              <Route element={<SmartInvestmentLayout />}>
+                <Route path="/investment-map" element={<InvestmentMap />} />
+                <Route path="/investment-project/:id" element={<ProjectDetail />} />
+                <Route path="/project/:id" element={<ProjectDetail />} />
+              </Route>
+
               <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route element={<AppLayout />}>
@@ -121,9 +144,6 @@ const AuthenticatedApp = () => {
                   <Route path="/post/:id" element={<PostDetail />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/all-circles" element={<AllCircles />} />
-                  <Route path="/investment-map" element={<InvestmentMap />} />
-                  <Route path="/investment-project/:id" element={<ProjectDetail />} />
-                  <Route path="/project/:id" element={<ProjectDetail />} />
                 </Route>
               </Route>
 
