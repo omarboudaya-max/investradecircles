@@ -173,22 +173,93 @@ export default function EventRegistrationLanding() {
     };
 
     try {
-      const { data, error } = await supabase
+      // Check if registration already exists in Supabase for this email
+      const { data: existingReg } = await supabase
         .from('event_registrations')
-        .insert([regPayload])
-        .select()
-        .single();
+        .select('*')
+        .eq('email', normalizedEmail)
+        .maybeSingle();
 
-      const finalRecord = (!error && data) ? data : regPayload;
-      localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(finalRecord));
-      setRegistrationSuccess(finalRecord);
+      if (existingReg) {
+        // Prevent double registration by updating existing registration
+        const updatePayload = {
+          full_name: formData.fullName || existingReg.full_name,
+          phone: formData.phone || existingReg.phone,
+          company: formData.company || existingReg.company,
+          role: formData.role || existingReg.role,
+          sector: formData.sector || existingReg.sector,
+          photo_url: finalPhotoUrl || existingReg.photo_url,
+          user_id: memberUserId || existingReg.user_id,
+          is_member: isMember || existingReg.is_member,
+        };
+
+        const { data: updatedReg } = await supabase
+          .from('event_registrations')
+          .update(updatePayload)
+          .eq('id', existingReg.id)
+          .select()
+          .single();
+
+        const finalRecord = updatedReg || { ...existingReg, ...updatePayload };
+        localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(finalRecord));
+        setRegistrationSuccess(finalRecord);
+        alert('مرحباً بك مجدداً! تم تحديث بيانات تسجيلك بنجاح وعرض تذكرتك الرسمية.');
+      } else {
+        // Insert new registration
+        const badgeCode = `INV-2026-OCT13-${Math.floor(1000 + Math.random() * 9000)}`;
+        const regPayload = {
+          full_name: formData.fullName,
+          email: normalizedEmail,
+          phone: formData.phone,
+          company: formData.company,
+          role: formData.role,
+          sector: formData.sector,
+          photo_url: finalPhotoUrl,
+          badge_code: badgeCode,
+          user_id: memberUserId,
+          is_member: isMember,
+          status: 'confirmed',
+          created_at: new Date().toISOString()
+        };
+
+        const { data: newReg, error: insertErr } = await supabase
+          .from('event_registrations')
+          .insert([regPayload])
+          .select()
+          .single();
+
+        if (insertErr) {
+          console.warn('Supabase insert notice:', insertErr);
+        }
+
+        const finalRecord = (!insertErr && newReg) ? newReg : regPayload;
+        localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(finalRecord));
+        setRegistrationSuccess(finalRecord);
+      }
     } catch (err) {
       console.warn('Supabase save notice, falling back to local storage:', err);
-      localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(regPayload));
-      setRegistrationSuccess(regPayload);
+      const badgeCode = `INV-2026-OCT13-${Math.floor(1000 + Math.random() * 9000)}`;
+      const fallbackPayload = {
+        full_name: formData.fullName,
+        email: normalizedEmail,
+        phone: formData.phone,
+        company: formData.company,
+        role: formData.role,
+        sector: formData.sector,
+        photo_url: finalPhotoUrl,
+        badge_code: badgeCode,
+        user_id: memberUserId,
+        is_member: isMember,
+        status: 'confirmed',
+        created_at: new Date().toISOString()
+      };
+      localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(fallbackPayload));
+      setRegistrationSuccess(fallbackPayload);
     } finally {
       setLoading(false);
-      document.getElementById('badge-section')?.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        document.getElementById('badge-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
   };
 

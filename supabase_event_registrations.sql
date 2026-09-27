@@ -15,9 +15,12 @@ CREATE TABLE IF NOT EXISTS public.event_registrations (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- If table already existed, ensure photo_url and is_member columns exist
+-- Ensure photo_url and is_member columns exist if table was already created
 ALTER TABLE public.event_registrations ADD COLUMN IF NOT EXISTS photo_url TEXT;
 ALTER TABLE public.event_registrations ADD COLUMN IF NOT EXISTS is_member BOOLEAN DEFAULT false;
+
+-- Create Unique Index on Email to prevent duplicate registrations in Supabase
+CREATE UNIQUE INDEX IF NOT EXISTS idx_event_registrations_email ON public.event_registrations (lower(email));
 
 -- Disable RLS for smooth client interaction (matching app standard)
 ALTER TABLE public.event_registrations DISABLE ROW LEVEL SECURITY;
