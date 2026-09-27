@@ -167,7 +167,7 @@ export default function EventRegistrationLanding() {
       title: 'Allocutions d\'ouverture',
       type: 'keynote',
       speakersList: [
-        { name: 'M. le représentant de l\'UTICA', role: 'Union Tunisienne de l\'Industrie, du Commerce et de l\'Artisanat' },
+        { name: 'M. Kais SELLAMI', role: 'Président de la Fédération du Numérique de l\'UTICA' },
         { name: 'M. Slim JAOUED', role: 'Chargé de programme, Konrad-Adenauer-Stiftung – KAS Tunisie' }
       ]
     },
@@ -188,7 +188,6 @@ export default function EventRegistrationLanding() {
       panelists: [
         { name: 'M. Bilel SAHNOUN', role: 'Directeur Général de la Bourse de Tunis' },
         { name: 'Mme Leïla BELKHIRIA JABER', role: 'Présidente de la CNFCE & Vice-Présidente de la Fédération COMESA' },
-        { name: 'M. Moncef BEN JOMAA', role: 'Président de la Chambre de Commerce et d\'Industrie de Tunis' },
         { name: 'M. Mohamed Adel CHOUARI', role: 'Directeur Général du Registre National des Entreprises (RNE)' },
         { name: 'M. Jalel TEBIB', role: 'Directeur Général de la FIPA (Agence de Promotion de l\'Investissement Extérieur)' },
         { name: 'Mme Néjia GHARBI', role: 'Directrice Générale de la Caisse des Dépôts et Consignations – CDC' }
@@ -239,13 +238,13 @@ export default function EventRegistrationLanding() {
                 href="https://www.utica.org.tn" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="group block transition-transform hover:scale-105"
-                title="UTICA - Union Tunisienne de l'Industrie, du Commerce et de l'Artisanat"
+                className="group block transition-transform hover:scale-105 bg-white/95 hover:bg-white rounded-xl px-2.5 sm:px-3.5 py-1.5 sm:py-2 border border-white/40 shadow-[0_2px_16px_rgba(0,161,228,0.25)]"
+                title="UTICA - Union Tunisienne de l'Industrie, du Commerce et de l'Artisanat • Prix Nobel de la Paix 2015"
               >
                 <img
                   src="/images/logos/utica-logo.png"
-                  alt="UTICA"
-                  className="h-10 sm:h-16 md:h-20 w-auto max-w-[85px] sm:max-w-[130px] md:max-w-[160px] object-contain drop-shadow-[0_2px_10px_rgba(0,161,228,0.3)]"
+                  alt="UTICA - Prix Nobel de la Paix 2015"
+                  className="h-8 sm:h-12 md:h-14 w-auto max-w-[130px] sm:max-w-[180px] md:max-w-[210px] object-contain"
                 />
               </a>
             </div>

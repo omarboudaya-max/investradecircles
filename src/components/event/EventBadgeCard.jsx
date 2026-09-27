@@ -150,8 +150,8 @@ export default function EventBadgeCard({
                 <div className="flex-1 flex items-center justify-start">
                   <img
                     src={UTICA_LOGO}
-                    alt="UTICA"
-                    className="h-9 sm:h-11 w-auto max-w-[85px] sm:max-w-[105px] object-contain"
+                    alt="UTICA - Prix Nobel de la Paix 2015"
+                    className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-[145px] object-contain"
                   />
                 </div>
 
