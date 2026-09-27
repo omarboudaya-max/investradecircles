@@ -8,6 +8,7 @@ import NotificationBell from '@/components/layout/NotificationBell';
 import MobileMenuDrawer from '@/components/layout/MobileMenuDrawer';
 
 import DownloadAppButton from '@/components/layout/DownloadAppButton';
+import PendingReviewAlert from '@/components/admin/PendingReviewAlert';
 
 export default function Navbar({ user }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -65,6 +66,8 @@ export default function Navbar({ user }) {
           <DownloadAppButton variant="compact" className="hidden xs:flex" />
 
           <NotificationBell />
+
+          <PendingReviewAlert />
 
           {/* 3-Line Hamburger Menu Icon Trigger */}
           <button

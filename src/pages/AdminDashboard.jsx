@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
-import { Navigate } from 'react-router-dom';
-import { Shield, Users, Trash2, FileText, Bell, CircleDot, BarChart2, MessageCircle, TrendingUp, UserCheck, Hash, ClipboardList, ShieldCheck } from 'lucide-react';
+import { Navigate, useSearchParams } from 'react-router-dom';
+import { Shield, Users, Trash2, FileText, Bell, CircleDot, BarChart2, MessageCircle, TrendingUp, UserCheck, Hash, ClipboardList, ShieldCheck, Ticket } from 'lucide-react';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
+import ProjectReviewPanel from '@/components/admin/ProjectReviewPanel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format, subDays, isAfter } from 'date-fns';
@@ -13,13 +14,93 @@ import { logger } from '@/lib/logger';
 import { CACHE } from '@/lib/query-client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const TABS = ['Overview', 'Users', 'Posts', 'Circles', 'Audit Log'];
+const TABS = ['Overview', 'Users', 'Projects', 'Event Regs', 'Posts', 'Circles', 'Audit Log'];
+
+function EventRegistrationsAdminPanel({ search = '' }) {
+  const { data: registrations = [], isLoading } = useQuery({
+    queryKey: ['admin-event-registrations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('event_registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data) return data;
+      return [];
+    },
+    staleTime: CACHE.short,
+  });
+
+  const q = search.trim().toLowerCase();
+  const visible = registrations.filter(r => 
+    !q || `${r.full_name || ''} ${r.email || ''} ${r.company || ''} ${r.role || ''} ${r.badge_code || ''}`.toLowerCase().includes(q)
+  );
+
+  return (
+    <div className="bg-card border rounded-2xl overflow-hidden">
+      <div className="px-5 py-3 border-b text-xs text-muted-foreground font-medium flex items-center justify-between">
+        <span>{visible.length} of {registrations.length} event registrations</span>
+        <span className="text-emerald-600 font-semibold">
+          {registrations.filter(r => r.is_member).length} Platform Members
+        </span>
+      </div>
+      {isLoading ? (
+        <div className="p-8 text-center text-sm text-muted-foreground">Loading registrations...</div>
+      ) : visible.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-10">No event registrations found</p>
+      ) : (
+        <div className="divide-y">
+          {visible.map((r) => (
+            <div key={r.id || r.badge_code} className="flex items-center gap-3 px-5 py-3.5">
+              <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0 text-white font-bold text-sm">
+                {r.photo_url ? (
+                  <img src={r.photo_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  (r.full_name || 'A').charAt(0)
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-medium">{r.full_name}</p>
+                  {r.is_member ? (
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                      ✓ Platform Member
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                      Guest Attendee
+                    </span>
+                  )}
+                  <span className="text-[11px] font-mono font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-950/40 px-2 py-0.5 rounded">
+                    {r.badge_code}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {r.email} {r.phone ? `· ${r.phone}` : ''} {r.company ? `· ${r.company}` : ''} {r.role ? `(${r.role})` : ''}
+                </p>
+                {r.sector && (
+                  <p className="text-[11px] text-muted-foreground/70 mt-0.5">
+                    Sector: {r.sector}
+                  </p>
+                )}
+              </div>
+              <div className="text-right text-[11px] text-muted-foreground shrink-0">
+                {r.created_at ? format(new Date(r.created_at), 'MMM d, HH:mm') : '—'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const { user } = useAuth();
   const { isAdmin } = useRBAC();
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState('Overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'Overview';
+  const [tab, setTab] = useState(TABS.includes(initialTab) ? initialTab : 'Overview');
   const [search, setSearch] = useState('');
 
   const { data: allUsers = [] } = useQuery({ queryKey: ['admin-users'], queryFn: () => supabase.from('profiles').select('*').then(res => res.data || []), staleTime: CACHE.short });
@@ -340,6 +421,14 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
+      )}
+
+      {tab === 'Projects' && (
+        <ProjectReviewPanel search={search} addAuditLog={addAuditLog} />
+      )}
+
+      {tab === 'Event Regs' && (
+        <EventRegistrationsAdminPanel search={search} />
       )}
 
       {tab === 'Posts' && (

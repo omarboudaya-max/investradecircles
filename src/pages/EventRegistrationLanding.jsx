@@ -95,6 +95,21 @@ export default function EventRegistrationLanding() {
     setFormData(prev => ({ ...prev, sector }));
   };
 
+  // Auto-sync event registration to mark as member if user logs in
+  useEffect(() => {
+    if (user?.email) {
+      (async () => {
+        try {
+          const normalized = user.email.trim().toLowerCase();
+          await supabase
+            .from('event_registrations')
+            .update({ is_member: true, user_id: user.id })
+            .eq('email', normalized);
+        } catch (e) {}
+      })();
+    }
+  }, [user?.email, user?.id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fullName || !formData.email) {
@@ -121,28 +136,50 @@ export default function EventRegistrationLanding() {
       }
     }
 
-    const badgeCode = `INV-2026-OCT7-${Math.floor(1000 + Math.random() * 9000)}`;
+    const normalizedEmail = formData.email.trim().toLowerCase();
+
+    // Check if user is platform member
+    let isMember = !!user;
+    let memberUserId = user?.id || null;
+
+    if (!memberUserId && normalizedEmail) {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', normalizedEmail)
+          .maybeSingle();
+        if (profile?.id) {
+          memberUserId = profile.id;
+          isMember = true;
+        }
+      } catch (e) {}
+    }
+
+    const badgeCode = `INV-2026-OCT13-${Math.floor(1000 + Math.random() * 9000)}`;
     const regPayload = {
       full_name: formData.fullName,
-      email: formData.email,
+      email: normalizedEmail,
       phone: formData.phone,
       company: formData.company,
       role: formData.role,
       sector: formData.sector,
       photo_url: finalPhotoUrl,
       badge_code: badgeCode,
-      user_id: user?.id || null,
+      user_id: memberUserId,
+      is_member: isMember,
+      status: 'confirmed',
       created_at: new Date().toISOString()
     };
 
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('event_registrations')
         .insert([regPayload])
         .select()
         .single();
 
-      const finalRecord = data || regPayload;
+      const finalRecord = (!error && data) ? data : regPayload;
       localStorage.setItem('investraders_oct7_event_reg', JSON.stringify(finalRecord));
       setRegistrationSuccess(finalRecord);
     } catch (err) {
