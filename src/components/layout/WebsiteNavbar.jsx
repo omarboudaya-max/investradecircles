@@ -12,6 +12,7 @@ export default function WebsiteNavbar() {
   const { isArabic, toggleLanguage } = useLanguage();
 
   const links = [
+    { name: isArabic ? 'خريطة الاستثمار' : 'Investment Map', path: '/investment-map', badge: 'NEW' },
     { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event', badge: 'AI' },
     { name: t.websiteNav.institutions, path: '/institutions' },
     { name: t.websiteNav.businesses, path: '/contact' },

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, User, Bookmark, Users, Globe, MessageCircle, Bell, 
+  X, User, Bookmark, Users, Globe, MessageCircle, Bell, Map,
   ChevronDown, ChevronUp, Settings, HelpCircle, LogOut, 
   Moon, Sun, Languages, Lock, ShieldCheck, Eye, CircleDot, FileText, MessageSquare
 } from 'lucide-react';
@@ -164,6 +164,20 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
 
                 {/* 2-Column Menu Tiles Grid */}
                 <div className="grid grid-cols-2 gap-3">
+                  <div 
+                    onClick={() => handleNav('/investment-map')}
+                    className="bg-primary/10 rounded-2xl p-3.5 shadow-sm border border-primary/20 flex flex-col gap-2 cursor-pointer hover:bg-primary/20 transition-colors col-span-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Map className="w-6 h-6 text-primary" />
+                        <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">New</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Discover investment-ready projects per governorate</p>
+                  </div>
+
                   <div 
                     onClick={() => handleNav('/saved')}
                     className="bg-background rounded-2xl p-3.5 shadow-sm border border-border flex flex-col gap-2 cursor-pointer hover:bg-muted/40 transition-colors"

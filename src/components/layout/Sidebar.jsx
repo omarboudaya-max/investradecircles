@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, PlusCircle, Globe, Eye, Pencil, Users } from 'lucide-react';
+import { Home, PlusCircle, Globe, Eye, Pencil, Users, Map } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -16,6 +16,7 @@ export default function Sidebar() {
 
   const NAV_ITEMS = [
     { label: t.sidebar.home, icon: Home, path: '/home' },
+    { label: isArabic ? 'خريطة الاستثمار' : 'Investment Map', icon: Map, path: '/investment-map' },
     { label: t.sidebar.createCircle, icon: PlusCircle, path: '/create-circle' },
     { label: t.sidebar.myCircles, icon: Users, path: '/my-circles' },
     { label: t.sidebar.allCircles, icon: Globe, path: '/all-circles' },

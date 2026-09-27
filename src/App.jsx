@@ -40,6 +40,8 @@ import GlobalLoader from '@/components/layout/GlobalLoader';
 import Onboarding from '@/pages/Onboarding';
 
 import Notifications from '@/pages/Notifications';
+import InvestmentMap from '@/pages/InvestmentMap';
+import ProjectDetail from '@/pages/ProjectDetail';
 
 const AuthenticatedApp = () => {
   const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -119,6 +121,9 @@ const AuthenticatedApp = () => {
                   <Route path="/post/:id" element={<PostDetail />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/all-circles" element={<AllCircles />} />
+                  <Route path="/investment-map" element={<InvestmentMap />} />
+                  <Route path="/investment-project/:id" element={<ProjectDetail />} />
+                  <Route path="/project/:id" element={<ProjectDetail />} />
                 </Route>
               </Route>
 
