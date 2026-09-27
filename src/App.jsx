@@ -39,6 +39,7 @@ import GlobalLoader from '@/components/layout/GlobalLoader';
 
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
 import WebsiteFooter from '@/components/layout/WebsiteFooter';
+import Onboarding from '@/pages/Onboarding';
 import Notifications from '@/pages/Notifications';
 import InvestmentMap from '@/pages/InvestmentMap';
 import ProjectDetail from '@/pages/ProjectDetail';
