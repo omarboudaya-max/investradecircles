@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { Navigate, useSearchParams } from 'react-router-dom';
-import { Shield, Users, Trash2, FileText, Bell, CircleDot, BarChart2, MessageCircle, TrendingUp, UserCheck, Hash, ClipboardList, ShieldCheck, Ticket } from 'lucide-react';
+import { Shield, Users, Trash2, FileText, Bell, CircleDot, BarChart2, MessageCircle, TrendingUp, UserCheck, Hash, ClipboardList, ShieldCheck, Ticket, Landmark } from 'lucide-react';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import ProjectReviewPanel from '@/components/admin/ProjectReviewPanel';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format, subDays, isAfter } from 'date-fns';
@@ -14,7 +15,7 @@ import { logger } from '@/lib/logger';
 import { CACHE } from '@/lib/query-client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const TABS = ['Overview', 'Users', 'Projects', 'Event Regs', 'Posts', 'Circles', 'Audit Log'];
+const TABS = ['Overview', 'Users', 'Projects', 'Investors', 'Event Regs', 'Posts', 'Circles', 'Audit Log'];
 
 function EventRegistrationsAdminPanel({ search = '' }) {
   const { data: registrations = [], isLoading } = useQuery({
@@ -86,6 +87,86 @@ function EventRegistrationsAdminPanel({ search = '' }) {
               <div className="text-right text-[11px] text-muted-foreground shrink-0">
                 {r.created_at ? format(new Date(r.created_at), 'MMM d, HH:mm') : '—'}
               </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InvestorsAdminPanel({ search = '' }) {
+  const queryClient = useQueryClient();
+  const { data: orgs = [], isLoading } = useQuery({
+    queryKey: ['admin-investor-orgs'],
+    queryFn: () => base44.entities.InvestmentOrganization.list()
+  });
+
+  const toggleVerify = useMutation({
+    mutationFn: async ({ id, status }) => {
+      await base44.entities.InvestmentOrganization.update(id, {
+        verification_status: status === 'VERIFIED' ? 'UNVERIFIED' : 'VERIFIED',
+        official: status !== 'VERIFIED'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-investor-orgs'] });
+      queryClient.invalidateQueries({ queryKey: ['investmentOrganizationsList'] });
+    }
+  });
+
+  const q = search.trim().toLowerCase();
+  const visible = orgs.filter(o =>
+    !q || `${o.display_name || ''} ${o.legal_name || ''} ${o.country || ''} ${o.organization_type || ''}`.toLowerCase().includes(q)
+  );
+
+  return (
+    <div className="bg-card border rounded-2xl overflow-hidden">
+      <div className="px-5 py-3 border-b text-xs text-muted-foreground font-medium flex items-center justify-between">
+        <span>{visible.length} of {orgs.length} investment institutions</span>
+        <span className="text-emerald-600 font-semibold">
+          {orgs.filter(o => o.verification_status === 'VERIFIED').length} Verified Capital Partners
+        </span>
+      </div>
+      {isLoading ? (
+        <div className="p-8 text-center text-sm text-muted-foreground">Loading investor directory...</div>
+      ) : visible.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-10">No investment institutions found</p>
+      ) : (
+        <div className="divide-y">
+          {visible.map((org) => (
+            <div key={org.id} className="flex items-center gap-3 px-5 py-3.5">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border overflow-hidden shrink-0 flex items-center justify-center">
+                {org.logo ? (
+                  <img src={org.logo} alt="" className="w-full h-full object-cover rounded-lg" />
+                ) : (
+                  <Landmark className="w-5 h-5 text-slate-400" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-bold">{org.display_name}</p>
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    {org.organization_type}
+                  </span>
+                  {org.verification_status === 'VERIFIED' && (
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                      ✓ Verified
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {org.legal_name} · {org.city ? `${org.city}, ` : ''}{org.country} · Ticket: {org.minimum_ticket ? `${org.minimum_ticket}M - ${org.maximum_ticket}M TND` : 'Custom'}
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant={org.verification_status === 'VERIFIED' ? 'outline' : 'default'}
+                className={`h-8 text-xs shrink-0 ${org.verification_status !== 'VERIFIED' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
+                onClick={() => toggleVerify.mutate({ id: org.id, status: org.verification_status })}
+              >
+                {org.verification_status === 'VERIFIED' ? 'Unverify' : 'Verify Mandate'}
+              </Button>
             </div>
           ))}
         </div>
@@ -425,6 +506,10 @@ export default function AdminDashboard() {
 
       {tab === 'Projects' && (
         <ProjectReviewPanel search={search} addAuditLog={addAuditLog} />
+      )}
+
+      {tab === 'Investors' && (
+        <InvestorsAdminPanel search={search} />
       )}
 
       {tab === 'Event Regs' && (

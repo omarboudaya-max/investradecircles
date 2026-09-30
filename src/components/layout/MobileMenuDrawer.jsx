@@ -173,9 +173,23 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         <Map className="w-6 h-6 text-primary" />
                         <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">New</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Map</span>
                     </div>
                     <p className="text-xs text-muted-foreground">Discover investment-ready projects per governorate</p>
+                  </div>
+
+                  <div 
+                    onClick={() => handleNav('/investment-network')}
+                    className="bg-emerald-500/10 rounded-2xl p-3.5 shadow-sm border border-emerald-500/20 flex flex-col gap-2 cursor-pointer hover:bg-emerald-500/20 transition-colors col-span-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-6 h-6 text-emerald-500" />
+                        <span className="text-sm font-bold text-foreground">{isArabic ? 'فواعل ومستثمرون' : 'Funds & Investors'}</span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full">Match</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Discover investor institutions, venture capital & matching engine</p>
                   </div>
 
                   <div 

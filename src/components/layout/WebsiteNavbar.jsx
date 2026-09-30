@@ -13,6 +13,7 @@ export default function WebsiteNavbar() {
 
   const links = [
     { name: isArabic ? 'خريطة الاستثمار' : 'Investment Map', path: '/investment-map', badge: 'NEW' },
+    { name: isArabic ? 'فواعل ومستثمرون' : 'Funds & Investors', path: '/investment-network', badge: 'MATCH' },
     { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event', badge: 'AI' },
     { name: t.websiteNav?.institutions || 'Institutions', path: '/institutions' },
     { name: t.websiteNav?.businesses || 'Businesses', path: '/contact' },

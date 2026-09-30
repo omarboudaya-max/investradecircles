@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { INITIAL_ORGANIZATIONS, INITIAL_VEHICLES } from '@/lib/investmentNetwork';
 
 // Initial governorates dataset (24 Governorates of Tunisia)
 const INITIAL_GOVERNORATES = [
@@ -306,6 +307,8 @@ const INITIAL_PROJECTS = [
 let governoratesStore = [...INITIAL_GOVERNORATES];
 let sectorsStore = [...INITIAL_SECTORS];
 let projectsStore = [...INITIAL_PROJECTS];
+let organizationsStore = [...INITIAL_ORGANIZATIONS];
+let vehiclesStore = [...INITIAL_VEHICLES];
 let projectViewsStore = [];
 let savedInvestmentsStore = [];
 let investorInterestsStore = [];
@@ -472,6 +475,130 @@ export const base44 = {
         } catch (e) {}
         investorInterestsStore.push(interest);
         return interest;
+      }
+    },
+
+    InvestmentOrganization: {
+      filter: async (criteria = {}, order = '-created_at', limit = 500) => {
+        try {
+          let query = supabase.from('InvestmentOrganization').select('*');
+          Object.entries(criteria).forEach(([key, val]) => {
+            query = query.eq(key, val);
+          });
+          const { data, error } = await query.limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+
+        return organizationsStore.filter((org) => {
+          return Object.entries(criteria).every(([key, val]) => org[key] === val);
+        });
+      },
+
+      list: async (order = '-created_at', limit = 500) => {
+        try {
+          const { data, error } = await supabase.from('InvestmentOrganization').select('*').limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return organizationsStore;
+      },
+
+      get: async (idOrSlug) => {
+        try {
+          const { data, error } = await supabase.from('InvestmentOrganization').select('*').or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`).single();
+          if (!error && data) return data;
+        } catch (e) {}
+        const org = organizationsStore.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
+        if (!org) return null;
+        return org;
+      },
+
+      create: async (payload) => {
+        const id = payload.id || `org_${Date.now()}`;
+        const newOrg = {
+          id,
+          slug: payload.slug || (payload.display_name ? payload.display_name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `org-${Date.now()}`),
+          created_at: new Date().toISOString(),
+          verification_status: payload.verification_status || 'PENDING',
+          active: payload.active ?? true,
+          ...payload
+        };
+
+        try {
+          await supabase.from('InvestmentOrganization').insert(newOrg);
+        } catch (e) {}
+
+        organizationsStore = [newOrg, ...organizationsStore];
+        return newOrg;
+      },
+
+      update: async (id, payload) => {
+        try {
+          await supabase.from('InvestmentOrganization').update(payload).eq('id', id);
+        } catch (e) {}
+
+        organizationsStore = organizationsStore.map((o) => (o.id === id ? { ...o, ...payload } : o));
+        return organizationsStore.find((o) => o.id === id);
+      },
+
+      delete: async (id) => {
+        try {
+          await supabase.from('InvestmentOrganization').delete().eq('id', id);
+        } catch (e) {}
+
+        organizationsStore = organizationsStore.filter((o) => o.id !== id);
+        return true;
+      }
+    },
+
+    InvestmentVehicle: {
+      filter: async (criteria = {}, order = '-created_at', limit = 500) => {
+        try {
+          let query = supabase.from('InvestmentVehicle').select('*');
+          Object.entries(criteria).forEach(([key, val]) => {
+            query = query.eq(key, val);
+          });
+          const { data, error } = await query.limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+
+        return vehiclesStore.filter((v) => {
+          return Object.entries(criteria).every(([key, val]) => v[key] === val);
+        });
+      },
+
+      list: async (order = '-created_at', limit = 500) => {
+        try {
+          const { data, error } = await supabase.from('InvestmentVehicle').select('*').limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return vehiclesStore;
+      },
+
+      get: async (id) => {
+        try {
+          const { data, error } = await supabase.from('InvestmentVehicle').select('*').eq('id', id).single();
+          if (!error && data) return data;
+        } catch (e) {}
+        const v = vehiclesStore.find((item) => item.id === id);
+        if (!v) return null;
+        return v;
+      },
+
+      create: async (payload) => {
+        const id = payload.id || `fund_${Date.now()}`;
+        const newVehicle = {
+          id,
+          created_at: new Date().toISOString(),
+          active: payload.active ?? true,
+          ...payload
+        };
+
+        try {
+          await supabase.from('InvestmentVehicle').insert(newVehicle);
+        } catch (e) {}
+
+        vehiclesStore = [newVehicle, ...vehiclesStore];
+        return newVehicle;
       }
     }
   }
