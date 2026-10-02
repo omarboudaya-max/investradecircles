@@ -86,15 +86,8 @@ const AuthenticatedApp = () => {
 
       {!showLoader && (
         <>
-          {authError ? (
-            authError.type === 'user_not_registered' ? (
-              <UserNotRegisteredError />
-            ) : authError.type === 'auth_required' ? (
-              (() => {
-                navigateToLogin();
-                return null;
-              })()
-            ) : null
+          {authError?.type === 'user_not_registered' ? (
+            <UserNotRegisteredError />
           ) : (
             <Routes>
               {/* Root path '/': renders Landing page for web visitors, or redirects to login/home in mobile app container */}
