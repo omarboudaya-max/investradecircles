@@ -87,9 +87,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   html, body {
-    background-color: #030914 !important;
-    color: #f8fafc;
-    @apply font-body;
+    @apply bg-background text-foreground font-body;
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
     -webkit-user-select: none;

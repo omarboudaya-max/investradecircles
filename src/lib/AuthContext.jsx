@@ -4,19 +4,15 @@ import { supabase } from '@/lib/supabase';
 const AuthContext = createContext();
 
 async function fetchProfile(userId) {
-  try {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    let profileData = data || {};
-    
-    if (profileData.email === 'omarboudaya1@gmail.com' && profileData.role !== 'admin') {
-      await supabase.from('profiles').update({ role: 'admin' }).eq('id', userId);
-      profileData.role = 'admin';
-    }
-    
-    return profileData;
-  } catch (e) {
-    return {};
+  const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  let profileData = data || {};
+  
+  if (profileData.email === 'omarboudaya1@gmail.com' && profileData.role !== 'admin') {
+    await supabase.from('profiles').update({ role: 'admin' }).eq('id', userId);
+    profileData.role = 'admin';
   }
+  
+  return profileData;
 }
 
 export const AuthProvider = ({ children }) => {
@@ -29,26 +25,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // Hard fallback: If auth checks take longer than 2.5 seconds, force unblock
+    // Hard fallback: If auth checks take longer than 8 seconds, force unblock
     const fallbackTimer = setTimeout(() => {
       if (isMounted) {
+        console.warn('Auth check timeout reached, forcing unblock.');
         setIsLoadingAuth(false);
         setAuthChecked(true);
       }
-    }, 2500);
+    }, 8000);
 
-    checkUserAuth().finally(() => {
-      if (isMounted) {
-        setIsLoadingAuth(false);
-        setAuthChecked(true);
-      }
-    });
+    checkUserAuth().finally(() => clearTimeout(fallbackTimer));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         try {
           if (session?.user) {
             if (event === 'TOKEN_REFRESHED') {
+              // Only update the session data, don't re-fetch profile from DB 
+              // to prevent race conditions and unnecessary DB calls that can freeze the app
               setUser(prevUser => {
                 if (!prevUser) return null;
                 return { ...prevUser, ...session.user };
@@ -77,10 +71,8 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setIsAuthenticated(false);
         } finally {
-          if (isMounted) {
-            setIsLoadingAuth(false);
-            setAuthChecked(true);
-          }
+          setIsLoadingAuth(false);
+          setAuthChecked(true);
         }
       }
     );
@@ -102,6 +94,8 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         const profile = await fetchProfile(session.user.id);
         const metadata = session.user.user_metadata || {};
+        
+        // Ensure is_onboarded is explicitly boolean
         const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
         
         setUser({ 
@@ -117,7 +111,11 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('User auth check failed:', error);
-      setAuthError(null);
+      await supabase.auth.signOut().catch(() => {});
+      setAuthError({
+        type: 'auth_required',
+        message: 'Authentication required'
+      });
       setIsAuthenticated(false);
       setUser(null);
     } finally {
@@ -127,27 +125,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const refreshProfile = async () => {
-    try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const profile = await fetchProfile(authUser.id);
-        const metadata = authUser.user_metadata || {};
-        const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
-        
-        setUser({ 
-          ...authUser, 
-          ...metadata, 
-          ...profile,
-          is_onboarded: isOnboarded
-        });
-      }
-    } catch (e) {}
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (authUser) {
+      const profile = await fetchProfile(authUser.id);
+      const metadata = authUser.user_metadata || {};
+      const isOnboarded = profile.is_onboarded === true || metadata.is_onboarded === true;
+      
+      setUser({ 
+        ...authUser, 
+        ...metadata, 
+        ...profile,
+        is_onboarded: isOnboarded
+      });
+    }
   };
 
   const logout = async (shouldRedirect = true) => {
-    try {
-      await supabase.auth.signOut();
-    } catch (e) {}
+    await supabase.auth.signOut();
     setUser(null);
     setIsAuthenticated(false);
     
@@ -165,7 +159,6 @@ export const AuthProvider = ({ children }) => {
       user, 
       isAuthenticated, 
       isLoadingAuth,
-      isLoadingPublicSettings: false,
       authError,
       authChecked,
       logout,

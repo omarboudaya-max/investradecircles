@@ -7,10 +7,9 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowLeft, MapPin, ShieldCheck, Star, Building2, Coins, TrendingUp, Clock, Users,
   Globe, Target, Check, Lock, Mail, Phone, Bookmark, BookmarkCheck, Share2, Download,
-  Send, FileText, Loader2, Landmark, Plus, Sparkles
+  Send, FileText, Loader2, Landmark, Plus,
 } from 'lucide-react';
 import InvestorInterestModal from '@/components/investment/InvestorInterestModal';
-import MatchingResultsModal from '@/components/investment/MatchingResultsModal';
 import ProjectSubmitForm from '@/components/investment/ProjectSubmitForm';
 import {
   STAGE_LABELS, TYPE_LABELS, SEEKING_LABELS, DOCUMENT_TYPES, formatMTND, formatNumber, sectorIcon,
@@ -46,8 +45,6 @@ export default function ProjectDetail() {
   const [showContact, setShowContact] = useState(false);
   const [modal, setModal] = useState(null); // 'interest' | 'info' | null
   const [showSubmit, setShowSubmit] = useState(false);
-  const [matchingOpen, setMatchingOpen] = useState(false);
-  const [allOrgs, setAllOrgs] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -56,15 +53,13 @@ export default function ProjectDetail() {
         const p = await base44.entities.InvestmentProject.get(id);
         if (!active) return;
         setProject(p);
-        const [gov, sec, orgs] = await Promise.all([
+        const [gov, sec] = await Promise.all([
           p.governorate_id ? base44.entities.Governorate.get(p.governorate_id).catch(() => null) : null,
           p.sector_id ? base44.entities.Sector.get(p.sector_id).catch(() => null) : null,
-          base44.entities.InvestmentOrganization.list().catch(() => [])
         ]);
         if (!active) return;
         setGovernorate(gov);
         setSector(sec);
-        setAllOrgs(orgs);
         base44.entities.ProjectView.create({
           project_id: p.id, governorate_id: p.governorate_id, sector_id: p.sector_id, user_id: user?.id, action: 'VIEW',
         }).catch(() => {});
@@ -339,12 +334,6 @@ export default function ProjectDetail() {
             </div>
 
             <div className="space-y-2 pt-2">
-              <Button
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 py-6 shadow-md"
-                onClick={() => setMatchingOpen(true)}
-              >
-                <Sparkles className="w-4 h-4 text-emerald-300" /> Find Matching Investors
-              </Button>
               <Button className="w-full" onClick={() => setModal('interest')}>
                 <Send className="w-4 h-4 mr-2" /> Express Investor Interest
               </Button>
@@ -381,16 +370,6 @@ export default function ProjectDetail() {
           </div>
         </div>
       </div>
-
-      {matchingOpen && (
-        <MatchingResultsModal
-          open={matchingOpen}
-          onClose={() => setMatchingOpen(false)}
-          mode="project-to-investors"
-          targetEntity={project}
-          allOrganizations={allOrgs}
-        />
-      )}
 
       <InvestorInterestModal
         open={modal === 'interest'}

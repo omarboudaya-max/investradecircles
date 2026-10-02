@@ -173,45 +173,9 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                         <Map className="w-6 h-6 text-primary" />
                         <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Map</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">New</span>
                     </div>
                     <p className="text-xs text-muted-foreground">Discover investment-ready projects per governorate</p>
-                  </div>
-
-                  <div 
-                    onClick={() => handleNav('/investment-network')}
-                    className="bg-emerald-500/10 rounded-2xl p-3.5 shadow-sm border border-emerald-500/20 flex flex-col gap-2 cursor-pointer hover:bg-emerald-500/20 transition-colors col-span-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Globe className="w-6 h-6 text-emerald-500" />
-                        <span className="text-sm font-bold text-foreground">{isArabic ? 'فواعل ومستثمرون' : 'Funds & Investors'}</span>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full">Network</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Discover investor institutions, venture capital & matching engine</p>
-                  </div>
-
-                  <div 
-                    onClick={() => handleNav('/matchmaker')}
-                    className="bg-cyan-500/10 rounded-2xl p-3.5 shadow-sm border border-cyan-500/20 flex flex-col gap-2 cursor-pointer hover:bg-cyan-500/20 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مطابقة الذكاء الاصطناعي' : 'AI Matchmaker'}</span>
-                      <span className="text-[10px] font-bold uppercase bg-cyan-500 text-slate-950 px-1.5 py-0.5 rounded-full">AI</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Find ideal business & deal matches</p>
-                  </div>
-
-                  <div 
-                    onClick={() => handleNav('/intelligence')}
-                    className="bg-purple-500/10 rounded-2xl p-3.5 shadow-sm border border-purple-500/20 flex flex-col gap-2 cursor-pointer hover:bg-purple-500/20 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مركز الذكاء الاقتصادي' : 'Intelligence Radar'}</span>
-                      <span className="text-[10px] font-bold uppercase bg-purple-500 text-white px-1.5 py-0.5 rounded-full">Live</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Executive command & trade flows</p>
                   </div>
 
                   <div 

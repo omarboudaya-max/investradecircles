@@ -12,7 +12,6 @@ import { validate, validators, sanitize } from '@/lib/validation';
 import { logger } from '@/lib/logger';
 import { CACHE } from '@/lib/query-client';
 import { useTranslation } from '@/lib/i18n/useTranslation';
-import { POST_INTENT_CATEGORIES } from '@/lib/investmentNetwork';
 
 const ACCEPTED_FILE = '.pdf,.xls,.xlsx,.csv,.doc,.docx';
 
@@ -22,7 +21,6 @@ export default function CreatePostBox() {
   const t = useTranslation();
 
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState('ANNOUNCEMENT');
   const [attachedFile, setAttachedFile] = useState(null); // { url, name, type }
   const [attachedImage, setAttachedImage] = useState(null); // { url, previewUrl }
   const [attachedVideo, setAttachedVideo] = useState(null); // { url, name }
@@ -225,7 +223,6 @@ export default function CreatePostBox() {
       author_avatar: avatarUrl,
       post_type: postType,
       created_by_id: user?.id,
-      intent_category: category,
     };
 
     if (selectedCircle) {
@@ -336,32 +333,6 @@ export default function CreatePostBox() {
           </span>
         </div>
       )}
-
-      {/* Economic Sensor Intent Selector */}
-      <div className="mb-2">
-        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-          Signal Type / Post Intent
-        </label>
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
-          {POST_INTENT_CATEGORIES.map((cat) => {
-            const active = category === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setCategory(cat.id)}
-                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap transition-all border ${
-                  active
-                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                    : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="relative">
         <Textarea
