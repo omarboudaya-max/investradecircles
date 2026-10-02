@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
@@ -269,6 +269,20 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
           >
             <MessageCircle className="w-5 h-5" />
             <span>{comments.length > 0 ? comments.length : t.postCard.comment}</span>
+          </button>
+          <button
+            onClick={() => {
+              toast({
+                title: "🚀 Signal Transformed into Opportunity",
+                description: "This post has been classified and listed on the Investraders Economic Map & Investment Network.",
+              });
+            }}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 transition-all border border-cyan-500/30"
+            title="Transform this post into an active economic opportunity signal"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
+            <span className="hidden sm:inline">Turn into Opportunity</span>
+            <span className="sm:hidden">Opportunity</span>
           </button>
         </div>
         <div className="flex items-center gap-3">

@@ -43,6 +43,8 @@ import Onboarding from '@/pages/Onboarding';
 import Notifications from '@/pages/Notifications';
 import InvestmentMap from '@/pages/InvestmentMap';
 import ProjectDetail from '@/pages/ProjectDetail';
+import InvestmentNetwork from '@/pages/InvestmentNetwork';
+import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -121,9 +123,13 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* Public & Authenticated Investment Map & Project Details */}
+              {/* Public & Authenticated Investment Map & Network Intelligence */}
               <Route element={<SmartInvestmentLayout />}>
                 <Route path="/investment-map" element={<InvestmentMap />} />
+                <Route path="/investment-network" element={<InvestmentNetwork />} />
+                <Route path="/network" element={<InvestmentNetwork />} />
+                <Route path="/executive-intelligence" element={<ExecutiveIntelligence />} />
+                <Route path="/intelligence" element={<ExecutiveIntelligence />} />
                 <Route path="/investment-project/:id" element={<ProjectDetail />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
               </Route>
