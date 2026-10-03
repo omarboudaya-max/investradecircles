@@ -61,8 +61,8 @@ export default function Home() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-3xl">📝</span>
               </div>
-              <h3 className="text-lg font-semibold mb-1">{t.home.noPostsTitle}</h3>
-              <p className="text-sm text-muted-foreground">{t.home.noPostsSubtitle}</p>
+              <h3 className="text-lg font-semibold mb-1">{t.home?.noPostsTitle || t.home?.noPostsYet || 'No posts yet'}</h3>
+              <p className="text-sm text-muted-foreground">{t.home?.noPostsSubtitle || t.home?.beFirstToPost || 'Be the first to share something with your circles!'}</p>
             </div>
           ) : (
             posts.map((post) => <PostCard key={post.id} post={post} />)

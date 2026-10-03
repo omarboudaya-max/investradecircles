@@ -132,7 +132,7 @@ export default function WeeklyLeaderboard() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t.leaderboard.posts(entry.postCount)} · {t.leaderboard.responses(entry.responseCount)}
+                  {typeof t.leaderboard?.posts === 'function' ? t.leaderboard.posts(entry.postCount) : `${entry.postCount} posts`} · {typeof t.leaderboard?.responses === 'function' ? t.leaderboard.responses(entry.responseCount) : `${entry.responseCount} responses`}
                 </p>
               </div>
 
