@@ -14,9 +14,6 @@ export default function WebsiteNavbar() {
 
   const links = [
     { name: isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map'), path: '/investment-map', badge: 'MAP' },
-    { name: isArabic ? 'فواعل ومستثمرون' : (language === 'fr' ? 'Fonds & Investisseurs' : 'Funds & Investors'), path: '/investment-network', badge: 'NETWORK' },
-    { name: isArabic ? 'مطابقة الذكاء الاصطناعي' : (language === 'fr' ? 'IA Matchmaker' : 'AI Matchmaker'), path: '/matchmaker', badge: 'AI' },
-    { name: isArabic ? 'مركز الذكاء الاقتصادي' : (language === 'fr' ? 'Radar Économique' : 'Intelligence Radar'), path: '/intelligence', badge: 'LIVE' },
     { name: isArabic ? 'الملتقى 13 أكتوبر' : (language === 'fr' ? 'Événement 13 Oct' : 'Event 13 Oct'), path: '/event' },
   ];
 
