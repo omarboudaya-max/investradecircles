@@ -19,11 +19,12 @@ import ContactSupportModal from '@/components/layout/ContactSupportModal';
 import DownloadAppButton from '@/components/layout/DownloadAppButton';
 
 import CircleIcon from '@/components/circles/CircleIcon';
+import LanguageSelector from '@/components/layout/LanguageSelector';
 
 export default function MobileMenuDrawer({ isOpen, onClose }) {
   const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const { isArabic, toggleLanguage } = useLanguage();
+  const { isArabic, language } = useLanguage();
   const t = useTranslation();
   const navigate = useNavigate();
 
@@ -171,7 +172,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Map className="w-6 h-6 text-primary" />
-                        <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
+                        <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map')}</span>
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Map</span>
                     </div>
@@ -185,7 +186,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Globe className="w-6 h-6 text-emerald-500" />
-                        <span className="text-sm font-bold text-foreground">{isArabic ? 'فواعل ومستثمرون' : 'Funds & Investors'}</span>
+                        <span className="text-sm font-bold text-foreground">{isArabic ? 'فواعل ومستثمرون' : (language === 'fr' ? 'Fonds & Investisseurs' : 'Funds & Investors')}</span>
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full">Network</span>
                     </div>
@@ -197,7 +198,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-cyan-500/10 rounded-2xl p-3.5 shadow-sm border border-cyan-500/20 flex flex-col gap-2 cursor-pointer hover:bg-cyan-500/20 transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مطابقة الذكاء الاصطناعي' : 'AI Matchmaker'}</span>
+                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مطابقة الذكاء الاصطناعي' : (language === 'fr' ? 'IA Matchmaker' : 'AI Matchmaker')}</span>
                       <span className="text-[10px] font-bold uppercase bg-cyan-500 text-slate-950 px-1.5 py-0.5 rounded-full">AI</span>
                     </div>
                     <p className="text-xs text-muted-foreground">Find ideal business & deal matches</p>
@@ -208,7 +209,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                     className="bg-purple-500/10 rounded-2xl p-3.5 shadow-sm border border-purple-500/20 flex flex-col gap-2 cursor-pointer hover:bg-purple-500/20 transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مركز الذكاء الاقتصادي' : 'Intelligence Radar'}</span>
+                      <span className="text-sm font-bold text-foreground">{isArabic ? 'مركز الذكاء الاقتصادي' : (language === 'fr' ? 'Radar Économique' : 'Intelligence Radar')}</span>
                       <span className="text-[10px] font-bold uppercase bg-purple-500 text-white px-1.5 py-0.5 rounded-full">Live</span>
                     </div>
                     <p className="text-xs text-muted-foreground">Executive command & trade flows</p>
@@ -294,18 +295,15 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                   </button>
 
                   {settingsOpen && (
-                    <div className="px-4 pb-3 space-y-2 border-t border-border/50 pt-3 animate-in fade-in duration-200">
-                      {/* Language Switcher */}
-                      <button 
-                        onClick={toggleLanguage}
-                        className="w-full flex items-center justify-between py-2 text-xs font-medium text-foreground hover:text-primary transition-colors"
-                      >
-                        <div className="flex items-center gap-2.5">
+                    <div className="px-4 pb-3 space-y-2.5 border-t border-border/50 pt-3 animate-in fade-in duration-200">
+                      {/* Universal Language Selector */}
+                      <div className="py-1">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-foreground mb-1.5">
                           <Languages className="w-4 h-4 text-blue-600" />
                           <span>{t.menuDrawer?.language || 'Language'}</span>
                         </div>
-                        <span className="text-xs font-bold bg-muted px-2 py-0.5 rounded-full">{isArabic ? 'العربية' : 'English'}</span>
-                      </button>
+                        <LanguageSelector variant="full" className="w-full justify-between" />
+                      </div>
 
                       {/* Dark Mode Switcher */}
                       <button 

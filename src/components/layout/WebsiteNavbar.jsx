@@ -3,20 +3,21 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import DownloadAppButton from '@/components/layout/DownloadAppButton';
+import LanguageSelector from '@/components/layout/LanguageSelector';
 
 export default function WebsiteNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const path = location.pathname;
   const t = useTranslation();
-  const { isArabic, toggleLanguage } = useLanguage();
+  const { isArabic, language } = useLanguage();
 
   const links = [
-    { name: isArabic ? 'خريطة الاستثمار' : 'Investment Map', path: '/investment-map', badge: 'MAP' },
-    { name: isArabic ? 'فواعل ومستثمرون' : 'Funds & Investors', path: '/investment-network', badge: 'NETWORK' },
-    { name: isArabic ? 'مطابقة الذكاء الاصطناعي' : 'AI Matchmaker', path: '/matchmaker', badge: 'AI' },
-    { name: isArabic ? 'مركز الذكاء الاقتصادي' : 'Intelligence Radar', path: '/intelligence', badge: 'LIVE' },
-    { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event' },
+    { name: isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map'), path: '/investment-map', badge: 'MAP' },
+    { name: isArabic ? 'فواعل ومستثمرون' : (language === 'fr' ? 'Fonds & Investisseurs' : 'Funds & Investors'), path: '/investment-network', badge: 'NETWORK' },
+    { name: isArabic ? 'مطابقة الذكاء الاصطناعي' : (language === 'fr' ? 'IA Matchmaker' : 'AI Matchmaker'), path: '/matchmaker', badge: 'AI' },
+    { name: isArabic ? 'مركز الذكاء الاقتصادي' : (language === 'fr' ? 'Radar Économique' : 'Intelligence Radar'), path: '/intelligence', badge: 'LIVE' },
+    { name: isArabic ? 'الملتقى 13 أكتوبر' : (language === 'fr' ? 'Événement 13 Oct' : 'Event 13 Oct'), path: '/event' },
   ];
 
   return (
@@ -59,14 +60,8 @@ export default function WebsiteNavbar() {
 
         {/* Action Buttons Right */}
         <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
-          {/* Language toggle */}
-          <button
-            onClick={toggleLanguage}
-            className="text-xs lg:text-sm text-slate-300 hover:text-white font-bold transition-colors w-8 h-8 rounded-full border border-slate-700 hover:border-white flex items-center justify-center bg-white/5"
-            title={isArabic ? t.navbar?.switchToEnglish || 'Switch to English' : t.navbar?.switchToArabic || 'Switch to Arabic'}
-          >
-            {isArabic ? 'EN' : 'ع'}
-          </button>
+          {/* Universal Language Selector */}
+          <LanguageSelector variant="compact" />
           
           <DownloadAppButton variant="compact" />
           
@@ -87,12 +82,7 @@ export default function WebsiteNavbar() {
 
         {/* Mobile Hamburger Button */}
         <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggleLanguage}
-            className="text-xs text-slate-300 font-bold w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center bg-white/5"
-          >
-            {isArabic ? 'EN' : 'ع'}
-          </button>
+          <LanguageSelector variant="compact" />
           <button
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}

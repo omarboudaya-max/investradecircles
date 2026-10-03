@@ -14,6 +14,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from '@/components/ui/use-toast';
 import { getAppUrl } from '@/lib/app-url';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { detectTextLanguage, LANGUAGES } from '@/lib/i18n/languages';
 import { POST_INTENT_CATEGORIES, extractPostEconomicSignal } from '@/lib/investmentNetwork';
 
 export default function PostCard({ post, onDeleted, readOnly = false }) {
@@ -21,6 +23,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const t = useTranslation();
+  const { language } = useLanguage();
   const [showComments, setShowComments] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState(null);
@@ -31,6 +34,8 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
 
   const intentObj = POST_INTENT_CATEGORIES.find((c) => c.id === post.intent_category) || POST_INTENT_CATEGORIES[0];
   const signal = extractPostEconomicSignal(post.content || '', post.intent_category || 'ANNOUNCEMENT');
+  const detectedLang = detectTextLanguage(post.content);
+  const showOriginalBadge = detectedLang && detectedLang !== language;
 
   // Always look up the author's current profile avatar to stay fresh
   const { data: authorProfile } = useQuery({
@@ -201,12 +206,20 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
 
       {/* Content */}
       <div className="px-4 pb-3 space-y-2">
-        {/* Intent Badge */}
-        {post.intent_category && (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border" style={{ backgroundColor: `${intentObj.color}15`, color: intentObj.color, borderColor: `${intentObj.color}40` }}>
-            {intentObj.label}
-          </div>
-        )}
+        {/* Intent Badge & Original Language Indicator */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {post.intent_category && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border" style={{ backgroundColor: `${intentObj.color}15`, color: intentObj.color, borderColor: `${intentObj.color}40` }}>
+              {intentObj.label}
+            </div>
+          )}
+          {showOriginalBadge && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-muted/60 border border-border/50 px-2 py-0.5 rounded-full">
+              <Globe2 className="w-3 h-3 text-cyan-400" />
+              Original: {LANGUAGES[detectedLang]?.nativeLabel || detectedLang.toUpperCase()}
+            </span>
+          )}
+        </div>
 
         <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{renderContent(post.content)}</p>
 

@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
+import LanguageProfileSync from '@/components/layout/LanguageProfileSync';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
@@ -178,6 +179,7 @@ function App() {
       <LanguageProvider>
       <ThemeProvider>
         <AuthProvider>
+        <LanguageProfileSync />
         <QueryClientProvider client={queryClientInstance}>
           <Router>
             <AuthenticatedApp />

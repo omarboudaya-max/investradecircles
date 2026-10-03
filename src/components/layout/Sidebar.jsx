@@ -12,17 +12,17 @@ export default function Sidebar() {
   const location = useLocation();
   const { user } = useAuth();
   const t = useTranslation();
-  const { isArabic } = useLanguage();
+  const { isArabic, language } = useLanguage();
 
   const NAV_ITEMS = [
-    { label: t.sidebar.home, icon: Home, path: '/home' },
-    { label: isArabic ? 'خريطة الاستثمار' : 'Investment Map', icon: Map, path: '/investment-map' },
-    { label: isArabic ? 'شبكة الاستثمار' : 'Funds & Investors', icon: Landmark, path: '/investment-network' },
-    { label: isArabic ? 'مطابقة الذكاء الاصطناعي' : 'AI Matchmaker', icon: Sparkles, path: '/matchmaker' },
-    { label: isArabic ? 'مركز الذكاء الاقتصادي' : 'Intelligence Radar', icon: Activity, path: '/intelligence' },
-    { label: t.sidebar.createCircle, icon: PlusCircle, path: '/create-circle' },
-    { label: t.sidebar.myCircles, icon: Users, path: '/my-circles' },
-    { label: t.sidebar.allCircles, icon: Globe, path: '/all-circles' },
+    { label: t.sidebar?.home || 'Home', icon: Home, path: '/home' },
+    { label: isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map'), icon: Map, path: '/investment-map' },
+    { label: isArabic ? 'شبكة الاستثمار' : (language === 'fr' ? 'Fonds & Investisseurs' : 'Funds & Investors'), icon: Landmark, path: '/investment-network' },
+    { label: isArabic ? 'مطابقة الذكاء الاصطناعي' : (language === 'fr' ? 'IA Matchmaker' : 'AI Matchmaker'), icon: Sparkles, path: '/matchmaker' },
+    { label: isArabic ? 'مركز الذكاء الاقتصادي' : (language === 'fr' ? 'Radar Économique' : 'Intelligence Radar'), icon: Activity, path: '/intelligence' },
+    { label: t.sidebar?.createCircle || 'Create Circle', icon: PlusCircle, path: '/create-circle' },
+    { label: t.sidebar?.myCircles || 'My Circles', icon: Users, path: '/my-circles' },
+    { label: t.sidebar?.allCircles || 'All Circles', icon: Globe, path: '/all-circles' },
   ];
 
   const { data: createdCircles = [] } = useQuery({
