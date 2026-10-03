@@ -14,7 +14,7 @@ import { useCircleNotifications } from '@/hooks/useCircleNotifications';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList, Sparkles, FileText, Globe2, Landmark, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import CircleFeed from '@/components/circles/CircleFeed';
@@ -312,66 +312,6 @@ export default function CircleDetail() {
       <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 p-1">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
-
-      {/* Circle AI Intelligence Header */}
-      {circle && (
-        <div className="bg-gradient-to-r from-slate-900 via-[#0b253e] to-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 text-white shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-              <div>
-                <h3 className="font-extrabold text-white text-base">Circle AI Intelligence Ecosystem</h3>
-                <p className="text-[11px] text-cyan-400 font-semibold">Real-time signal analytics for {circle.name}</p>
-              </div>
-            </div>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-cyan-500/40 text-cyan-300 hover:text-white hover:bg-cyan-500/20 text-xs gap-1.5 shrink-0"
-              onClick={() => alert(`Weekly AI Intelligence brief for ${circle.name} generated.`)}
-            >
-              <FileText className="w-3.5 h-3.5" /> Download Circle AI Brief
-            </Button>
-          </div>
-
-          {/* Circle Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Community Members</div>
-              <div className="text-lg font-bold text-white">{allMemberIds.length}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Verified Companies</div>
-              <div className="text-lg font-bold text-cyan-400">{Math.max(8, Math.round(allMemberIds.length * 0.4))}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Active Deals</div>
-              <div className="text-lg font-bold text-emerald-400">{Math.max(3, Math.round(allMemberIds.length * 0.15))}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Capital Demanded</div>
-              <div className="text-lg font-bold text-amber-400">8.4M TND</div>
-            </div>
-          </div>
-
-          {/* Live AI Circle Signals */}
-          <div className="space-y-1.5 pt-1 text-xs">
-            <p className="font-bold text-slate-300 text-[11px] uppercase tracking-wider">Live Community AI Signals:</p>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
-                🔥 Investment demand up +14%
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
-                🤝 8 Partnership requests detected
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-semibold">
-                🌍 Germany & GCC target corridors trending
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Institutional/Business: premium AI-finance layout ── */}
       {isInstitutional ? (

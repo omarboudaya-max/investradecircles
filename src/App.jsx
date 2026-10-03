@@ -46,8 +46,6 @@ import ProjectDetail from '@/pages/ProjectDetail';
 import InvestmentNetwork from '@/pages/InvestmentNetwork';
 import InvestorProfileDetail from '@/pages/InvestorProfileDetail';
 import FundProfileDetail from '@/pages/FundProfileDetail';
-import AIMatchmaker from '@/pages/AIMatchmaker';
-import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -132,8 +130,6 @@ const AuthenticatedApp = () => {
                 <Route path="/investment-network" element={<InvestmentNetwork />} />
                 <Route path="/investment-network/:organizationSlug" element={<InvestorProfileDetail />} />
                 <Route path="/investment-network/fund/:fundSlug" element={<FundProfileDetail />} />
-                <Route path="/matchmaker" element={<AIMatchmaker />} />
-                <Route path="/intelligence" element={<ExecutiveIntelligence />} />
                 <Route path="/investment-project/:id" element={<ProjectDetail />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
               </Route>
