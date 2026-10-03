@@ -103,12 +103,12 @@ export default function CircleDiscovery() {
             <Users className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold">{t.circleDiscovery.title}</h3>
-            <p className="text-xs text-muted-foreground">{t.circleDiscovery.subtitle}</p>
+            <h3 className="text-sm font-semibold">{t.circleDiscovery?.title || 'Circles For You'}</h3>
+            <p className="text-xs text-muted-foreground">{t.circleDiscovery?.subtitle || 'Based on your interests'}</p>
           </div>
         </div>
         <Link to="/my-circles" className="flex items-center gap-1 text-xs text-primary font-medium hover:underline">
-          {t.circleDiscovery.seeAll} <ChevronRight className="w-3 h-3" />
+          {t.circleDiscovery?.seeAll || 'See all'} <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
 
@@ -133,7 +133,7 @@ export default function CircleDiscovery() {
               <div className="min-w-0">
                 <p className="text-xs font-semibold truncate">{circle.name}</p>
                 <p className="text-[10px] text-muted-foreground">
-                  {(circle.member_ids || []).length} {t.circleDiscovery.members}
+                  {(circle.member_ids || []).length} {t.circleDiscovery?.members || 'members'}
                 </p>
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function CircleDiscovery() {
               disabled={joinMutation.isPending}
               onClick={() => joinMutation.mutate(circle)}
             >
-              <Plus className="w-3 h-3 mr-1" /> {t.circleDiscovery.join}
+              <Plus className="w-3 h-3 mr-1" /> {t.circleDiscovery?.join || 'Join'}
             </Button>
           </div>
         ))}

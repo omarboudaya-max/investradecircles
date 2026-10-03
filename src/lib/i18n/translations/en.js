@@ -620,6 +620,26 @@ const en = {
     official: 'Official',
     posting: 'Posting to:',
   },
+  postCard: {
+    unknown: 'User',
+    public: 'Public',
+    copyLink: 'Copy link',
+    linkCopied: 'Link copied to clipboard',
+    deletePost: 'Delete post',
+    postDeleted: 'Post deleted',
+    reportPost: 'Report post',
+    postReported: 'Post reported',
+    reportThankYou: 'Thank you for keeping our community safe.',
+    attachedDocument: 'Attached Document',
+    clickToOpen: 'Click to open / download',
+    comment: 'Comment',
+    postError: 'Failed to update post',
+  },
+  home: {
+    noPostsTitle: 'No posts yet',
+    noPostsSubtitle: 'Be the first to share something with your circles!',
+    beFirstToPost: 'Be the first to share something with your circles!',
+  },
 };
 
 export default en;

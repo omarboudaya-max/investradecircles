@@ -620,6 +620,26 @@ const ar = {
     official: 'رسمي',
     posting: 'نشر إلى:',
   },
+  postCard: {
+    unknown: 'مستخدم',
+    public: 'عام',
+    copyLink: 'نسخ الرابط',
+    linkCopied: 'تم نسخ الرابط',
+    deletePost: 'حذف المنشور',
+    postDeleted: 'تم حذف المنشور',
+    reportPost: 'الإبلاغ عن منشور',
+    postReported: 'تم الإبلاغ عن المنشور',
+    reportThankYou: 'شكراً لك على المساعدة في الحفاظ على أمان مجتمعنا.',
+    attachedDocument: 'مستند مرفق',
+    clickToOpen: 'انقر للفتح / التنزيل',
+    comment: 'تعليق',
+    postError: 'فشل تحديث المنشور',
+  },
+  home: {
+    noPostsTitle: 'لا توجد منشورات بعد',
+    noPostsSubtitle: 'كن أول من يشارك شيئاً مع دوائرك!',
+    beFirstToPost: 'كن أول من يشارك شيئاً مع دوائرك!',
+  },
 };
 
 export default ar;

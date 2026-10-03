@@ -65,7 +65,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
       queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
       queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
     },
-    onError: (error) => toast({ title: t.postCard.postError || 'Failed to like post', description: error.message, variant: 'destructive' }),
+    onError: (error) => toast({ title: t.postCard?.postError || 'Failed to like post', description: error.message, variant: 'destructive' }),
   });
 
   const deletePost = useMutation({
@@ -75,7 +75,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
       queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
       queryClient.invalidateQueries({ queryKey: ['profile-posts'] });
       if (onDeleted) onDeleted(post.id);
-      toast({ title: t.postCard.postDeleted });
+      toast({ title: t.postCard?.postDeleted || 'Post deleted' });
     },
   });
 
@@ -150,11 +150,11 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
           </Link>
           <div>
             <Link to={`/profile/${post.created_by_id}`} className="hover:underline">
-              <p className="text-sm font-semibold">{post.author_name || t.postCard.unknown}</p>
+              <p className="text-sm font-semibold">{post.author_name || t.postCard?.unknown || 'User'}</p>
             </Link>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-[10px] px-2 py-0">
-                {post.visibility || t.postCard.public}
+                {post.visibility || t.postCard?.public || 'Public'}
               </Badge>
             </div>
           </div>
@@ -168,9 +168,9 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem onClick={() => {
               navigator.clipboard.writeText(`${getAppUrl()}/post/${post.id}`);
-              toast({ title: t.postCard.linkCopied });
+              toast({ title: t.postCard?.linkCopied || 'Link copied' });
             }}>
-              <LinkIcon className="w-4 h-4 mr-2" /> {t.postCard.copyLink}
+              <LinkIcon className="w-4 h-4 mr-2" /> {t.postCard?.copyLink || 'Copy link'}
             </DropdownMenuItem>
             {isOwn && (
               <>
@@ -179,7 +179,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
                   className="text-destructive focus:text-destructive"
                   onClick={() => deletePost.mutate()}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" /> {t.postCard.deletePost}
+                  <Trash2 className="w-4 h-4 mr-2" /> {t.postCard?.deletePost || 'Delete post'}
                 </DropdownMenuItem>
               </>
             )}
@@ -188,9 +188,9 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-orange-600 focus:text-orange-600"
-                  onClick={() => toast({ title: t.postCard.postReported, description: t.postCard.reportThankYou })}
+                  onClick={() => toast({ title: t.postCard?.postReported || 'Post reported', description: t.postCard?.reportThankYou || 'Thank you' })}
                 >
-                  <Flag className="w-4 h-4 mr-2" /> {t.postCard.reportPost}
+                  <Flag className="w-4 h-4 mr-2" /> {t.postCard?.reportPost || 'Report post'}
                 </DropdownMenuItem>
               </>
             )}
@@ -273,8 +273,8 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
               : <File className="w-8 h-8 text-amber-600 shrink-0" />
             }
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-amber-800 truncate">{post.file_name || t.postCard.attachedDocument}</p>
-              <p className="text-xs text-amber-600">{t.postCard.clickToOpen}</p>
+              <p className="text-sm font-medium text-amber-800 truncate">{post.file_name || t.postCard?.attachedDocument || 'Attached document'}</p>
+              <p className="text-xs text-amber-600">{t.postCard?.clickToOpen || 'Click to open'}</p>
             </div>
             <Download className="w-4 h-4 text-amber-500 group-hover:text-amber-700 shrink-0" />
           </a>
@@ -310,7 +310,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
             className={`flex items-center gap-1.5 text-sm transition-colors ${readOnly ? 'opacity-50 cursor-not-allowed' : ''} ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
           >
             <MessageCircle className="w-5 h-5" />
-            <span>{comments.length > 0 ? comments.length : t.postCard.comment}</span>
+            <span>{comments.length > 0 ? comments.length : (t.postCard?.comment || 'Comment')}</span>
           </button>
         </div>
         <div className="flex items-center gap-3">

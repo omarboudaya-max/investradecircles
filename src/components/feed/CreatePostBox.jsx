@@ -327,7 +327,7 @@ export default function CreatePostBox() {
       {/* Circle badge if selected */}
       {selectedCircle && (
         <div className="flex items-center gap-1.5 mb-2">
-          <span className="text-xs text-muted-foreground">{t.common.posting || 'Posting to:'}</span>
+          <span className="text-xs text-muted-foreground">{t.common?.posting || 'Posting to:'}</span>
           <span className="flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
             <CircleDot className="w-3 h-3" /> {selectedCircle.name}
             <button onClick={() => setSelectedCircle(null)} className="ml-1 hover:text-red-500">
@@ -366,7 +366,7 @@ export default function CreatePostBox() {
       <div className="relative">
         <Textarea
           ref={textareaRef}
-          placeholder={t.createPost.placeholder}
+          placeholder={t.createPost?.placeholder || "What's on your mind?"}
           value={content}
           onChange={handleContentChange}
           className={`min-h-[80px] border-border resize-none mb-1 ${validationError ? 'border-destructive' : ''}`}
@@ -468,7 +468,7 @@ export default function CreatePostBox() {
                       type="text"
                       value={circleSearch}
                       onChange={(e) => setCircleSearch(e.target.value)}
-                      placeholder={t.createPost.searchCircles}
+                      placeholder={t.createPost?.searchCircles || 'Search circles...'}
                       className="w-full h-8 text-xs rounded-lg border border-border bg-muted/50 px-2.5 outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-muted-foreground/60"
                       autoFocus
                     />
@@ -479,12 +479,12 @@ export default function CreatePostBox() {
                       onClick={() => { setSelectedCircle(null); setShowCirclePicker(false); setCircleSearch(''); }}
                       className="w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:bg-secondary text-left"
                     >
-                      <span className="flex-1">{t.createPost.public}</span>
+                      <span className="flex-1">{t.createPost?.public || 'Public (no circle)'}</span>
                       {!selectedCircle && <Check className="w-3.5 h-3.5 text-primary" />}
                     </button>
                     {filtered.length === 0 ? (
                       <p className="px-3 py-2 text-xs text-muted-foreground">
-                        {circleSearch.trim() ? t.createPost.noMatchingCircles : t.createPost.noCirclesYet}
+                        {circleSearch.trim() ? (t.createPost?.noMatchingCircles || 'No matching circles.') : (t.createPost?.noCirclesYet || 'No circles yet.')}
                       </p>
                     ) : (
                       filtered.map((c) => (
@@ -512,7 +512,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 text-xs font-medium hover:bg-green-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'photo' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Image className="w-3.5 h-3.5" />}
-            {t.createPost.photo}
+            {t.createPost?.photo || 'Photo'}
           </button>
 
           {/* Video button */}
@@ -522,7 +522,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-600 text-xs font-medium hover:bg-purple-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'video' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Video className="w-3.5 h-3.5" />}
-            {t.createPost.video}
+            {t.createPost?.video || 'Video'}
           </button>
 
           {/* File button */}
@@ -533,7 +533,7 @@ export default function CreatePostBox() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-medium hover:bg-amber-500/20 transition-colors disabled:opacity-50"
           >
             {uploading && uploadingType === 'file' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
-            {uploading && uploadingType === 'file' ? t.createPost.uploading : t.createPost.file}
+            {uploading && uploadingType === 'file' ? (t.createPost?.uploading || 'Uploading...') : (t.createPost?.file || 'File')}
           </button>
         </div>
 
@@ -543,7 +543,7 @@ export default function CreatePostBox() {
           size="sm"
           className="rounded-full bg-primary hover:bg-primary/90 px-5"
         >
-          {createPost.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : t.createPost.post}
+          {createPost.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (t.createPost?.post || 'Post')}
         </Button>
       </div>
 

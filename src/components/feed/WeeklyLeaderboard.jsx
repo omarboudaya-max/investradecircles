@@ -88,7 +88,7 @@ export default function WeeklyLeaderboard() {
       <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-5">
         <div className="px-5 py-4 border-b flex items-center gap-2">
           <Trophy className="w-4 h-4 text-yellow-500" />
-          <h3 className="font-semibold text-sm">{t.leaderboard.title}</h3>
+          <h3 className="font-semibold text-sm">{t.leaderboard?.title || 'Weekly Leaderboard'}</h3>
         </div>
         <div className="px-5 py-8 flex items-center justify-center">
           <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -103,8 +103,8 @@ export default function WeeklyLeaderboard() {
     <div className="bg-card rounded-2xl border shadow-sm overflow-hidden mb-5">
       <div className="px-5 py-4 border-b flex items-center gap-2">
         <Trophy className="w-4 h-4 text-yellow-500" />
-        <h3 className="font-semibold text-sm">{t.leaderboard.title}</h3>
-        <span className="ml-auto text-xs text-muted-foreground">{t.leaderboard.topContributors}</span>
+        <h3 className="font-semibold text-sm">{t.leaderboard?.title || 'Weekly Leaderboard'}</h3>
+        <span className="ml-auto text-xs text-muted-foreground">{t.leaderboard?.topContributors || 'Top Contributors'}</span>
       </div>
       <div className="divide-y">
         {ranked.map((entry, i) => {
@@ -139,7 +139,7 @@ export default function WeeklyLeaderboard() {
               {/* Score */}
               <div className="text-right shrink-0">
                 <p className="text-sm font-bold text-primary">{entry.score}</p>
-                <p className="text-[10px] text-muted-foreground">{t.leaderboard.pts}</p>
+                <p className="text-[10px] text-muted-foreground">{t.leaderboard?.pts || 'pts'}</p>
               </div>
             </Link>
           );

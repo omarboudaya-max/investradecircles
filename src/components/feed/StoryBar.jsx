@@ -82,7 +82,7 @@ export default function StoryBar() {
               </span>
             )}
           </div>
-          <span className="text-xs text-muted-foreground font-medium truncate max-w-[64px] text-center">{t.storyBar.myProfile}</span>
+          <span className="text-xs text-muted-foreground font-medium truncate max-w-[64px] text-center">{t.storyBar?.myProfile || 'My Profile'}</span>
         </Link>
 
         {/* Create Story */}
@@ -90,7 +90,7 @@ export default function StoryBar() {
           <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary flex items-center justify-center bg-primary/5 hover:bg-primary/10 transition-colors">
             <Plus className="w-6 h-6 text-primary" />
           </div>
-          <span className="text-xs text-primary font-medium">{t.storyBar.createStory}</span>
+          <span className="text-xs text-primary font-medium">{t.storyBar?.createStory || 'Create Story'}</span>
         </div>
 
         {/* Connection stories */}
@@ -115,7 +115,7 @@ export default function StoryBar() {
                 </div>
               </div>
               <span className="text-xs text-muted-foreground truncate max-w-[64px] text-center">
-                {isOwn ? t.storyBar.yourStory : group.author_name?.split(' ')[0]}
+                {isOwn ? (t.storyBar?.yourStory || 'Your Story') : group.author_name?.split(' ')[0]}
               </span>
             </div>
           );
