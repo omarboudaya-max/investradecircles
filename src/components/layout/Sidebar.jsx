@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, PlusCircle, Globe, Eye, Pencil, Users, Map, Zap, BarChart3, Sparkles } from 'lucide-react';
+import { Home, PlusCircle, Globe, Eye, Pencil, Users, Map, Share2, LineChart } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -16,10 +16,9 @@ export default function Sidebar() {
 
   const NAV_ITEMS = [
     { label: t.sidebar.home, icon: Home, path: '/home' },
-    { label: isArabic ? 'شبكة الاستثمار' : 'Investment Network', icon: Sparkles, path: '/investment-network' },
-    { label: isArabic ? 'موفق الذكاء الاصطناعي' : 'AI Matchmaker', icon: Zap, path: '/matchmaker' },
+    { label: isArabic ? 'شبكة الاستثمار' : 'Investment Network', icon: Share2, path: '/network' },
     { label: isArabic ? 'خريطة الاستثمار' : 'Investment Map', icon: Map, path: '/investment-map' },
-    { label: isArabic ? 'مركز القيادة' : 'Executive Command Center', icon: BarChart3, path: '/executive-intelligence' },
+    { label: isArabic ? 'الذكاء التنفيذي' : 'Executive AI', icon: LineChart, path: '/executive-intelligence' },
     { label: t.sidebar.createCircle, icon: PlusCircle, path: '/create-circle' },
     { label: t.sidebar.myCircles, icon: Users, path: '/my-circles' },
     { label: t.sidebar.allCircles, icon: Globe, path: '/all-circles' },

@@ -165,32 +165,17 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                 {/* 2-Column Menu Tiles Grid */}
                 <div className="grid grid-cols-2 gap-3">
                   <div 
-                    onClick={() => handleNav('/investment-network')}
-                    className="bg-[#1769FF]/10 rounded-2xl p-3.5 shadow-sm border border-[#1769FF]/30 flex flex-col gap-1 cursor-pointer hover:bg-[#1769FF]/20 transition-colors col-span-2"
+                    onClick={() => handleNav('/investment-map')}
+                    className="bg-primary/10 rounded-2xl p-3.5 shadow-sm border border-primary/20 flex flex-col gap-2 cursor-pointer hover:bg-primary/20 transition-colors col-span-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-foreground flex items-center gap-2">
-                        ✨ {isArabic ? 'شبكة الاستثمار' : 'Investment Network'}
-                      </span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[#1769FF] text-white px-2 py-0.5 rounded-full">HUB</span>
+                      <div className="flex items-center gap-2">
+                        <Map className="w-6 h-6 text-primary" />
+                        <span className="text-sm font-bold text-foreground">{isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">New</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">AI-powered economic network & directory</p>
-                  </div>
-
-                  <div 
-                    onClick={() => handleNav('/matchmaker')}
-                    className="bg-[#16C7B7]/10 rounded-2xl p-3.5 shadow-sm border border-[#16C7B7]/30 flex flex-col gap-1 cursor-pointer hover:bg-[#16C7B7]/20 transition-colors"
-                  >
-                    <span className="text-sm font-bold text-foreground">⚡ {isArabic ? 'موفق الذكاء' : 'AI Matchmaker'}</span>
-                    <p className="text-[11px] text-muted-foreground">Strategic matching</p>
-                  </div>
-
-                  <div 
-                    onClick={() => handleNav('/investment-map')}
-                    className="bg-primary/10 rounded-2xl p-3.5 shadow-sm border border-primary/20 flex flex-col gap-1 cursor-pointer hover:bg-primary/20 transition-colors"
-                  >
-                    <span className="text-sm font-bold text-foreground">🗺️ {isArabic ? 'خريطة الاستثمار' : 'Investment Map'}</span>
-                    <p className="text-[11px] text-muted-foreground">Geographic projects</p>
+                    <p className="text-xs text-muted-foreground">Discover investment-ready projects per governorate</p>
                   </div>
 
                   <div 
