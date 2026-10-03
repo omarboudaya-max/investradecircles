@@ -43,6 +43,11 @@ import Onboarding from '@/pages/Onboarding';
 import Notifications from '@/pages/Notifications';
 import InvestmentMap from '@/pages/InvestmentMap';
 import ProjectDetail from '@/pages/ProjectDetail';
+import InvestmentNetwork from '@/pages/InvestmentNetwork';
+import InvestorProfileDetail from '@/pages/InvestorProfileDetail';
+import FundProfileDetail from '@/pages/FundProfileDetail';
+import AIMatchmaker from '@/pages/AIMatchmaker';
+import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -61,17 +66,17 @@ const SmartInvestmentLayout = () => {
 };
 
 const AuthenticatedApp = () => {
-  const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { user, isLoadingAuth, authError } = useAuth();
   const [animationDone, setAnimationDone] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationDone(true);
-    }, 2500); // Ensure loader logo forms fully (takes ~2.3s) before transition
+    }, 1500); // 1.5s loader duration
     return () => clearTimeout(timer);
   }, []);
 
-  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
+  const showLoader = isLoadingAuth && !animationDone;
 
   return (
     <>
@@ -81,15 +86,8 @@ const AuthenticatedApp = () => {
 
       {!showLoader && (
         <>
-          {authError ? (
-            authError.type === 'user_not_registered' ? (
-              <UserNotRegisteredError />
-            ) : authError.type === 'auth_required' ? (
-              (() => {
-                navigateToLogin();
-                return null;
-              })()
-            ) : null
+          {authError?.type === 'user_not_registered' ? (
+            <UserNotRegisteredError />
           ) : (
             <Routes>
               {/* Root path '/': renders Landing page for web visitors, or redirects to login/home in mobile app container */}
@@ -121,9 +119,14 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* Public & Authenticated Investment Map & Project Details */}
+              {/* Public & Authenticated Investment Map & Network */}
               <Route element={<SmartInvestmentLayout />}>
                 <Route path="/investment-map" element={<InvestmentMap />} />
+                <Route path="/investment-network" element={<InvestmentNetwork />} />
+                <Route path="/investment-network/:organizationSlug" element={<InvestorProfileDetail />} />
+                <Route path="/investment-network/fund/:fundSlug" element={<FundProfileDetail />} />
+                <Route path="/matchmaker" element={<AIMatchmaker />} />
+                <Route path="/intelligence" element={<ExecutiveIntelligence />} />
                 <Route path="/investment-project/:id" element={<ProjectDetail />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
               </Route>

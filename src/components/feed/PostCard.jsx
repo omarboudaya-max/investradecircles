@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Rocket, Handshake, Globe2, Landmark, CheckCircle2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
 import SharePostModal from '@/components/feed/SharePostModal';
@@ -14,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from '@/components/ui/use-toast';
 import { getAppUrl } from '@/lib/app-url';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import { POST_INTENT_CATEGORIES, extractPostEconomicSignal } from '@/lib/investmentNetwork';
 
 export default function PostCard({ post, onDeleted, readOnly = false }) {
   const { user } = useAuth();
@@ -23,9 +23,13 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const [showComments, setShowComments] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState(null);
+  const navigate = useNavigate();
   const liked = post.liked_by?.includes(user?.id);
   const isOwn = post.created_by_id === user?.id;
   const saved = post.saved_by?.includes(user?.id);
+
+  const intentObj = POST_INTENT_CATEGORIES.find((c) => c.id === post.intent_category) || POST_INTENT_CATEGORIES[0];
+  const signal = extractPostEconomicSignal(post.content || '', post.intent_category || 'ANNOUNCEMENT');
 
   // Always look up the author's current profile avatar to stay fresh
   const { data: authorProfile } = useQuery({
@@ -195,8 +199,46 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
       </div>
 
       {/* Content */}
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3 space-y-2">
+        {/* Intent Badge */}
+        {post.intent_category && (
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border" style={{ backgroundColor: `${intentObj.color}15`, color: intentObj.color, borderColor: `${intentObj.color}40` }}>
+            {intentObj.label}
+          </div>
+        )}
+
         <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{renderContent(post.content)}</p>
+
+        {/* AI Economic Sensor Signal Pill */}
+        <div className="bg-slate-900/50 dark:bg-slate-900 border border-slate-700/60 rounded-xl p-3 text-xs space-y-2 text-slate-200 mt-2">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-cyan-400 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-300" /> AI Economic Signal Detected
+            </span>
+            <span className="text-[10px] text-emerald-400 font-semibold">High Confidence</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+            <div><span className="text-slate-400">Intent:</span> <strong>{signal.intent}</strong></div>
+            <div><span className="text-slate-400">Target:</span> <strong>{signal.targetCountry}</strong></div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <span className="text-[10px] text-slate-400">Sector: {signal.sector}</span>
+            <button
+              onClick={() => {
+                toast({
+                  title: '🚀 Converting Post to Structured Opportunity',
+                  description: 'Elevating post update into published Investment Map project & Network listing.',
+                });
+                navigate('/investment-map');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 transition-all"
+            >
+              🚀 Turn into Opportunity
+            </button>
+          </div>
+        </div>
       </div>
 
       {post.image_url && (
