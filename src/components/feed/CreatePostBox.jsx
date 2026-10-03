@@ -15,25 +15,12 @@ import { useTranslation } from '@/lib/i18n/useTranslation';
 
 const ACCEPTED_FILE = '.pdf,.xls,.xlsx,.csv,.doc,.docx';
 
-const ECONOMIC_SIGNALS = [
-  { id: 'announcement', label: '📢 Announcement' },
-  { id: 'investment', label: '💰 Investment' },
-  { id: 'partnership', label: '🤝 Partnership' },
-  { id: 'expansion', label: '🌍 Expansion' },
-  { id: 'product', label: '📦 Product' },
-  { id: 'insight', label: '📈 Insight' },
-  { id: 'opportunity', label: '💡 Opportunity' },
-  { id: 'need', label: '🔎 Need' },
-  { id: 'challenge', label: '⚠️ Challenge' },
-];
-
 export default function CreatePostBox() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const t = useTranslation();
 
   const [content, setContent] = useState('');
-  const [selectedSignal, setSelectedSignal] = useState(null);
   const [attachedFile, setAttachedFile] = useState(null); // { url, name, type }
   const [attachedImage, setAttachedImage] = useState(null); // { url, previewUrl }
   const [attachedVideo, setAttachedVideo] = useState(null); // { url, name }
@@ -192,7 +179,6 @@ export default function CreatePostBox() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       setContent('');
-      setSelectedSignal(null);
       clearAttachments();
       setSelectedCircle(null);
       setPostError(null);
@@ -224,7 +210,6 @@ export default function CreatePostBox() {
     }
 
     const sanitizedContent = sanitize(content);
-    const finalContent = selectedSignal ? `${selectedSignal.label} ${sanitizedContent}` : sanitizedContent;
     let postType = 'text';
     if (attachedImage) postType = 'photo';
     else if (attachedVideo) postType = 'video';
@@ -233,7 +218,7 @@ export default function CreatePostBox() {
     logger.track('post_created', { post_type: postType, has_circle: !!selectedCircle });
 
     const payload = {
-      content: finalContent,
+      content: sanitizedContent,
       author_name: displayName,
       author_avatar: avatarUrl,
       post_type: postType,
@@ -348,32 +333,6 @@ export default function CreatePostBox() {
           </span>
         </div>
       )}
-
-      {/* Economic Signal Classification Chips */}
-      <div className="mb-2.5">
-        <p className="text-[11px] text-muted-foreground font-semibold mb-1.5 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" /> Signal Classification:
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {ECONOMIC_SIGNALS.map((sig) => {
-            const isSel = selectedSignal?.id === sig.id;
-            return (
-              <button
-                key={sig.id}
-                type="button"
-                onClick={() => setSelectedSignal(isSel ? null : sig)}
-                className={`text-[11px] px-2.5 py-1 rounded-full font-medium transition-all ${
-                  isSel
-                    ? 'bg-primary text-white shadow-sm ring-2 ring-primary/30'
-                    : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
-              >
-                {sig.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="relative">
         <Textarea

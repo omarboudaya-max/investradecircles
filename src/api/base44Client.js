@@ -473,6 +473,364 @@ export const base44 = {
         investorInterestsStore.push(interest);
         return interest;
       }
+    },
+
+    Investor: {
+      list: async (order = '-created_date', limit = 50) => {
+        try {
+          const { data, error } = await supabase.from('Investor').select('*').limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return INITIAL_INVESTORS;
+      },
+      get: async (id) => {
+        try {
+          const { data, error } = await supabase.from('Investor').select('*').eq('id', id).single();
+          if (!error && data) return data;
+        } catch (e) {}
+        return INITIAL_INVESTORS.find((i) => i.id === id) || null;
+      }
+    },
+
+    Company: {
+      list: async (order = '-created_date', limit = 50) => {
+        try {
+          const { data, error } = await supabase.from('Company').select('*').limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return INITIAL_COMPANIES;
+      },
+      get: async (id) => {
+        try {
+          const { data, error } = await supabase.from('Company').select('*').eq('id', id).single();
+          if (!error && data) return data;
+        } catch (e) {}
+        return INITIAL_COMPANIES.find((c) => c.id === id) || null;
+      }
+    },
+
+    Institution: {
+      list: async (order = '-created_date', limit = 50) => {
+        try {
+          const { data, error } = await supabase.from('Institution').select('*').limit(limit);
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return INITIAL_INSTITUTIONS;
+      },
+      get: async (id) => {
+        try {
+          const { data, error } = await supabase.from('Institution').select('*').eq('id', id).single();
+          if (!error && data) return data;
+        } catch (e) {}
+        return INITIAL_INSTITUTIONS.find((inst) => inst.id === id) || null;
+      }
+    },
+
+    Market: {
+      list: async () => {
+        try {
+          const { data, error } = await supabase.from('Market').select('*');
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return INITIAL_MARKETS;
+      }
+    },
+
+    AIMatchEngine: {
+      findMatches: async ({ role, objective, sector, ticket }) => {
+        // Calculate dynamic match scores for projects, investors, and companies
+        const allItems = [
+          ...INITIAL_PROJECTS.map(p => ({ ...p, entity_type: 'PROJECT' })),
+          ...INITIAL_INVESTORS.map(i => ({ ...i, entity_type: 'INVESTOR' })),
+          ...INITIAL_COMPANIES.map(c => ({ ...c, entity_type: 'COMPANY' }))
+        ];
+
+        return allItems.map(item => {
+          let score = 75; // base score
+          const itemSector = item.sector_id || item.sector || '';
+          if (sector && sector !== 'all' && itemSector.toLowerCase().includes(sector.toLowerCase())) {
+            score += 15;
+          }
+          if (item.featured || item.is_verified) {
+            score += 6;
+          }
+          // Clamp score between 82% and 98%
+          const finalScore = Math.min(98, Math.max(82, Math.floor(score + Math.random() * 5)));
+          return {
+            ...item,
+            ai_match_score: finalScore,
+            ai_match_rationale: `High strategic alignment across ${itemSector || 'target sector'}, ticket profile, and international export criteria.`
+          };
+        }).sort((a, b) => b.ai_match_score - a.ai_match_score);
+      }
     }
   }
 };
+
+// Initial Investors dataset
+export const INITIAL_INVESTORS = [
+  {
+    id: 'inv_africinvest',
+    name: 'AfricInvest Capital Partners',
+    type: 'Private Equity & Venture Capital',
+    country: 'Tunisia / International',
+    flag: '🇹🇳',
+    logo_url: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&h=150&fit=crop',
+    min_ticket: 2.0,
+    max_ticket: 25.0,
+    currency: 'EUR',
+    ticket_display: '€2M – €25M',
+    preferred_sectors: ['Technology & AI', 'Healthcare & Pharma', 'Green Energy', 'FinTech'],
+    preferred_markets: ['Tunisia', 'North Africa', 'Sub-Saharan Africa', 'France'],
+    ai_match_score: 96,
+    ai_rationale: 'Top institutional PE investor in Pan-African expansion with active funds in Tunis and Paris.',
+    active_opportunities: 18,
+    portfolio_count: 54,
+    verified: true,
+    website: 'https://africinvest.com'
+  },
+  {
+    id: 'inv_cdc',
+    name: 'Caisse des Dépôts et Consignations (CDC)',
+    type: 'Sovereign Investment Fund',
+    country: 'Tunisia',
+    flag: '🇹🇳',
+    logo_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=150&h=150&fit=crop',
+    min_ticket: 1.0,
+    max_ticket: 15.0,
+    currency: 'TND',
+    ticket_display: '1M – 15M TND',
+    preferred_sectors: ['Infrastructure', 'DeepTech', 'Agri-Food', 'Renewable Energy'],
+    preferred_markets: ['Grand Tunis', 'Sfax', 'Bizerte', 'Regional Interior'],
+    ai_match_score: 94,
+    ai_rationale: 'Strategic national investor backing strategic infrastructure and high-impact innovation projects.',
+    active_opportunities: 24,
+    portfolio_count: 82,
+    verified: true,
+    website: 'https://cdc.tn'
+  },
+  {
+    id: 'inv_med_cap',
+    name: 'Mediterranean Innovation Capital',
+    type: 'Venture Capital',
+    country: 'France / Tunisia',
+    flag: '🇫🇷',
+    logo_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=150&h=150&fit=crop',
+    min_ticket: 0.5,
+    max_ticket: 4.0,
+    currency: 'EUR',
+    ticket_display: '€500K – €4M',
+    preferred_sectors: ['AI & SaaS', 'FinTech', 'Smart Supply Chain', 'CleanTech'],
+    preferred_markets: ['Tunisia', 'France', 'Germany', 'GCC'],
+    ai_match_score: 91,
+    ai_rationale: 'Euro-Med bridge fund providing follow-on capital for offshore SaaS and tech exporters.',
+    active_opportunities: 12,
+    portfolio_count: 28,
+    verified: true,
+    website: 'https://med-cap.io'
+  },
+  {
+    id: 'inv_kas_fund',
+    name: 'KAS Sustainable Impact Ventures',
+    type: 'Impact & Green Fund',
+    country: 'Germany / International',
+    flag: '🇩🇪',
+    logo_url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=150&h=150&fit=crop',
+    min_ticket: 1.0,
+    max_ticket: 8.0,
+    currency: 'EUR',
+    ticket_display: '€1M – €8M',
+    preferred_sectors: ['Solar Energy', 'Bio-Refinery', 'Water Tech', 'Sustainable Tourism'],
+    preferred_markets: ['Tunisia', 'Morocco', 'Egypt', 'Germany'],
+    ai_match_score: 89,
+    ai_rationale: 'German development impact capital focusing on decarbonization and ESG-compliant industrial projects.',
+    active_opportunities: 15,
+    portfolio_count: 36,
+    verified: true,
+    website: 'https://kas-ventures.de'
+  },
+  {
+    id: 'inv_gulf_venture',
+    name: 'Gulf-Arabian Strategic Partners',
+    type: 'Private Equity & Family Office',
+    country: 'Saudi Arabia / UAE',
+    flag: '🇸🇦',
+    logo_url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=150&h=150&fit=crop',
+    min_ticket: 3.0,
+    max_ticket: 30.0,
+    currency: 'USD',
+    ticket_display: '$3M – $30M',
+    preferred_sectors: ['Logistics', 'Real Estate & Tourism', 'Agri-Food Export', 'Energy'],
+    preferred_markets: ['Saudi Arabia', 'UAE', 'Tunisia', 'GCC'],
+    ai_match_score: 88,
+    ai_rationale: 'High-net-worth GCC investor syndicate specializing in joint-ventures and cross-border trade links.',
+    active_opportunities: 9,
+    portfolio_count: 22,
+    verified: true,
+    website: 'https://gulfarabian.sa'
+  }
+];
+
+// Initial Companies dataset
+export const INITIAL_COMPANIES = [
+  {
+    id: 'comp_neuracode',
+    name: 'NeuraCode Labs Tunisia',
+    sector: 'Technology & AI',
+    location: 'Tunis, Tunisia',
+    flag: '🇹🇳',
+    employees: 45,
+    stage: 'Growth Stage',
+    seeking_capital: '1.2M TND',
+    ai_match_score: 95,
+    description: 'AI-driven credit scoring and risk assessment SaaS platform for MENA financial institutions.',
+    verified: true
+  },
+  {
+    id: 'comp_agritech',
+    name: 'AgriTech Mediterranean Corp',
+    sector: 'Agri-Food & Smart Farming',
+    location: 'Bizerte, Tunisia',
+    flag: '🇹🇳',
+    employees: 120,
+    stage: 'Expansion',
+    seeking_capital: '4.5M TND',
+    ai_match_score: 93,
+    description: 'Smart agricultural cold storage and organic sorting facility exporting to Southern Europe.',
+    verified: true
+  },
+  {
+    id: 'comp_sfax_green',
+    name: 'Sfax Green Energy SA',
+    sector: 'Renewable Solar & Green Energy',
+    location: 'Sfax, Tunisia',
+    flag: '🇹🇳',
+    employees: 85,
+    stage: 'Greenfield',
+    seeking_capital: '18.5M TND',
+    ai_match_score: 92,
+    description: '20MW photovoltaic solar farm development with 20-year industrial PPA agreements.',
+    verified: true
+  },
+  {
+    id: 'comp_tunisia_wire',
+    name: 'Tunisia Wire Solutions',
+    sector: 'Advanced Manufacturing',
+    location: 'Sousse, Tunisia',
+    flag: '🇹🇳',
+    employees: 250,
+    stage: 'Expansion',
+    seeking_capital: '8.0M TND',
+    ai_match_score: 90,
+    description: 'High-voltage electric vehicle wiring harness assembly plant for European tier-1 OEMs.',
+    verified: true
+  }
+];
+
+// Initial Institutions dataset
+export const INITIAL_INSTITUTIONS = [
+  {
+    id: 'inst_utica',
+    name: 'UTICA — Union Tunisienne de l\'Industrie, du Commerce et de l\'Artisanat',
+    type: 'National Employers Federation & Chamber',
+    location: 'Tunis, Tunisia',
+    flag: '🇹🇳',
+    members_count: '150,000+',
+    nobel_honoree: true,
+    website: 'https://www.utica.org.tn'
+  },
+  {
+    id: 'inst_fipa',
+    name: 'FIPA Tunisia — Foreign Investment Promotion Agency',
+    type: 'Government Investment Agency',
+    location: 'Tunis, Tunisia',
+    flag: '🇹🇳',
+    members_count: '3,800+ Foreign Projects',
+    nobel_honoree: false,
+    website: 'https://www.investintunisia.tn'
+  },
+  {
+    id: 'inst_tia',
+    name: 'TIA — Tunisian Investment Authority',
+    type: 'National Single Window Authority',
+    location: 'Tunis, Tunisia',
+    flag: '🇹🇳',
+    members_count: '1,200+ Major Projects',
+    nobel_honoree: false,
+    website: 'https://www.tia.gov.tn'
+  },
+  {
+    id: 'inst_ahk',
+    name: 'AHK Tunisia — Chambre Tuniso-Allemande d\'Industrie et de Commerce',
+    type: 'Bilateral Chamber of Commerce',
+    location: 'Tunis / Berlin',
+    flag: '🇩🇪',
+    members_count: '900+ German-Tunisian Firms',
+    nobel_honoree: false,
+    website: 'https://tunisien.ahk.de'
+  }
+];
+
+// Initial Global Markets dataset
+export const INITIAL_MARKETS = [
+  {
+    id: 'mkt_tn',
+    country: 'Tunisia',
+    flag: '🇹🇳',
+    region: 'North Africa / Mediterranean',
+    opportunities_count: 40,
+    capital_flow: '€450M',
+    trending_sectors: ['Renewable Energy', 'Agri-Food', 'AI & Tech', 'Pharma'],
+    trade_agreements: 'EU Zero-Tariff (AA), AfCFTA, GAFTA'
+  },
+  {
+    id: 'mkt_de',
+    country: 'Germany',
+    flag: '🇩🇪',
+    region: 'European Union',
+    opportunities_count: 34,
+    capital_flow: '€120M',
+    trending_sectors: ['EV Components', 'Green Solar', 'Offshore Software'],
+    trade_agreements: 'EU Single Market, Bilateral Investment Treaty'
+  },
+  {
+    id: 'mkt_fr',
+    country: 'France',
+    flag: '🇫🇷',
+    region: 'European Union',
+    opportunities_count: 27,
+    capital_flow: '€95M',
+    trending_sectors: ['FinTech', 'Essential Oils', 'Eco-Tourism'],
+    trade_agreements: 'EU Single Market, Double Taxation Treaty'
+  },
+  {
+    id: 'mkt_sa',
+    country: 'Saudi Arabia',
+    flag: '🇸🇦',
+    region: 'GCC',
+    opportunities_count: 31,
+    capital_flow: '€210M',
+    trending_sectors: ['Green Hydrogen', 'Building Materials', 'FinTech'],
+    trade_agreements: 'GAFTA, GCC Economic Agreement'
+  },
+  {
+    id: 'mkt_ae',
+    country: 'United Arab Emirates',
+    flag: '🇦🇪',
+    region: 'GCC',
+    opportunities_count: 28,
+    capital_flow: '€180M',
+    trending_sectors: ['AI & SaaS', 'Cold Logistics', 'Luxury Tourism'],
+    trade_agreements: 'GAFTA, Bilateral CEPA Negotiations'
+  },
+  {
+    id: 'mkt_ma',
+    country: 'Morocco',
+    flag: '🇲🇦',
+    region: 'North Africa',
+    opportunities_count: 19,
+    capital_flow: '€65M',
+    trending_sectors: ['Renewable Energy', 'Trade Logistics'],
+    trade_agreements: 'Agadir Agreement, AfCFTA'
+  }
+];

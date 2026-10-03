@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Flame } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
@@ -239,6 +239,27 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
         </div>
       )}
 
+      {/* AI Sensor Signal Detection & Opportunity Elevate Button */}
+      {post.content && (post.content.toLowerCase().includes('invest') || post.content.toLowerCase().includes('partner') || post.content.toLowerCase().includes('looking for') || post.content.toLowerCase().includes('distributor')) && (
+        <div className="mx-4 mb-3 p-2.5 rounded-xl bg-[#16C7B7]/10 border border-[#16C7B7]/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-1.5 text-[#16C7B7] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#16C7B7] animate-ping" />
+            <span>AI Signal Detected: Economic Opportunity Intent</span>
+          </div>
+          <button
+            onClick={() => {
+              toast({
+                title: "🚀 Elevated to Investment Opportunity!",
+                description: "Post indexed into AI Knowledge Graph & Investment Map.",
+              });
+            }}
+            className="px-3 py-1 rounded-lg bg-[#1769FF] hover:bg-blue-600 text-white font-bold text-[11px] transition-all shadow-sm flex items-center gap-1"
+          >
+            🚀 Turn into Opportunity
+          </button>
+        </div>
+      )}
+
       <div className="px-4 pb-2">
         <p className="text-xs text-muted-foreground">
           {post.created_date ? format(new Date(post.created_date), 'dd MMM yyyy') : ''}
@@ -269,20 +290,6 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
           >
             <MessageCircle className="w-5 h-5" />
             <span>{comments.length > 0 ? comments.length : t.postCard.comment}</span>
-          </button>
-          <button
-            onClick={() => {
-              toast({
-                title: "🚀 Signal Transformed into Opportunity",
-                description: "This post has been classified and listed on the Investraders Economic Map & Investment Network.",
-              });
-            }}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 transition-all border border-cyan-500/30"
-            title="Transform this post into an active economic opportunity signal"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
-            <span className="hidden sm:inline">Turn into Opportunity</span>
-            <span className="sm:hidden">Opportunity</span>
           </button>
         </div>
         <div className="flex items-center gap-3">
