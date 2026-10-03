@@ -2,16 +2,59 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   BarChart3, TrendingUp, Building2, Wallet, Globe, Sparkles, 
-  ArrowUpRight, ArrowDownRight, ShieldCheck, Download, AlertTriangle, 
-  CheckCircle2, Layers, Filter, Compass, Zap
+  ArrowUpRight, ShieldCheck, Download, Zap, Layers, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import UTICABusinessCommandCenter from '@/components/circles/UTICABusinessCommandCenter';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function ExecutiveIntelligence() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeInstitution, setActiveInstitution] = useState('ALL'); // ALL, UTICA, TIA_FIPA, CDC, RNE
+
+  // Dynamic Macro KPIs per institutional view
+  const kpiData = {
+    ALL: [
+      { label: 'Companies Connected', value: '12,480', change: '+12.4% MoM', isUp: true, icon: Building2 },
+      { label: 'Investment Opportunities', value: '1,284', change: '+8.1% MoM', isUp: true, icon: Sparkles },
+      { label: 'Capital Seeking', value: '€4.8B', change: '+15.2% MoM', isUp: true, icon: Wallet },
+      { label: 'Active Investors', value: '642', change: '+5.7% MoM', isUp: true, icon: Globe },
+      { label: 'International Matches', value: '3,812', change: '+24.9% MoM', isUp: true, icon: Zap }
+    ],
+    UTICA: [
+      { label: 'UTICA Member SMEs', value: '18,450', change: '+4.2% MoM', isUp: true, icon: Building2 },
+      { label: 'Sector Issues Logged', value: '1,284', change: '-5.1% this week', isUp: true, icon: Sparkles },
+      { label: 'Regional Partnerships', value: '486', change: '+18 this month', isUp: true, icon: Wallet },
+      { label: 'Business Sentiment', value: '68% Positive', change: '🟢 Stable (+2%)', isUp: true, icon: Globe },
+      { label: 'Cross-Border Opportunities', value: '214', change: '47 International', isUp: true, icon: Zap }
+    ],
+    TIA_FIPA: [
+      { label: 'FDI Pipeline Projects', value: '342', change: '+18.4% YoY', isUp: true, icon: Building2 },
+      { label: 'Target Capital Inflow', value: '€2.1B', change: '+14.0% YoY', isUp: true, icon: Wallet },
+      { label: 'Foreign Investor Leads', value: '189', change: 'Europe & GCC', isUp: true, icon: Globe },
+      { label: 'FDI Matches Closed', value: '64', change: 'Completed Q3', isUp: true, icon: Zap },
+      { label: 'Priority Tech Hubs', value: '12', change: 'Tunis, Sousse, Sfax', isUp: true, icon: Sparkles }
+    ],
+    CDC: [
+      { label: 'Sovereign Co-Investments', value: '48', change: '€450M Portfolio', isUp: true, icon: Wallet },
+      { label: 'Growth Funds Backed', value: '16 VCs', change: 'Fintech & Green', isUp: true, icon: Building2 },
+      { label: 'SME Equity Demand', value: '€1.2B', change: '84 Projects', isUp: true, icon: Sparkles },
+      { label: 'Impact Score', value: '91/100', change: 'High ESG Alignment', isUp: true, icon: Globe },
+      { label: 'Green Energy Assets', value: '€180M', change: '+22% YoY', isUp: true, icon: Zap }
+    ],
+    RNE: [
+      { label: 'Registered Enterprises', value: '142,600', change: '+8.4% YoY', isUp: true, icon: Building2 },
+      { label: 'New Business Creations', value: '3,840', change: 'This Month', isUp: true, icon: Sparkles },
+      { label: 'Beneficial Ownership Logs', value: '94.2%', change: 'Compliance Rate', isUp: true, icon: ShieldCheck },
+      { label: 'Export Active Companies', value: '6,420', change: 'Validated', isUp: true, icon: Globe },
+      { label: 'Digital Filing Pulse', value: '98%', change: 'Real-time sync', isUp: true, icon: Zap }
+    ]
+  };
+
+  const currentKPIs = kpiData[activeInstitution] || kpiData.ALL;
 
   return (
     <div className="min-h-screen bg-[#071A2B] text-slate-100 font-sans pb-16">
@@ -34,8 +77,8 @@ export default function ExecutiveIntelligence() {
 
           <div className="flex flex-wrap items-center gap-3">
             <Button 
-              onClick={() => alert('Generating Weekly AI Macroeconomic Brief PDF...')}
-              className="bg-[#1769FF] hover:bg-blue-600 text-white text-xs px-4 py-2.5 rounded-xl font-semibold flex items-center gap-2"
+              onClick={() => alert('Downloading Weekly AI Executive Briefing PDF...')}
+              className="bg-[#1769FF] hover:bg-blue-600 text-white text-xs px-4 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/30"
             >
               <Download className="w-4 h-4" /> Download Executive Brief
             </Button>
@@ -65,7 +108,7 @@ export default function ExecutiveIntelligence() {
               onClick={() => setActiveInstitution(item.id)}
               className={`px-3.5 py-1.5 rounded-lg border transition-all ${
                 activeInstitution === item.id 
-                  ? 'bg-[#1769FF] text-white border-[#1769FF]' 
+                  ? 'bg-[#1769FF] text-white border-[#1769FF] shadow-md shadow-blue-600/30' 
                   : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
               }`}
             >
@@ -80,13 +123,7 @@ export default function ExecutiveIntelligence() {
         
         {/* 1. TOP EXECUTIVE KPI CARDS */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {[
-            { label: 'Companies Connected', value: '12,480', change: '+12.4% MoM', isUp: true, icon: Building2 },
-            { label: 'Investment Opportunities', value: '1,284', change: '+8.1% MoM', isUp: true, icon: Briefcase },
-            { label: 'Capital Seeking', value: '€4.8B', change: '+15.2% MoM', isUp: true, icon: Wallet },
-            { label: 'Active Investors', value: '642', change: '+5.7% MoM', isUp: true, icon: Globe },
-            { label: 'International Matches', value: '3,812', change: '+24.9% MoM', isUp: true, icon: Sparkles }
-          ].map((kpi, idx) => {
+          {currentKPIs.map((kpi, idx) => {
             const Icon = kpi.icon;
             return (
               <Card key={idx} className="bg-slate-900/90 border-slate-800 p-4 rounded-2xl shadow-lg space-y-2">
@@ -102,6 +139,13 @@ export default function ExecutiveIntelligence() {
             );
           })}
         </div>
+
+        {/* IF UTICA MODE IS ACTIVE: Render deep UTICA Command Center panel */}
+        {activeInstitution === 'UTICA' && (
+          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-6">
+            <UTICABusinessCommandCenter circle={{ name: 'UTICA National Business Center' }} user={user} isDark={true} />
+          </div>
+        )}
 
         {/* 2. REAL-TIME MACROECONOMIC AI SIGNALS */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

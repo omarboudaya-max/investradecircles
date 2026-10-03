@@ -131,6 +131,9 @@ const AuthenticatedApp = () => {
                 <Route path="/investment-network" element={<InvestmentNetwork />} />
                 <Route path="/matchmaker" element={<AIMatchmaker />} />
                 <Route path="/executive-intelligence" element={<ExecutiveIntelligence />} />
+                <Route path="/executive-command-center" element={<ExecutiveIntelligence />} />
+                <Route path="/executive" element={<ExecutiveIntelligence />} />
+                <Route path="/command-center" element={<ExecutiveIntelligence />} />
                 <Route path="/investment-project/:id" element={<ProjectDetail />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
                 <Route path="/investor/:id" element={<InvestorProfileDetail />} />
