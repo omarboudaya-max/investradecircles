@@ -112,7 +112,10 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('User auth check failed:', error);
       await supabase.auth.signOut().catch(() => {});
-      setAuthError(null);
+      setAuthError({
+        type: 'auth_required',
+        message: 'Authentication required'
+      });
       setIsAuthenticated(false);
       setUser(null);
     } finally {
