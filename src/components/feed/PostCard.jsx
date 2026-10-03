@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Rocket, Handshake, Globe2, Landmark, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
