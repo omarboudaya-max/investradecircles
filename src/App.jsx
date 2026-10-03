@@ -66,17 +66,17 @@ const SmartInvestmentLayout = () => {
 };
 
 const AuthenticatedApp = () => {
-  const { user, isLoadingAuth, authError } = useAuth();
+  const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const [animationDone, setAnimationDone] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationDone(true);
-    }, 1500); // 1.5s loader duration
+    }, 2500); // Ensure loader logo forms fully (takes ~2.3s) before transition
     return () => clearTimeout(timer);
   }, []);
 
-  const showLoader = isLoadingAuth && !animationDone;
+  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
 
   return (
     <>
