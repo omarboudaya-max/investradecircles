@@ -46,6 +46,8 @@ import ProjectDetail from '@/pages/ProjectDetail';
 import InvestmentNetwork from '@/pages/InvestmentNetwork';
 import InvestorProfileDetail from '@/pages/InvestorProfileDetail';
 import FundProfileDetail from '@/pages/FundProfileDetail';
+import AIMatchmaker from '@/pages/AIMatchmaker';
+import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -124,12 +126,19 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* Public & Authenticated Investment Map & Network */}
+              {/* Public & Authenticated Investment Network & Intelligence Routes */}
               <Route element={<SmartInvestmentLayout />}>
                 <Route path="/investment-map" element={<InvestmentMap />} />
                 <Route path="/investment-network" element={<InvestmentNetwork />} />
                 <Route path="/investment-network/:organizationSlug" element={<InvestorProfileDetail />} />
                 <Route path="/investment-network/fund/:fundSlug" element={<FundProfileDetail />} />
+                <Route path="/matchmaker" element={<AIMatchmaker />} />
+                <Route path="/intelligence" element={<ExecutiveIntelligence />} />
+                <Route path="/executive-intelligence" element={<ExecutiveIntelligence />} />
+                <Route path="/executive-command-center" element={<ExecutiveIntelligence />} />
+                <Route path="/executive" element={<ExecutiveIntelligence />} />
+                <Route path="/command-center" element={<ExecutiveIntelligence />} />
+                <Route path="/investor/:id" element={<InvestorProfileDetail />} />
                 <Route path="/investment-project/:id" element={<ProjectDetail />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
               </Route>
