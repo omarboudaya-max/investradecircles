@@ -14,7 +14,7 @@ import { useCircleNotifications } from '@/hooks/useCircleNotifications';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList, Sparkles, Flame, Globe } from 'lucide-react';
+import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import CircleFeed from '@/components/circles/CircleFeed';
@@ -312,48 +312,6 @@ export default function CircleDetail() {
       <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 p-1">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
-
-      {/* AI Circle Intelligence Center Header */}
-      <div className="bg-gradient-to-r from-[#071A2B] via-[#0A2540] to-[#0D3054] text-white p-4 sm:p-5 rounded-2xl mb-6 shadow-xl border border-cyan-500/20 relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <span className="text-xs font-black tracking-widest uppercase text-cyan-400">Circle Economic Intelligence</span>
-          </div>
-          <span className="text-[11px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Telemetry
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3.5">
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <p className="text-[10px] text-slate-400 font-medium">Circle Members</p>
-            <p className="text-base font-bold text-white mt-0.5">{allMemberIds.length}</p>
-          </div>
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <p className="text-[10px] text-slate-400 font-medium">Tracked Projects</p>
-            <p className="text-base font-bold text-cyan-300 mt-0.5">14 Active</p>
-          </div>
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <p className="text-[10px] text-slate-400 font-medium">Capital Required</p>
-            <p className="text-base font-bold text-emerald-400 mt-0.5">€24.8M</p>
-          </div>
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <p className="text-[10px] text-slate-400 font-medium">Match Opportunities</p>
-            <p className="text-base font-bold text-amber-300 mt-0.5">18 Signals</p>
-          </div>
-        </div>
-
-        <div className="space-y-1 text-xs text-slate-300 border-t border-white/10 pt-2.5">
-          <div className="flex items-center gap-2">
-            <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span><strong className="text-white">AI Signal:</strong> High investment interest detected in this circle (+24% MoM)</span>
-          </div>
-        </div>
-      </div>
 
       {/* ── Institutional/Business: premium AI-finance layout ── */}
       {isInstitutional ? (

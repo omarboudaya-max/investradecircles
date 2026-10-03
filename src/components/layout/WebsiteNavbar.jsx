@@ -12,13 +12,12 @@ export default function WebsiteNavbar() {
   const { isArabic, toggleLanguage } = useLanguage();
 
   const links = [
-    { name: isArabic ? 'شبكة الاستثمار' : 'Investment Network', path: '/network', badge: 'AI' },
-    { name: isArabic ? 'خريطة الاستثمار' : 'Investment Map', path: '/investment-map', badge: 'MAP' },
-    { name: isArabic ? 'الذكاء التنفيذي' : 'Executive AI', path: '/executive-intelligence', badge: 'PRO' },
-    { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event' },
+    { name: isArabic ? 'خريطة الاستثمار' : 'Investment Map', path: '/investment-map', badge: 'NEW' },
+    { name: isArabic ? 'الملتقى 13 أكتوبر' : 'Event 13 Oct', path: '/event', badge: 'AI' },
     { name: t.websiteNav?.institutions || 'Institutions', path: '/institutions' },
     { name: t.websiteNav?.businesses || 'Businesses', path: '/contact' },
     { name: t.websiteNav?.individuals || 'Individuals', path: '/individuals' },
+    { name: t.websiteNav?.threeM || '3M', path: '/3m' },
   ];
 
   return (
