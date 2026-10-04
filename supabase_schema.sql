@@ -110,6 +110,7 @@ CREATE TABLE public."Post" (
   liked_by UUID[] DEFAULT '{}',
   saved_by UUID[] DEFAULT '{}',
   reactions JSONB DEFAULT '{}'::jsonb,
+  intent_category TEXT DEFAULT 'ANNOUNCEMENT',
   created_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

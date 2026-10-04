@@ -177,9 +177,29 @@ export default function CreatePostBox() {
   const [postError, setPostError] = useState(null);
 
   const createPost = useMutation({
-    mutationFn: (data) => supabase.from('Post').insert(data),
+    mutationFn: async (data) => {
+      // First attempt: insert full payload (including intent_category if column exists)
+      const res = await supabase.from('Post').insert(data).select();
+      if (res.error) {
+        // If Supabase schema lacks intent_category column (PGRST204 or 42703), retry without it
+        if (
+          res.error.code === 'PGRST204' ||
+          res.error.code === '42703' ||
+          res.error.message?.includes('intent_category') ||
+          res.error.details?.includes('intent_category')
+        ) {
+          const { intent_category, ...fallbackPayload } = data;
+          const retryRes = await supabase.from('Post').insert(fallbackPayload).select();
+          if (retryRes.error) throw new Error(retryRes.error.message);
+          return retryRes.data;
+        }
+        throw new Error(res.error.message);
+      }
+      return res.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
       setContent('');
       clearAttachments();
       setSelectedCircle(null);
