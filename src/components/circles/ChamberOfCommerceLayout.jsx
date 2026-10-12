@@ -28,33 +28,35 @@ function formatPrice(symbol, price) {
   if (!price && price !== 0) return '—';
   const crypto = ['BTC/USD', 'ETH/USD'];
   const forex = ['EUR/USD'];
-  const tunisian = ['SFBT', 'BIAT', 'BT', 'SAH', 'PGH', 'DH', 'TRE', 'TLNET'];
+  const tunisian = ['SFBT', 'BIAT', 'BT', 'SAH', 'PGH', 'DH', 'TRE', 'TLNET', 'TJARI', 'AMEN'];
   if (crypto.includes(symbol)) return `$${Number(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   if (forex.includes(symbol)) return Number(price).toFixed(4);
   if (symbol === 'GOLD' || symbol === 'OIL (WTI)') return `$${Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  if (symbol === 'TUNINDEX') return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  if (tunisian.includes(symbol)) return `${Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TND`;
+  if (symbol === 'TUNINDEX') return `${Number(price).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pts`;
+  if (tunisian.includes(symbol)) return `${Number(price).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TND`;
   return Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 const DEFAULT_MARKET_DATA = [
-  { symbol: 'S&P 500', price: 7492.79, change_pct: -0.25 },
-  { symbol: 'NASDAQ', price: 26337.33, change_pct: -0.15 },
-  { symbol: 'DOW', price: 51753.28, change_pct: -0.47 },
-  { symbol: 'GOLD', price: 4268.50, change_pct: -2.07 },
-  { symbol: 'OIL (WTI)', price: 73.19, change_pct: -4.69 },
-  { symbol: 'EUR/USD', price: 1.1476, change_pct: -1.15 },
-  { symbol: 'BTC/USD', price: 63854.00, change_pct: -1.92 },
-  { symbol: 'ETH/USD', price: 1738.66, change_pct: -0.94 },
-  { symbol: 'TUNINDEX', price: 18520.00, change_pct: 1.15 },
-  { symbol: 'SFBT', price: 14.11, change_pct: 0.36 },
-  { symbol: 'BIAT', price: 158.00, change_pct: 0.51 },
-  { symbol: 'BT', price: 8.74, change_pct: 4.05 },
-  { symbol: 'SAH', price: 14.25, change_pct: 1.06 },
-  { symbol: 'PGH', price: 27.70, change_pct: -1.91 },
-  { symbol: 'DH', price: 19.64, change_pct: -0.30 },
-  { symbol: 'TRE', price: 13.20, change_pct: 1.54 },
-  { symbol: 'TLNET', price: 10.65, change_pct: 1.24 }
+  { symbol: 'TUNINDEX', price: 18563.67, change_pct: -0.22 },
+  { symbol: 'BIAT', price: 162.00, change_pct: 0.31 },
+  { symbol: 'SFBT', price: 13.48, change_pct: -0.15 },
+  { symbol: 'TJARI', price: 77.50, change_pct: 0.65 },
+  { symbol: 'BT', price: 5.48, change_pct: 0.37 },
+  { symbol: 'SAH', price: 12.26, change_pct: 0.49 },
+  { symbol: 'PGH', price: 25.98, change_pct: -0.38 },
+  { symbol: 'DH', price: 15.10, change_pct: 0.20 },
+  { symbol: 'AMEN', price: 44.50, change_pct: 0.45 },
+  { symbol: 'TRE', price: 13.50, change_pct: 0.75 },
+  { symbol: 'TLNET', price: 9.85, change_pct: -0.50 },
+  { symbol: 'S&P 500', price: 5815.20, change_pct: 0.61 },
+  { symbol: 'NASDAQ', price: 18342.90, change_pct: 0.33 },
+  { symbol: 'DOW', price: 42863.80, change_pct: 0.97 },
+  { symbol: 'GOLD', price: 2657.40, change_pct: 1.10 },
+  { symbol: 'OIL (WTI)', price: 75.56, change_pct: -0.38 },
+  { symbol: 'EUR/USD', price: 1.0935, change_pct: -0.05 },
+  { symbol: 'BTC/USD', price: 62850.00, change_pct: 2.10 },
+  { symbol: 'ETH/USD', price: 2450.00, change_pct: 1.80 }
 ];
 
 function TickerItem({ t, isDark }) {
@@ -666,7 +668,10 @@ export default function ChamberOfCommerceLayout({
       }
     });
 
-    const order = ['S&P 500', 'NASDAQ', 'DOW', 'GOLD', 'OIL (WTI)', 'EUR/USD', 'BTC/USD', 'ETH/USD'];
+    const order = [
+      'TUNINDEX', 'BIAT', 'SFBT', 'TJARI', 'BT', 'SAH', 'PGH', 'DH', 'AMEN', 'TRE', 'TLNET',
+      'S&P 500', 'NASDAQ', 'DOW', 'GOLD', 'OIL (WTI)', 'EUR/USD', 'BTC/USD', 'ETH/USD'
+    ];
     return merged.sort((a, b) => {
       const idxA = order.indexOf(a.symbol);
       const idxB = order.indexOf(b.symbol);

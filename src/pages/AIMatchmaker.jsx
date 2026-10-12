@@ -75,8 +75,13 @@ export default function AIMatchmaker() {
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 pt-12 pb-8 border-b border-slate-800/80">
         <div className="container mx-auto px-4 text-center max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-500/30">
-            <Sparkles className="w-4 h-4 text-cyan-400" /> Autonomous Economic Matchmaker
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-500/30">
+              <Sparkles className="w-4 h-4 text-cyan-400" /> Autonomous Economic Matchmaker
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+              ⚠️ Données de démonstration & Simulation
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -84,7 +89,7 @@ export default function AIMatchmaker() {
           </h1>
 
           <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-            Tell our AI engine who you are and what you need. Investraders actively computes compatibility across 1,250+ institutional capital mandates and 5,000+ business opportunities.
+            Dites à notre moteur IA qui vous êtes et votre besoin de financement ou partenariat. Investraders calcule en temps réel la compatibilité avec les fonds institutionnels partenaires et opportunités du réseau <em>(Mode Démonstrateur & Simulation d'affaires)</em>.
           </p>
         </div>
       </div>

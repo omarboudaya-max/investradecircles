@@ -5,11 +5,12 @@
 
 // Taxonomy Constants
 export const INVESTOR_TYPES = [
+  { id: 'PUBLIC_INSTITUTION', label: "Établissement Public d'Investissement", icon: 'Landmark', badge: 'Public / CDC' },
+  { id: 'DEVELOPMENT_FINANCE_INSTITUTION', label: 'Development Finance (DFI)', icon: 'Globe2', badge: 'DFI' },
   { id: 'VENTURE_CAPITAL', label: 'Venture Capital', icon: 'Rocket', badge: 'VC' },
   { id: 'PRIVATE_EQUITY', label: 'Private Equity', icon: 'Building2', badge: 'PE' },
   { id: 'FAMILY_OFFICE', label: 'Family Office', icon: 'Landmark', badge: 'FO' },
   { id: 'SOVEREIGN_WEALTH_FUND', label: 'Sovereign Wealth Fund', icon: 'Crown', badge: 'SWF' },
-  { id: 'DEVELOPMENT_FINANCE_INSTITUTION', label: 'Development Finance (DFI)', icon: 'Globe2', badge: 'DFI' },
   { id: 'IMPACT_INVESTOR', label: 'Impact / Climate Investor', icon: 'Leaf', badge: 'Impact' },
   { id: 'ASSET_MANAGER', label: 'Asset Manager', icon: 'BarChart3', badge: 'AM' },
   { id: 'CORPORATE_VENTURE_CAPITAL', label: 'Corporate VC', icon: 'Briefcase', badge: 'CVC' },
@@ -79,9 +80,9 @@ export const INITIAL_ORGANIZATIONS = [
   {
     id: 'org_cdc_gestion',
     slug: 'cdc-gestion',
-    display_name: 'CDC Gestion',
-    legal_name: 'Caisse des Dépôts et Consignations - CDC Tunisia',
-    organization_type: 'SOVEREIGN_WEALTH_FUND',
+    display_name: 'CDC Tunisie / CDC Gestion',
+    legal_name: 'Caisse des Dépôts et Consignations (CDC Tunisie)',
+    organization_type: 'PUBLIC_INSTITUTION',
     country: 'Tunisia',
     country_code: 'TN',
     city: 'Tunis',
@@ -89,13 +90,14 @@ export const INITIAL_ORGANIZATIONS = [
     website: 'https://www.cdc.tn',
     year_founded: 2011,
     logo: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=150&h=150&fit=crop',
-    logo_alt_text: 'CDC Gestion Logo',
-    verification_status: 'OFFICIAL',
-    verification_source: 'Public Institution (Ministère des Finances)',
-    official: true,
+    logo_alt_text: 'CDC Tunisie Logo',
+    verification_status: 'ILLUSTRATIVE',
+    verification_source: "Établissement Public d'Investissement d'Intérêt Général",
+    official: false,
+    is_illustrative: true,
     featured: true,
     partner: true,
-    description: 'Public strategic investment institution serving as the financial arm for long-term economic development, innovation funds, and regional infrastructure projects in Tunisia.',
+    description: "Établissement public d'investissement d'intérêt général agissant en tant que tiers de confiance et investisseur d'impact à long terme pour l'économie tunisienne et l'écosystème entrepreneurial.",
     investment_focus: ['sec_energy', 'sec_industry', 'sec_tech', 'sec_agri', 'sec_tourism'],
     geographic_focus: ['Tunisia'],
     investment_stages: ['GREENFIELD', 'GROWTH', 'EXPANSION'],
@@ -177,9 +179,10 @@ export const INITIAL_ORGANIZATIONS = [
     year_founded: 1988,
     logo: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=150&h=150&fit=crop',
     logo_alt_text: 'BlackRock Logo',
-    verification_status: 'VERIFIED',
-    verification_source: 'SEC / Global Public Listed Institutional',
-    official: true,
+    verification_status: 'ILLUSTRATIVE',
+    verification_source: 'Exemple Illustratif International',
+    official: false,
+    is_illustrative: true,
     featured: true,
     partner: false,
     description: 'World largest asset management firm active in global infrastructure, renewable energy transition funds, and emerging market climate sustainability mandates.',
@@ -264,9 +267,10 @@ export const INITIAL_ORGANIZATIONS = [
     year_founded: 1976,
     logo: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=150&h=150&fit=crop',
     logo_alt_text: 'KKR Logo',
-    verification_status: 'VERIFIED',
-    verification_source: 'Global NYSE Listed PE',
-    official: true,
+    verification_status: 'ILLUSTRATIVE',
+    verification_source: 'Exemple Illustratif International',
+    official: false,
+    is_illustrative: true,
     featured: true,
     partner: false,
     description: 'Premier global investment firm co-investing in energy transition, telecom infrastructure, port logistics, and healthcare networks across emerging corridors.',
@@ -450,42 +454,72 @@ export function extractPostEconomicSignal(content = '', category = 'ANNOUNCEMENT
   const text = content.toLowerCase();
   let intent = 'General Business Communication';
   let sector = 'Multi-sector';
-  let targetCountry = 'Global / Regional';
-  let confidence = 'High';
+  let targetCountry = 'Tunisia / Regional';
+  let confidenceScore = 88;
 
+  // Country / Target Corridor
   if (text.includes('german') || text.includes('germany') || text.includes('allemagne')) {
     targetCountry = 'Germany (EU Gateway)';
+    confidenceScore += 4;
   } else if (text.includes('france') || text.includes('french')) {
     targetCountry = 'France (EU Market)';
-  } else if (text.includes('saudi') || text.includes('uae') || text.includes('dubai') || text.includes('gcc')) {
-    targetCountry = 'GCC / Gulf Region';
-  } else if (text.includes('africa') || text.includes('sub-saharan')) {
-    targetCountry = 'Sub-Saharan Africa';
+    confidenceScore += 3;
+  } else if (text.includes('saudi') || text.includes('saoudite') || text.includes('riyadh') || text.includes('uae') || text.includes('dubai') || text.includes('gcc') || text.includes('السعودية')) {
+    targetCountry = 'GCC / Saudi Arabia';
+    confidenceScore += 6;
+  } else if (text.includes('africa') || text.includes('sub-saharan') || text.includes('afrique')) {
+    targetCountry = 'Europe–Africa Corridor';
+    confidenceScore += 5;
+  } else if (text.includes('tunis') || text.includes('national') || text.includes('local') || text.includes('rurale')) {
+    targetCountry = 'Tunisia (Marché National)';
+    confidenceScore += 2;
   }
 
-  if (text.includes('solar') || text.includes('energy') || text.includes('renewable') || text.includes('green')) {
+  // Sector Matching with smart word boundaries and domain prioritization
+  const isAgri = /\b(agri|agricole|agricultrice|agriculteur|ouvri[èe]re|productrice|productrices|rural|rurale|rurales|ferme|farm|food|agroalimentaire|terroir|olive|huiles?)\b/i.test(text);
+  const isHealth = /\b(health|santé|médical|medical|medtech|pharma|biotech|hôpital|soins?)\b/i.test(text);
+  const isEnergy = /\b(solar|solaire|energy|énergie|renewable|renouvelable|green|photovoltaïque|climat|cleantech)\b/i.test(text);
+  const isTech = /\b(software|logiciel|saas|fintech|deep learning|llm|cyber|cloud|application|code|ia générative)\b/i.test(text) ||
+                 /\b(ai|ia|tech|startup)\b/i.test(text);
+  const isIndustry = /\b(factory|usine|industrie|manufactur|textile|confection|automobile|mécanique|câblage)\b/i.test(text);
+
+  if (isAgri) {
+    sector = 'Agri-Food, ESS & Rural Impact';
+    confidenceScore = Math.min(97, confidenceScore + 7);
+  } else if (isHealth) {
+    sector = 'Digital Health & MedTech';
+    confidenceScore = Math.min(96, confidenceScore + 6);
+  } else if (isEnergy) {
     sector = 'Renewable Solar & Green Energy';
-  } else if (text.includes('tech') || text.includes('ai') || text.includes('software') || text.includes('saas')) {
+    confidenceScore = Math.min(95, confidenceScore + 6);
+  } else if (isTech) {
     sector = 'Technology & AI';
-  } else if (text.includes('agri') || text.includes('food') || text.includes('farm')) {
-    sector = 'Agri-Food & Smart Farming';
-  } else if (text.includes('factory') || text.includes('industry') || text.includes('manufactur')) {
-    sector = 'Advanced Manufacturing';
+    confidenceScore = Math.min(95, confidenceScore + 4);
+  } else if (isIndustry) {
+    sector = 'Advanced Manufacturing & Industry';
+    confidenceScore = Math.min(93, confidenceScore + 3);
   }
 
-  if (category === 'INVESTMENT' || text.includes('fund') || text.includes('raise') || text.includes('capital') || text.includes('investor')) {
+  // Intent
+  if (category === 'INVESTMENT' || text.includes('tour de table') || text.includes('fund') || text.includes('levée') || text.includes('raise') || text.includes('capital') || text.includes('investor') || text.includes('financement')) {
     intent = 'Capital Seeking / Equity Financing';
-  } else if (category === 'PARTNERSHIP' || text.includes('distributor') || text.includes('partner') || text.includes('joint venture')) {
+  } else if (category === 'PARTNERSHIP' || text.includes('partenariat') || text.includes('cooperation') || text.includes('collaboration') || text.includes('distributor') || text.includes('partner') || text.includes('joint venture')) {
     intent = 'Strategic Commercial Partnership';
-  } else if (category === 'EXPANSION' || text.includes('export') || text.includes('expand') || text.includes('market')) {
+  } else if (category === 'EXPANSION' || text.includes('export') || text.includes('expand') || text.includes('expansion') || text.includes('market')) {
     intent = 'International Market Expansion';
+  } else if (category === 'INSIGHT' || text.includes('programme') || text.includes('analyse') || text.includes('perspective')) {
+    intent = 'Economic Insight & Policy Intelligence';
   }
+
+  const confidenceLabel = `${confidenceScore}% Confidence`;
 
   return {
     intent,
     sector,
     targetCountry,
-    confidence,
+    confidence: confidenceLabel,
+    confidenceScore,
+    confidenceLabel,
     timestamp: new Date().toISOString()
   };
 }

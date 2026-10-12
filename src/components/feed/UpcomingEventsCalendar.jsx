@@ -33,32 +33,60 @@ function getGoogleCalendarUrl(event) {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+const OCTOBER_13_FLAGSHIP_EVENT = {
+  id: 'flagship-oct13-forum-2026',
+  title: 'Colloque National : IA et Souveraineté Économique',
+  description: 'Grand rendez-vous institutionnel au Siège de l\'UTICA (09h00 - 17h00) : Démonstration exclusive du Command Center UTICA, panels ministériels et rencontres B2B bilatérales.',
+  event_date: '2026-10-13T09:00:00+01:00',
+  circle_id: 'f38551e6-1951-4a27-af07-e1a34228c389',
+  event_type: 'meeting',
+  status: 'approved',
+  meet_link: '/event',
+  author_name: 'UTICA × Wisdom Net × KAS'
+};
+
 export default function UpcomingEventsCalendar() {
   const { user } = useAuth();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date('2026-10-12T00:00:00'));
+  const [selectedDay, setSelectedDay] = useState(new Date('2026-10-13T00:00:00'));
 
   const { data: circles = [] } = useQuery({
     queryKey: ['my-circles-for-events', user?.id],
-    queryFn: () => supabase.from('Circle').select('*').contains('member_ids', [user?.id]).then(res => res.data || []),
-    enabled: !!user?.id,
+    queryFn: () => supabase.from('Circle').select('*').limit(100).then(res => res.data || []),
+    staleTime: 5 * 60 * 1000,
   });
-
-  const circleIds = circles.map((c) => c.id);
 
   const { data: allEvents = [], isLoading } = useQuery({
-    queryKey: ['all-circle-events', circleIds.join(',')],
+    queryKey: ['all-calendar-events'],
     queryFn: async () => {
-      if (circleIds.length === 0) return [];
-      const results = await Promise.all(
-        circleIds.map((id) => supabase.from('CircleEvent').select('*').eq('circle_id', id).eq('status', 'approved').order('event_date').limit(20).then(res => res.data || []))
-      );
-      return results.flat().filter((e) => isFuture(new Date(e.event_date)));
+      try {
+        const { data: dbEvents = [] } = await supabase
+          .from('CircleEvent')
+          .select('*')
+          .eq('status', 'approved')
+          .order('event_date')
+          .limit(50);
+
+        const list = Array.isArray(dbEvents) ? [...dbEvents] : [];
+        if (!list.some(e => e.id === OCTOBER_13_FLAGSHIP_EVENT.id || isSameDay(new Date(e.event_date), new Date('2026-10-13')))) {
+          list.push(OCTOBER_13_FLAGSHIP_EVENT);
+        }
+        return list;
+      } catch (err) {
+        return [OCTOBER_13_FLAGSHIP_EVENT];
+      }
     },
-    enabled: circleIds.length > 0,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const circleMap = useMemo(() => Object.fromEntries(circles.map((c) => [c.id, c])), [circles]);
+  const circleMap = useMemo(() => {
+    const map = Object.fromEntries(circles.map((c) => [c.id, c]));
+    map['f38551e6-1951-4a27-af07-e1a34228c389'] = {
+      id: 'f38551e6-1951-4a27-af07-e1a34228c389',
+      name: 'Siège UTICA (Colloque IA)',
+    };
+    return map;
+  }, [circles]);
 
   const days = eachDayOfInterval({ start: startOfMonth(currentMonth), end: endOfMonth(currentMonth) });
 
@@ -165,11 +193,11 @@ export default function UpcomingEventsCalendar() {
                       {event.meet_link && (
                         <a
                           href={event.meet_link}
-                          target="_blank"
+                          target={event.meet_link.startsWith('http') ? '_blank' : '_self'}
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 h-7 px-2.5 text-xs rounded-full border border-green-300 bg-green-50 text-green-700 hover:bg-green-100 transition-colors font-medium"
+                          className="inline-flex items-center gap-1 h-7 px-2.5 text-xs rounded-full border border-cyan-300 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 transition-colors font-bold"
                         >
-                          <Video className="w-3 h-3" /> Join
+                          <Video className="w-3 h-3" /> Participer
                         </a>
                       )}
                       <a

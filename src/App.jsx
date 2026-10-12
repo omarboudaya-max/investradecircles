@@ -49,6 +49,7 @@ import InvestorProfileDetail from '@/pages/InvestorProfileDetail';
 import FundProfileDetail from '@/pages/FundProfileDetail';
 import AIMatchmaker from '@/pages/AIMatchmaker';
 import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
+import UTICACommandCenterPage from '@/pages/UTICACommandCenterPage';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -73,11 +74,11 @@ const AuthenticatedApp = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationDone(true);
-    }, 2500); // Ensure loader logo forms fully (takes ~2.3s) before transition
+    }, 400); // Fast fluid transition instead of 2.5s blocking delay
     return () => clearTimeout(timer);
   }, []);
 
-  const showLoader = isLoadingPublicSettings || isLoadingAuth || !animationDone;
+  const showLoader = (isLoadingPublicSettings || isLoadingAuth) && !animationDone;
 
   return (
     <>
@@ -126,6 +127,11 @@ const AuthenticatedApp = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* UTICA Command Center Dedicated Standalone & Presentation Routes */}
+              <Route path="/utica-command" element={<UTICACommandCenterPage />} />
+              <Route path="/utica-command-center" element={<UTICACommandCenterPage />} />
+              <Route path="/utica-presentation" element={<UTICACommandCenterPage />} />
 
               {/* Public & Authenticated Investment Network & Intelligence Routes */}
               <Route element={<SmartInvestmentLayout />}>

@@ -41,7 +41,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const { data: authorProfile } = useQuery({
     queryKey: ['author-profile', post.created_by_id],
     queryFn: () => supabase.from('profiles').select('*').match({ id: post.created_by_id }).then(res => res.data || []),
-    enabled: !!post.created_by_id,
+    enabled: !!post.created_by_id && !post.author_avatar,
     select: (data) => data?.[0],
     staleTime: 5 * 60 * 1000,
   });
@@ -50,6 +50,8 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const { data: comments = [] } = useQuery({
     queryKey: ['comments', post.id],
     queryFn: () => supabase.from('Comment').select('*').match({ post_id: post.id }).order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
+    enabled: showComments,
+    staleTime: 60 * 1000,
   });
 
   const topComment = comments.length > 0 ? [...comments].sort((a, b) => {
@@ -229,7 +231,13 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
             <span className="font-bold text-cyan-400 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-cyan-300" /> AI Economic Signal Detected
             </span>
-            <span className="text-[10px] text-emerald-400 font-semibold">High Confidence</span>
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+              (signal.confidenceScore || 90) >= 94
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+            }`}>
+              {signal.confidenceLabel || signal.confidence || '94% Confidence'}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">

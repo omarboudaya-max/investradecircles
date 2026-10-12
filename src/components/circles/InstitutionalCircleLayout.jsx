@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/lib/ThemeContext';
@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp, TrendingDown, Megaphone, Newspaper, LayoutList,
   BarChart2, Globe, Users, Plus, Send, MessageCircle,
-  ChevronUp, ChevronDown, Landmark, Sparkles,
+  ChevronUp, ChevronDown, Landmark, Sparkles, Maximize2,
   Target, Eye, BookOpen, Briefcase, ShoppingBag,
   Sun, Moon
 } from 'lucide-react';
@@ -29,33 +29,35 @@ function formatPrice(symbol, price) {
   if (!price && price !== 0) return '—';
   const crypto = ['BTC/USD', 'ETH/USD'];
   const forex = ['EUR/USD'];
-  const tunisian = ['SFBT', 'BIAT', 'BT', 'SAH', 'PGH', 'DH', 'TRE', 'TLNET'];
+  const tunisian = ['SFBT', 'BIAT', 'BT', 'SAH', 'PGH', 'DH', 'TRE', 'TLNET', 'TJARI', 'AMEN'];
   if (crypto.includes(symbol)) return `$${Number(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   if (forex.includes(symbol)) return Number(price).toFixed(4);
   if (symbol === 'GOLD' || symbol === 'OIL (WTI)') return `$${Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  if (symbol === 'TUNINDEX') return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  if (tunisian.includes(symbol)) return `${Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TND`;
+  if (symbol === 'TUNINDEX') return `${Number(price).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pts`;
+  if (tunisian.includes(symbol)) return `${Number(price).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TND`;
   return Number(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 const DEFAULT_MARKET_DATA = [
-  { symbol: 'S&P 500', price: 7492.79, change_pct: -0.25 },
-  { symbol: 'NASDAQ', price: 26337.33, change_pct: -0.15 },
-  { symbol: 'DOW', price: 51753.28, change_pct: -0.47 },
-  { symbol: 'GOLD', price: 4268.50, change_pct: -2.07 },
-  { symbol: 'OIL (WTI)', price: 73.19, change_pct: -4.69 },
-  { symbol: 'EUR/USD', price: 1.1476, change_pct: -1.15 },
-  { symbol: 'BTC/USD', price: 63854.00, change_pct: -1.92 },
-  { symbol: 'ETH/USD', price: 1738.66, change_pct: -0.94 },
-  { symbol: 'TUNINDEX', price: 18520.00, change_pct: 1.15 },
-  { symbol: 'SFBT', price: 14.11, change_pct: 0.36 },
-  { symbol: 'BIAT', price: 158.00, change_pct: 0.51 },
-  { symbol: 'BT', price: 8.74, change_pct: 4.05 },
-  { symbol: 'SAH', price: 14.25, change_pct: 1.06 },
-  { symbol: 'PGH', price: 27.70, change_pct: -1.91 },
-  { symbol: 'DH', price: 19.64, change_pct: -0.30 },
-  { symbol: 'TRE', price: 13.20, change_pct: 1.54 },
-  { symbol: 'TLNET', price: 10.65, change_pct: 1.24 }
+  { symbol: 'TUNINDEX', price: 18563.67, change_pct: -0.22 },
+  { symbol: 'BIAT', price: 162.00, change_pct: 0.31 },
+  { symbol: 'SFBT', price: 13.48, change_pct: -0.15 },
+  { symbol: 'TJARI', price: 77.50, change_pct: 0.65 },
+  { symbol: 'BT', price: 5.48, change_pct: 0.37 },
+  { symbol: 'SAH', price: 12.26, change_pct: 0.49 },
+  { symbol: 'PGH', price: 25.98, change_pct: -0.38 },
+  { symbol: 'DH', price: 15.10, change_pct: 0.20 },
+  { symbol: 'AMEN', price: 44.50, change_pct: 0.45 },
+  { symbol: 'TRE', price: 13.50, change_pct: 0.75 },
+  { symbol: 'TLNET', price: 9.85, change_pct: -0.50 },
+  { symbol: 'S&P 500', price: 5815.20, change_pct: 0.61 },
+  { symbol: 'NASDAQ', price: 18342.90, change_pct: 0.33 },
+  { symbol: 'DOW', price: 42863.80, change_pct: 0.97 },
+  { symbol: 'GOLD', price: 2657.40, change_pct: 1.10 },
+  { symbol: 'OIL (WTI)', price: 75.56, change_pct: -0.38 },
+  { symbol: 'EUR/USD', price: 1.0935, change_pct: -0.05 },
+  { symbol: 'BTC/USD', price: 62850.00, change_pct: 2.10 },
+  { symbol: 'ETH/USD', price: 2450.00, change_pct: 1.80 }
 ];
 
 function TickerItem({ t, isDark }) {
@@ -970,7 +972,22 @@ export default function InstitutionalCircleLayout({
   allMemberIds,
 }) {
   const [activeTab, setActiveTab] = useState('info');
+  const [launchFullscreen, setLaunchFullscreen] = useState(false);
   const { isDark } = useTheme();
+  const [searchParams] = useSearchParams();
+
+  // Support direct deep-linking to UTICA command center & fullscreen via query params
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    const fsParam = searchParams.get('fullscreen');
+    if (tabParam === 'utica_command' || tabParam === 'utica') {
+      setActiveTab('utica_command');
+    }
+    if (fsParam === 'true' || fsParam === '1') {
+      setActiveTab('utica_command');
+      setLaunchFullscreen(true);
+    }
+  }, [searchParams]);
 
   // ── Fetch real market data from entity (updated daily via automation) ──
   const { data: marketData = [] } = useQuery({
@@ -988,7 +1005,10 @@ export default function InstitutionalCircleLayout({
       }
     });
 
-    const order = ['S&P 500', 'NASDAQ', 'DOW', 'GOLD', 'OIL (WTI)', 'EUR/USD', 'BTC/USD', 'ETH/USD'];
+    const order = [
+      'TUNINDEX', 'BIAT', 'SFBT', 'TJARI', 'BT', 'SAH', 'PGH', 'DH', 'AMEN', 'TRE', 'TLNET',
+      'S&P 500', 'NASDAQ', 'DOW', 'GOLD', 'OIL (WTI)', 'EUR/USD', 'BTC/USD', 'ETH/USD'
+    ];
     return merged.sort((a, b) => {
       const idxA = order.indexOf(a.symbol);
       const idxB = order.indexOf(b.symbol);
@@ -1001,11 +1021,11 @@ export default function InstitutionalCircleLayout({
 
   const tabsList = React.useMemo(() => {
     const list = [...INST_TABS];
-    if (isAdmin || isModerator || circle?.name?.toLowerCase()?.includes('utica') || circle?.category === 'institution') {
+    if (circle?.name?.toLowerCase()?.includes('utica')) {
       list.push({ id: 'utica_command', label: 'UTICA Command Center AI', Icon: Landmark });
     }
     return list;
-  }, [isAdmin, isModerator, circle?.name, circle?.category]);
+  }, [circle?.name]);
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-2xl transition-all duration-300" style={{ background: isDark ? 'linear-gradient(160deg,#070a13 0%,#0e1726 50%,#060910 100%)' : 'linear-gradient(160deg,#fbf7ee 0%,#f6ecd2 50%,#e8d7af 100%)' }}>
@@ -1025,7 +1045,24 @@ export default function InstitutionalCircleLayout({
               )}
             </div>
             
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+              {circle?.name?.toLowerCase()?.includes('utica') && (
+                <button
+                  onClick={() => {
+                    setActiveTab('utica_command');
+                    setLaunchFullscreen(true);
+                  }}
+                  className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                    isDark
+                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 hover:bg-amber-500/25'
+                      : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                  }`}
+                  title="Lancer le Command Center UTICA en Plein Écran (Touche F)"
+                >
+                  <Maximize2 className="w-3 h-3 text-amber-500" />
+                  <span>Plein écran</span>
+                </button>
+              )}
               <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all ${
                 isDark 
                   ? 'text-sky-300/70 bg-sky-400/10 border-sky-400/15' 
@@ -1060,18 +1097,36 @@ export default function InstitutionalCircleLayout({
         }}
       >
         {tabsList.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-1.5 px-4 py-3 text-xs font-semibold border-b-2 transition-all shrink-0 ${
-              activeTab === id
-                ? isDark ? 'border-amber-400 text-amber-300' : 'border-amber-600 text-amber-900'
-                : isDark ? 'text-blue-300/50 hover:text-blue-200 border-transparent' : 'text-stone-500 hover:text-stone-800 border-transparent'
-            }`}
-          >
-            <Icon className="w-3.5 h-3.5" />
-            {label}
-          </button>
+          <div key={id} className="flex items-center shrink-0">
+            <button
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-1.5 px-4 py-3 text-xs font-semibold border-b-2 transition-all shrink-0 cursor-pointer ${
+                activeTab === id
+                  ? isDark ? 'border-amber-400 text-amber-300' : 'border-amber-600 text-amber-900'
+                  : isDark ? 'text-blue-300/50 hover:text-blue-200 border-transparent' : 'text-stone-500 hover:text-stone-800 border-transparent'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {label}
+            </button>
+            {id === 'utica_command' && (
+              <button
+                onClick={() => {
+                  setActiveTab('utica_command');
+                  setLaunchFullscreen(true);
+                }}
+                title="Lancer le Command Center en Plein Écran (F)"
+                className={`mr-3 px-2 py-0.5 text-[10px] font-black rounded-full border transition-all flex items-center gap-1 cursor-pointer hover:scale-105 ${
+                  isDark
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                    : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                }`}
+              >
+                <Maximize2 className="w-2.5 h-2.5 text-amber-400" />
+                <span>Plein Écran</span>
+              </button>
+            )}
+          </div>
         ))}
       </div>
 
@@ -1255,7 +1310,15 @@ export default function InstitutionalCircleLayout({
             </div>
           )}
 
-          {activeTab === 'utica_command' && <UTICABusinessCommandCenter circle={circle} user={user} isDark={isDark} />}
+          {activeTab === 'utica_command' && (
+            <UTICABusinessCommandCenter
+              circle={circle}
+              user={user}
+              isDark={isDark}
+              initialFullscreen={launchFullscreen}
+              onExitFullscreen={() => setLaunchFullscreen(false)}
+            />
+          )}
           {activeTab === 'feed' && <CircleFeed circle={circle} user={user} />}
         </motion.div>
       </AnimatePresence>

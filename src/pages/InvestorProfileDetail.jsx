@@ -124,15 +124,23 @@ export default function InvestorProfileDetail() {
                     <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
                       {organization.organization_type?.replace(/_/g, ' ')}
                     </Badge>
-                    {organization.verification_status === 'VERIFIED' && (
-                      <Badge className="bg-emerald-500 text-white text-xs gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5" /> Verified Institution
+                    {(organization.is_illustrative || organization.id === 'org_cdc_gestion' || organization.id === 'org_blackrock' || organization.id === 'org_kkr_infra') ? (
+                      <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/40 text-xs font-bold">
+                        ⚠️ Exemple illustratif (Démonstration)
                       </Badge>
-                    )}
-                    {organization.official && (
-                      <Badge variant="outline" className="border-white/30 text-white text-xs">
-                        Official Partner
-                      </Badge>
+                    ) : (
+                      <>
+                        {organization.verification_status === 'VERIFIED' && (
+                          <Badge className="bg-emerald-500 text-white text-xs gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5" /> Verified Institution
+                          </Badge>
+                        )}
+                        {organization.official && (
+                          <Badge variant="outline" className="border-white/30 text-white text-xs">
+                            Official Partner
+                          </Badge>
+                        )}
+                      </>
                     )}
                   </div>
 

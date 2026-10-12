@@ -336,13 +336,28 @@ export default function InvestmentNetwork() {
 
         {/* MAIN INVESTOR CARDS GRID */}
         <section className="container mx-auto px-4 py-4 space-y-6">
+          {/* Demo Disclaimer */}
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider shrink-0">
+                Mode Démonstrateur
+              </span>
+              <p>
+                <strong>Exemples Illustratifs</strong> : Les fiches fonds et investisseurs ci-dessous sont présentées à titre de modèles de démonstration pour illustrer l'architecture de matching institutionnel.
+              </p>
+            </div>
+            <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 shrink-0">
+              Profils Démo CDC & Partenaires
+            </span>
+          </div>
+
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Investment Institutions & Capital Partners
               </h3>
               <p className="text-xs text-slate-500">
-                Displaying {filteredOrganizations.length} verified capital mandates
+                Affichage de {filteredOrganizations.length} profils d'investisseurs et mandats de capital (Exemples illustratifs)
               </p>
             </div>
           </div>
@@ -381,15 +396,23 @@ export default function InvestmentNetwork() {
                           <Badge variant="outline" className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-300">
                             {typeObj?.badge || org.organization_type}
                           </Badge>
-                          {org.verification_status === 'VERIFIED' && (
-                            <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-emerald-200 text-[10px] gap-1">
-                              🟢 Verified
+                          {(org.is_illustrative || org.id === 'org_cdc_gestion' || org.id === 'org_blackrock' || org.id === 'org_kkr_infra') ? (
+                            <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+                              Exemple illustratif
                             </Badge>
-                          )}
-                          {org.official && (
-                            <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border-blue-200 text-[10px]">
-                              🔵 Official
-                            </Badge>
+                          ) : (
+                            <>
+                              {org.verification_status === 'VERIFIED' && (
+                                <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-emerald-200 text-[10px] gap-1">
+                                  🟢 Verified
+                                </Badge>
+                              )}
+                              {org.official && (
+                                <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border-blue-200 text-[10px]">
+                                  🔵 Official
+                                </Badge>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>

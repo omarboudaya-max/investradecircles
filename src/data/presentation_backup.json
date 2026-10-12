@@ -1,0 +1,2485 @@
+{
+  "timestamp": "2026-10-12T20:54:19.804Z",
+  "event_focus": "Colloque 13 Octobre 2026 — Siège UTICA",
+  "counts": {
+    "circles": 30,
+    "posts": 46,
+    "events": 3,
+    "market_data": 17,
+    "projects": 0
+  },
+  "circles": [
+    {
+      "id": "ff958789-15df-45d9-8ebb-574f8bc666e6",
+      "name": "Gaming circle",
+      "description": "A circle for all gamers",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "macro"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "fad5b4a0-315a-4f16-bb1a-4c7da6577462",
+        "fc245566-3309-48d6-8c1b-95a8f0c956a3",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "3b28f075-4eea-4299-b432-aca973b7db1e",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+        "48b84e0f-ab04-42a8-92ae-6a49b3656f00",
+        "2244db30-e6bb-4dd1-9667-368a2cf51802",
+        "17337634-f67e-4b28-8de6-b634a7447dab"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-06-15T19:14:45.460744+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "8a059880-43f9-41da-9537-f0bd4cf60ddb",
+      "name": "Real Estate",
+      "description": "The best circle to practice your sales speech",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "real_estate"
+      ],
+      "website_url": null,
+      "is_verified": true,
+      "verified_label": "Verified",
+      "member_ids": [
+        "fad5b4a0-315a-4f16-bb1a-4c7da6577462",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "4af17f25-bc78-4a50-a072-0e55ee21b7e0",
+        "fc245566-3309-48d6-8c1b-95a8f0c956a3",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "699152a3-fa07-4b59-90dd-a11de62ee80b",
+        "9be7146a-eece-47ef-b04b-08e878999cf6",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6",
+        "f5667a25-4aaa-4c99-8482-a4cf3a5e9dae",
+        "50ce5bea-9923-4563-a106-43adc5d91ebd",
+        "42bcb59b-e675-42aa-b6da-b29b21a358a5",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+        "03914926-e59d-47bd-ae22-31cc9a5535d1",
+        "2244db30-e6bb-4dd1-9667-368a2cf51802",
+        "3d362add-cb49-4e9e-9da3-78315d4f47ac",
+        "46ecf81f-776f-44d9-87bb-fad36d3ab1c4",
+        "835065ea-f70e-4f99-8869-78292ffae9e9",
+        "6ebe186d-4e07-4857-b916-504722aa7cd4"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "fad5b4a0-315a-4f16-bb1a-4c7da6577462",
+      "created_date": "2026-06-16T15:24:09.676601+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "f76432c4-369b-42f8-9b72-8db70f64efc8",
+      "name": "Special circle",
+      "description": "for investors",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "dividends"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "4af17f25-bc78-4a50-a072-0e55ee21b7e0",
+        "fc245566-3309-48d6-8c1b-95a8f0c956a3",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4",
+        "699152a3-fa07-4b59-90dd-a11de62ee80b",
+        "fd7b54de-a8ee-4195-9c96-a73aa1304d00",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "de18f04c-d707-4847-ac86-38ae7a656c64",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+        "48b84e0f-ab04-42a8-92ae-6a49b3656f00",
+        "03914926-e59d-47bd-ae22-31cc9a5535d1",
+        "3d362add-cb49-4e9e-9da3-78315d4f47ac",
+        "40607c86-4ccd-4c7d-9067-43bebb32fe0a",
+        "835065ea-f70e-4f99-8869-78292ffae9e9",
+        "17337634-f67e-4b28-8de6-b634a7447dab",
+        "6ebe186d-4e07-4857-b916-504722aa7cd4",
+        "6b080a6f-eb74-4d4e-90f7-ead92a2c62d7",
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "moderator_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef"
+      ],
+      "created_by_id": null,
+      "created_date": "2026-06-16T23:22:43.247213+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "12abe3e6-3c3d-49e2-9bf5-a7597cf50d67",
+      "name": "Zero Tech",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities",
+        "options"
+      ],
+      "website_url": "https://zerotechstores.com/en?gad_source=1&gad_campaignid=23562686788&gbraid=0AAAABC3cMwIHkAJoChVv4HDDpEKznSzIi&gclid=CjwKCAjwuuPRBhAnEiwA2Ji8eu0kqeMHSxvBX81T-8OxglaqgKBAzmMWTpTHdkDGNRtoKv6GSlSUnRoCyaoQAvD_BwE",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "30c366a9-d49f-4701-a645-f5722012a52c",
+        "de18f04c-d707-4847-ac86-38ae7a656c64",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6",
+        "066c8395-655c-454c-83ee-0c50a373a7e2",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "48b84e0f-ab04-42a8-92ae-6a49b3656f00",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "1ff3433e-c236-498c-9270-e1f24eebd000",
+        "4365697c-118e-45a8-a318-2b3dd5be320f",
+        "3cb985f8-3579-4409-99fa-7e253d681462",
+        "6ebe186d-4e07-4857-b916-504722aa7cd4",
+        "6b080a6f-eb74-4d4e-90f7-ead92a2c62d7",
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-22T11:34:19.808101+00:00",
+      "ai_cached_data": {
+        "name": "Zero Tech",
+        "news": [],
+        "goals": [
+          "Provide a wide range of products to customers",
+          "Offer competitive prices and promotions"
+        ],
+        "vision": "",
+        "mission": "",
+        "tagline": "",
+        "products": [
+          {
+            "category": "Electronics",
+            "image_url": "https://zerotech.fsn1.your-objectstorage.com/home-slider/banner-21-7-2025/1.jpg",
+            "description": "Various electronic devices such as smartphones, laptops, and tablets",
+            "price_range": "",
+            "featured_items": [
+              "Smartphones",
+              "Laptops",
+              "Tablets"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "Zero Tech is an e-commerce platform that sells various products.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "ef432f60-5b7e-4c46-bde0-e5c092b47b00",
+      "name": "Start your business",
+      "description": "The perfect cirle to learn how to start your business ",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "startups"
+      ],
+      "website_url": null,
+      "is_verified": true,
+      "verified_label": "Verified",
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "fad5b4a0-315a-4f16-bb1a-4c7da6577462",
+        "fc245566-3309-48d6-8c1b-95a8f0c956a3",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "fd7b54de-a8ee-4195-9c96-a73aa1304d00",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "4af17f25-bc78-4a50-a072-0e55ee21b7e0",
+        "de18f04c-d707-4847-ac86-38ae7a656c64",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "660159ed-919c-455e-a0c9-1c40c1eab2c4",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6",
+        "f5667a25-4aaa-4c99-8482-a4cf3a5e9dae",
+        "42bcb59b-e675-42aa-b6da-b29b21a358a5",
+        "82319811-18ae-4493-9b96-34bed6594bd5",
+        "6caf42a3-aaef-4dab-a671-0508ee5bae6c",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+        "48b84e0f-ab04-42a8-92ae-6a49b3656f00",
+        "0366b906-6353-46a7-a43b-de17d4775c1f",
+        "590dd5ab-9e6c-40fd-97e3-a8468db0f389",
+        "3cb985f8-3579-4409-99fa-7e253d681462",
+        "835065ea-f70e-4f99-8869-78292ffae9e9",
+        "17337634-f67e-4b28-8de6-b634a7447dab",
+        "6b080a6f-eb74-4d4e-90f7-ead92a2c62d7",
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "moderator_ids": [],
+      "created_by_id": null,
+      "created_date": "2026-06-15T19:01:38.11908+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "e1684d37-2919-4869-a19a-b14ac7595ba4",
+      "name": "Wise",
+      "description": "",
+      "category": "individual",
+      "privacy": "private",
+      "tags": [
+        "personal_finance"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "fd409f6e-d133-4465-ad03-30af624bfb4b",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6",
+        "066c8395-655c-454c-83ee-0c50a373a7e2",
+        "f5667a25-4aaa-4c99-8482-a4cf3a5e9dae",
+        "6caf42a3-aaef-4dab-a671-0508ee5bae6c",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "48b84e0f-ab04-42a8-92ae-6a49b3656f00",
+        "03914926-e59d-47bd-ae22-31cc9a5535d1",
+        "0366b906-6353-46a7-a43b-de17d4775c1f",
+        "40607c86-4ccd-4c7d-9067-43bebb32fe0a",
+        "a2efb77c-0ba8-4af0-adf7-7329fcc36940",
+        "3cb985f8-3579-4409-99fa-7e253d681462",
+        "835065ea-f70e-4f99-8869-78292ffae9e9",
+        "17337634-f67e-4b28-8de6-b634a7447dab"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-17T00:13:36.019207+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "5cfb02a7-4713-40cc-b099-0d276b0e5059",
+      "name": "Apple Store",
+      "description": "Apple, a multinational technology company headquartered in Cupertino, California, designs, develops and sells consumer electronics, computer software and online services.",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities"
+      ],
+      "website_url": "https://www.apple.com/store",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-17T18:32:18.944241+00:00",
+      "ai_cached_data": {
+        "name": "Apple",
+        "news": [],
+        "goals": [
+          "To create innovative products that combine the best of technology and art",
+          "To provide the best user experience to its customers"
+        ],
+        "vision": "To be the most successful and sustainable technology company in the world.",
+        "mission": "To bring the best user experience to its customers through its innovative hardware, software, and services.",
+        "tagline": "The best way to buy the products you love.",
+        "products": [
+          {
+            "category": "Smartphones",
+            "image_url": "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/og-default?wid=1200&hei=630&fmt=jpeg&qlt=95&.v=1525370171638",
+            "description": "iPhone 17 Pro, a high-end smartphone with advanced camera and performance features",
+            "price_range": "$1099 - $45.79/mo",
+            "featured_items": [
+              "iPhone 17 Pro"
+            ]
+          },
+          {
+            "category": "Laptops",
+            "image_url": "",
+            "description": "MacBook Neo, a laptop with a surprising price and magic of Mac",
+            "price_range": "$599 - $49.91/mo",
+            "featured_items": [
+              "MacBook Neo"
+            ]
+          },
+          {
+            "category": "Smartwatches",
+            "image_url": "",
+            "description": "Apple Watch Pride Edition Sport Loop, a vibrant woven band",
+            "price_range": "$49 - $4.08/mo",
+            "featured_items": [
+              "Apple Watch Pride Edition Sport Loop"
+            ]
+          },
+          {
+            "category": "Smartphones",
+            "image_url": "",
+            "description": "iPhone 17e, a smartphone with advanced features",
+            "price_range": "",
+            "featured_items": [
+              "iPhone 17e"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "Apple designs, manufactures, and markets consumer electronics, computer software, and online services. The company's products include the iPhone, Mac, iPad, Apple Watch, and AirPods.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "bda38b98-391e-4cb6-a2ee-47c502af08fc",
+      "name": "The Arab Dream",
+      "description": "Arab Dream is a passionate team driven by creativity, innovation, and collaboration. We believe that great ideas can transform into impactful solutions through teamwork, technology, and determination to build a better future.",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "startups",
+        "personal_finance",
+        "macro",
+        "options",
+        "crypto"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "7d58e5b6-231d-42a2-9fd6-f7f82190d2a1",
+        "fd409f6e-d133-4465-ad03-30af624bfb4b",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "1bfc38c1-f22f-4ba6-8f83-02e086145795",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4",
+      "created_date": "2026-06-23T12:13:08.752526+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "6d09fa40-b0ca-4496-8ae1-a3864c1632cf",
+      "name": "HEC Entrepreneurs",
+      "description": "Le pilier de la culture entrepreneuriale à l’IHEC Carthage. 💡Nous formons les leaders responsables de demain.",
+      "category": "institution",
+      "privacy": "private",
+      "tags": [
+        "startups"
+      ],
+      "website_url": "https://hec-entrepreneurs.vercel.app/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "ba583488-64fb-43e3-8e91-5c4a022fa369",
+        "fad5b4a0-315a-4f16-bb1a-4c7da6577462",
+        "4af17f25-bc78-4a50-a072-0e55ee21b7e0"
+      ],
+      "moderator_ids": [
+        "ba583488-64fb-43e3-8e91-5c4a022fa369"
+      ],
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-06-24T13:53:29.41216+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "13a6c6ba-a440-4da9-a8b8-fb129a15bbd6",
+      "name": "Peak",
+      "description": "brand",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [],
+      "website_url": "https://www.peaksports.tn",
+      "is_verified": true,
+      "verified_label": "Verified",
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "fc245566-3309-48d6-8c1b-95a8f0c956a3",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "fd409f6e-d133-4465-ad03-30af624bfb4b",
+        "9be7146a-eece-47ef-b04b-08e878999cf6"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-06-15T20:06:54.424074+00:00",
+      "ai_cached_data": {
+        "name": "Peak",
+        "news": [
+          {
+            "date": "",
+            "title": "Bienvenue chez Peak Tunisie"
+          },
+          {
+            "date": "",
+            "title": "Des remises et des offres exceptionnelles vous attendent"
+          }
+        ],
+        "goals": [
+          "Proposer des produits de haute qualité qui allient technologie, confort et design",
+          "Offrir une expérience de shopping exceptionnelle aux clients"
+        ],
+        "vision": "",
+        "mission": "",
+        "tagline": "Découvrez PEAK Tunisie, la marque internationale de sport alliant technologie, confort et design.",
+        "products": [
+          {
+            "category": "Chaussures",
+            "image_url": "https://www.peaksports.tn/cdn/shop/files/2WEB-THUMBNAIL_1.png?crop=center&height=1200&v=1761558816&width=1200",
+            "description": "Des chaussures de sport pour hommes, femmes et enfants",
+            "price_range": "",
+            "featured_items": [
+              "Chaussures de basketball",
+              "Chaussures de running"
+            ]
+          },
+          {
+            "category": "Vêtements",
+            "image_url": "",
+            "description": "Des vêtements de sport pour hommes, femmes et enfants",
+            "price_range": "",
+            "featured_items": [
+              "T-shirts",
+              "Pantalon de sport"
+            ]
+          },
+          {
+            "category": "Accessoires",
+            "image_url": "",
+            "description": "Des accessoires de sport tels que des sacs à dos, des valises, etc.",
+            "price_range": "",
+            "featured_items": [
+              "Sacs à dos",
+              "Valises"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "Peak est une marque de sport qui propose des collections de chaussures, vêtements et accessoires pour basketball, running et lifestyle.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "ebdb28cd-efd2-49bf-bfee-eb990e91e41b",
+      "name": "IKEA",
+      "description": "We’ve come a long way since our early days in Älmhult, Sweden, but IKEA founder Ingvar Kamprad’s dream to create a better life for as many people as possible – whatever the size of their wallet – is and will always be our driving force.",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities"
+      ],
+      "website_url": "https://www.ikea.com/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "1fe2508a-7bf5-4563-97cd-c9b15c80e27b",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-18T21:08:03.127594+00:00",
+      "ai_cached_data": {
+        "name": "IKEA",
+        "news": [
+          {
+            "date": "2022-01-01",
+            "title": "IKEA launches new sustainable furniture line"
+          },
+          {
+            "date": "2022-06-01",
+            "title": "IKEA announces plans to open new store in NYC"
+          }
+        ],
+        "goals": [
+          "To provide affordable and sustainable home furnishing solutions",
+          "To create a positive impact on people and the planet"
+        ],
+        "vision": "To create a better everyday life for the many people.",
+        "mission": "To offer a wide range of well-designed, functional home furnishing products at prices so low that as many people as possible will be able to afford them.",
+        "tagline": "A better everyday life begins at home!",
+        "products": [
+          {
+            "category": "Home Furniture",
+            "image_url": "https://www.ikea.com/images/products/malm-dresser__0147716_pe296355_s5.jpg",
+            "description": "A wide range of furniture for living room, bedroom, kitchen and more",
+            "price_range": "50-500 USD",
+            "featured_items": [
+              "MALM dresser",
+              "POÄNG chair"
+            ]
+          },
+          {
+            "category": "Kitchen Appliances",
+            "image_url": "https://www.ikea.com/images/products/lagkapten-refrigerator__0717713_pe630745_s5.jpg",
+            "description": "A variety of kitchen appliances such as refrigerators, ovens and dishwashers",
+            "price_range": "200-2000 USD",
+            "featured_items": [
+              "LAGKAPTEN refrigerator",
+              "KVARTERSKIVA oven"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "IKEA is a multinational group of companies that designs and sells ready-to-assemble furniture, kitchen appliances and home accessories. The company is known for its modern architectural designs for various types of appliances and furniture.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "9e18dfc3-3951-4689-8bcc-36d795380406",
+      "name": "Research in political philosophy ",
+      "description": "This circle focuses on exchanging knowledge and ideas and developing talents.",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "db5b8ddd-d048-4778-b4ac-be9021960873",
+      "created_date": "2026-06-28T20:29:09.350091+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "d38a845b-7285-43fb-8982-ffc1b239bea6",
+      "name": "Lcheck",
+      "description": "مشروع قادم باذن الله",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "startups"
+      ],
+      "website_url": "https://lcheck.us",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+      "created_date": "2026-06-25T21:10:48.88339+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "a3f513fe-2320-4851-a299-05746d17ef91",
+      "name": "Amazon Store",
+      "description": "Initially launched as an online bookstore, Amazon rapidly evolved into the world's largest internet retail platform, expanding its offerings to a wide range of products and services, including electronics, media, and groceries.",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities"
+      ],
+      "website_url": "https://www.amazon.com/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "1bfc38c1-f22f-4ba6-8f83-02e086145795",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-17T11:23:11.385226+00:00",
+      "ai_cached_data": {
+        "name": "Amazon Store",
+        "news": [],
+        "goals": [
+          "To provide the best customer experience",
+          "To be the most innovative company"
+        ],
+        "vision": "To be the most innovative and customer-obsessed organization on the planet.",
+        "mission": "To be Earth's most customer-centric company, where customers can find and discover anything they might want to buy online.",
+        "tagline": "Earth's biggest selection",
+        "products": [
+          {
+            "category": "Electronics",
+            "image_url": "https://m.media-amazon.com/images/S/sash/6Uh4bsAwUkB3vJb.gif",
+            "description": "Amazon offers a wide range of electronic products, including smartphones, laptops, and tablets.",
+            "price_range": "50-1000 USD",
+            "featured_items": [
+              "Echo Smart Speaker",
+              "Fire TV Stick"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "Amazon is an e-commerce company that sells physical goods, apparel, and devices. It also provides various services like cloud computing and artificial intelligence.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "5a9a146d-9304-4102-9656-533a356f2716",
+      "name": "Chambre de commerce et d'industrie de Bizerte ",
+      "description": "",
+      "category": "chamber_of_commerce",
+      "privacy": "public",
+      "tags": [
+        "real_estate"
+      ],
+      "website_url": "https://ccibizerte.org/?fbclid=IwT01FWATC67VleHRuA2FlbQIxMABzcnRjBmFwcF9pZAwzNTA2ODU1MzE3MjgAAR6227O6xhntYz9P9n9u1f3IBIN1q399cjFFIDzXfGS5LS8IuE7N7EUlf6WlOw_aem_NsJs4ajMhw4g8mP0SLJefg",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+      "created_date": "2026-07-14T10:16:26.388874+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "933c70dc-5934-4f7f-9605-9c326102722b",
+      "name": "Textile",
+      "description": "Fashion and textile industry and new trends ",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "startups"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "6caf42a3-aaef-4dab-a671-0508ee5bae6c",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "6caf42a3-aaef-4dab-a671-0508ee5bae6c",
+      "created_date": "2026-07-24T15:41:42.112235+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "b70604dc-e288-48d1-8c0f-2ade612d421f",
+      "name": "CCI Tunis",
+      "description": "La Chambre de Commerce et d'Industrie de Tunis (CCI Tunis) est un établissement public d'intérêt économique.",
+      "category": "chamber_of_commerce",
+      "privacy": "public",
+      "tags": [
+        "Tunisia",
+        "Business",
+        "Export",
+        "B2B"
+      ],
+      "website_url": null,
+      "is_verified": true,
+      "verified_label": "Institution",
+      "member_ids": [
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "03914926-e59d-47bd-ae22-31cc9a5535d1",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "6ea6f1ed-616a-4348-aed4-cfe7a61aa186",
+        "835065ea-f70e-4f99-8869-78292ffae9e9"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+      "created_date": "2026-07-15T00:59:04.865639+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "25d649db-ed37-49c1-8e04-0008832464de",
+      "name": "Liberta",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "options"
+      ],
+      "website_url": "https://liberta.travel/fr-tn",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "0898ec06-3e48-4bac-aadc-5a284b93d649",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "0898ec06-3e48-4bac-aadc-5a284b93d649",
+      "created_date": "2026-07-13T09:49:47.05624+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "86d56556-0e9f-47d9-a942-51317c618599",
+      "name": "First chamber of commerce",
+      "description": "",
+      "category": "chamber_of_commerce",
+      "privacy": "public",
+      "tags": [
+        "etfs",
+        "startups"
+      ],
+      "website_url": "https://ccitunis.org.tn/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-07-10T13:13:30.192528+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "ed9d5a5b-ba0c-4878-92ea-0291dbf9866b",
+      "name": "ccit for investors",
+      "description": "",
+      "category": "institution",
+      "privacy": "private",
+      "tags": [
+        "personal_finance"
+      ],
+      "website_url": "https://ccitunis.org.tn/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "42bcb59b-e675-42aa-b6da-b29b21a358a5"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "42bcb59b-e675-42aa-b6da-b29b21a358a5",
+      "created_date": "2026-07-21T22:34:11.259688+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "0d14c592-ad00-4e1d-90de-c33fae325d32",
+      "name": "the dot",
+      "description": "",
+      "category": "institution",
+      "privacy": "private",
+      "tags": [],
+      "website_url": "https://thedot.tn/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "7dde0322-ecf7-4a22-a68c-dfc4b7448526"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "7dde0322-ecf7-4a22-a68c-dfc4b7448526",
+      "created_date": "2026-07-22T09:38:36.468469+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "646af50e-3992-4f85-9bc7-44a994955a6f",
+      "name": "Change Makers",
+      "description": "Awareness is the first step towards change , and Change Makers are the most conscious of all mankind ",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "options"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-07-06T13:26:19.890187+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "c540f6fa-76fb-4f89-b779-740e02736c86",
+      "name": "Open AI",
+      "description": "OpenAI is an AI research and deployment company. Our mission is to ensure that artificial general intelligence benefits all of humanity.",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "options",
+        "startups"
+      ],
+      "website_url": "https://openai.com/about/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+        "200cf884-26f0-4d7e-bba0-81ef0df15cc9",
+        "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4",
+        "699152a3-fa07-4b59-90dd-a11de62ee80b",
+        "fd409f6e-d133-4465-ad03-30af624bfb4b",
+        "fd7b54de-a8ee-4195-9c96-a73aa1304d00",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "de18f04c-d707-4847-ac86-38ae7a656c64",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "9d38386a-9273-4551-a70f-ee9127cda116",
+        "4a46cbd8-84d1-4f94-b7b1-435f7d838de6",
+        "f5667a25-4aaa-4c99-8482-a4cf3a5e9dae",
+        "0898ec06-3e48-4bac-aadc-5a284b93d649",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "598da30a-7f14-4ae5-9617-eaad5663ff8a",
+        "82319811-18ae-4493-9b96-34bed6594bd5",
+        "6caf42a3-aaef-4dab-a671-0508ee5bae6c",
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-18T11:03:59.431616+00:00",
+      "ai_cached_data": {
+        "name": "Open AI",
+        "news": [],
+        "goals": [
+          "To develop and apply various forms of artificial intelligence to help humanity",
+          "To ensure that artificial general intelligence benefits society"
+        ],
+        "vision": "",
+        "mission": "",
+        "tagline": "",
+        "products": [],
+        "services": [
+          {
+            "title": "AI Research and Development",
+            "description": "Open AI conducts research and development in the field of artificial intelligence"
+          }
+        ],
+        "main_activity": "Open AI is an artificial intelligence research organization and company.",
+        "is_product_brand": false
+      }
+    },
+    {
+      "id": "6b3a977b-222f-42e8-9741-813bca895ff3",
+      "name": "UTICA",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [],
+      "website_url": "https://www.facebook.com/UticaTunisie/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "a23c0917-0f86-40c6-8885-77ffdb347b28",
+        "40607c86-4ccd-4c7d-9067-43bebb32fe0a",
+        "6ea6f1ed-616a-4348-aed4-cfe7a61aa186",
+        "f187dbfa-94d4-4e1f-8806-5f6cd8921b67",
+        "835065ea-f70e-4f99-8869-78292ffae9e9"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-09-02T08:50:31.870142+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "66af8e7d-ec83-4908-b140-4ff5e99c89ec",
+      "name": "Friendship",
+      "description": "",
+      "category": "individual",
+      "privacy": "public",
+      "tags": [
+        "personal_finance"
+      ],
+      "website_url": null,
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "ede5a367-bad8-462b-ac3e-d430aad4cbba",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "6ea6f1ed-616a-4348-aed4-cfe7a61aa186",
+        "835065ea-f70e-4f99-8869-78292ffae9e9"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "81dddc43-1aea-4ae5-a35b-3de8c427c0f9",
+      "created_date": "2026-07-24T16:02:40.709329+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "c47fe2bd-d845-4bea-8514-e0506f580b00",
+      "name": "Business attorneys ",
+      "description": "Arbitration and international business trade ",
+      "category": "institution",
+      "privacy": "private",
+      "tags": [
+        "commodities",
+        "personal_finance",
+        "real_estate",
+        "macro"
+      ],
+      "website_url": "https://lupoepartnersavvocati.it/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "82319811-18ae-4493-9b96-34bed6594bd5",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "82319811-18ae-4493-9b96-34bed6594bd5",
+      "created_date": "2026-08-01T15:22:06.070428+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "a27bf7c2-d338-4145-ab42-cdce3e4fd423",
+      "name": "E Commerce",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "startups",
+        "commodities"
+      ],
+      "website_url": "https://solutiongroup-sg.com/?language=fr",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "82319811-18ae-4493-9b96-34bed6594bd5",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "a23c0917-0f86-40c6-8885-77ffdb347b28",
+        "40607c86-4ccd-4c7d-9067-43bebb32fe0a",
+        "835065ea-f70e-4f99-8869-78292ffae9e9"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "dff418c6-5bdd-40cc-8de9-1f7d64fce3a9",
+      "created_date": "2026-07-27T10:52:01.637349+00:00",
+      "ai_cached_data": null
+    },
+    {
+      "id": "a2d0fcf9-3a87-484c-95c6-92421da97092",
+      "name": "4sighta Consulting",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities",
+        "startups",
+        "etfs",
+        "options"
+      ],
+      "website_url": "https://4sighta.com/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "ba583488-64fb-43e3-8e91-5c4a022fa369",
+        "1bfc38c1-f22f-4ba6-8f83-02e086145795",
+        "5bc0b6e8-4373-41f4-b9f6-7b7066060134",
+        "066c8395-655c-454c-83ee-0c50a373a7e2",
+        "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "feab61f3-afcd-432c-ba7d-679e1101fa7b",
+      "created_date": "2026-06-24T10:44:41.028289+00:00",
+      "ai_cached_data": {
+        "name": "4Sighta",
+        "news": [],
+        "goals": [
+          "تحقيق التميز الصناعي",
+          "تطوير الأعمال"
+        ],
+        "vision": "",
+        "mission": "4Sighta هي شركة استشارية رائدة تعتمد على نموذج عمل مبتكر، يرتكز على التحول من الحلول إلى الشراكات مع عملائنا في القطاع الصناعي.",
+        "tagline": "شريكك الاستراتيجي لتحقيق التميز الصناعي وتطوير الأعمال",
+        "products": [],
+        "services": [
+          {
+            "title": "استشارات صناعية",
+            "description": "توفر الشركة خدمات استشارية لتحقيق التميز الصناعي وتطوير الأعمال"
+          }
+        ],
+        "main_activity": "4Sighta هي شركة استشارية رائدة تعتمد على نموذج عمل مبتكر، يرتكز على التحول من الحلول إلى الشراكات مع عملائنا في القطاع الصناعي. توفر الشركة خدمات استشارية لتحقيق التميز الصناعي وتطوير الأعمال.",
+        "is_product_brand": false
+      }
+    },
+    {
+      "id": "25e712f5-d1b1-485c-bc6a-146565b8105d",
+      "name": "Twenty Store",
+      "description": "",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [
+        "commodities"
+      ],
+      "website_url": "https://www.twenty.tn/en/",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "4af17f25-bc78-4a50-a072-0e55ee21b7e0",
+        "f40ae64e-e1d1-4fe2-a47f-66d7a2959d3a"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-06-22T11:24:59.662399+00:00",
+      "ai_cached_data": {
+        "name": "Twenty",
+        "news": [],
+        "goals": [
+          "To provide quality products at the best price",
+          "To offer a wide range of products to customers"
+        ],
+        "vision": "",
+        "mission": "",
+        "tagline": "Online Shopping for Electronics, Fashion, Beauty, Home & Sports",
+        "products": [
+          {
+            "category": "Electronics",
+            "image_url": "https://www.twenty.tn/img/logo-1711971570.jpg",
+            "description": "Twenty offers a variety of electronic products including computers, laptops, smartphones, and accessories",
+            "price_range": "",
+            "featured_items": [
+              "Laptops",
+              "Smartphones",
+              "Computer Accessories"
+            ]
+          },
+          {
+            "category": "Fashion",
+            "image_url": "",
+            "description": "Twenty offers a range of fashion products including clothing, shoes, and accessories",
+            "price_range": "",
+            "featured_items": [
+              "Clothing",
+              "Shoes",
+              "Fashion Accessories"
+            ]
+          },
+          {
+            "category": "Home and Office",
+            "image_url": "",
+            "description": "Twenty offers a variety of home and office products including kitchen appliances, furniture, and decor",
+            "price_range": "",
+            "featured_items": [
+              "Kitchen Appliances",
+              "Furniture",
+              "Home Decor"
+            ]
+          }
+        ],
+        "services": [],
+        "main_activity": "Twenty is an online shopping platform that offers a wide range of products including electronics, fashion, beauty, home, and sports items.",
+        "is_product_brand": true
+      }
+    },
+    {
+      "id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "name": "Événement 13 Octobre — Forum IA & Souveraineté",
+      "description": "Cercle Officiel du Colloque National du 13 Octobre 2026 au Siège de l'UTICA : \"L'Intelligence Artificielle et la Souveraineté Économique\", co-organisé par Wisdom Net, l'UTICA et la Fondation Konrad Adenauer (KAS). Programme officiel, panels ministériels, B2B et restitution des travaux.",
+      "category": "institution",
+      "privacy": "public",
+      "tags": [],
+      "website_url": "https://www.investraders.net/event",
+      "is_verified": false,
+      "verified_label": null,
+      "member_ids": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "6ea6f1ed-616a-4348-aed4-cfe7a61aa186",
+        "7a58d482-f505-4430-bbec-36cc2a9b5f26",
+        "672a1f95-48b9-43e0-bf83-e08b00c16a63",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "6b080a6f-eb74-4d4e-90f7-ead92a2c62d7"
+      ],
+      "moderator_ids": [],
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-10-04T20:21:28.896429+00:00",
+      "ai_cached_data": {
+        "name": "Colloque 13 Octobre — IA & Souveraineté Économique",
+        "news": [
+          {
+            "date": "12 Octobre 2026",
+            "title": "Finalisation des préparatifs pour le Colloque National au siège de l'UTICA."
+          },
+          {
+            "date": "10 Octobre 2026",
+            "title": "Confirmation de la présence des délégations institutionnelles et des directeurs généraux."
+          }
+        ],
+        "goals": [
+          "Déployer des solutions opérationnelles d'IA pour les entreprises industrielles et de services",
+          "Renforcer la souveraineté numérique et la valorisation des compétences tunisiennes",
+          "Structurer des corridors de partenariat et de co-investissement avec l'Europe et le Golfe",
+          "Présentation officielle du Command Center UTICA et de la plateforme Investraders"
+        ],
+        "vision": "Établir la Tunisie comme hub euro-méditerranéen et africain d'excellence en IA appliquée et en financements d'impact.",
+        "mission": "Fédérer les forces économiques nationales, investisseurs, ministères et leaders industriels autour du pilotage stratégique de l'Intelligence Artificielle et de la compétitivité souveraine de la Tunisie.",
+        "tagline": "Wisdom Net × UTICA × Fondation Konrad Adenauer (KAS Tunisie)",
+        "products": [],
+        "services": [
+          {
+            "title": "08h30 – 09h00 : Accueil & Émargement",
+            "description": "Accueil des délégations officielles, présidents de fédérations et chefs d'entreprises au Siège de l'UTICA."
+          },
+          {
+            "title": "09h00 – 10h00 : Allocutions Protocolaires",
+            "description": "Allocutions d'ouverture : Présidence de l'UTICA, Représentation résidente KAS Tunisie, et Ministère des Technologies de la Communication."
+          },
+          {
+            "title": "10h00 – 11h00 : Keynote d'Ouverture",
+            "description": "L'Intelligence Artificielle et la Souveraineté Économique : Enjeux d'indépendance technologique et valeur ajoutée nationale."
+          },
+          {
+            "title": "11h15 – 12h45 : Panel 1 — Industrie 4.0 & Régulation",
+            "description": "Impact de l'AI Act européen, décarbonation et gains de productivité pour les exportateurs tunisiens."
+          },
+          {
+            "title": "14h00 – 15h15 : Démonstration Exclusive Investraders & UTICA Command Center",
+            "description": "Présentation en direct du centre d'intelligence macroéconomique et du radar d'opportunités B2B."
+          },
+          {
+            "title": "15h30 – 17h00 : Matchmaking B2B & Networking Dirigeants",
+            "description": "Rencontres bilatérales entre entreprises, banques, fonds d'investissement et partenaires institutionnels."
+          }
+        ],
+        "is_product_brand": false
+      }
+    }
+  ],
+  "posts": [
+    {
+      "id": "7081b3bc-5093-416d-b93f-04e932609831",
+      "circle_id": null,
+      "created_by_id": "09a60768-21de-420f-b2d2-b0c861708603",
+      "author_name": "Dr. Mohamed Riadh Zekri",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_09a60768-21de-420f-b2d2-b0c861708603_1791834830217.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "🌍 Europe–Africa Partnerships: Transforming the Future of Healthcare\n\nEuropean–African cooperation offers a unique opportunity to reshape healthcare through AI-enabled solutions, digital health, joint research, medical training, and health technology innovation.\n\n🚀 By connecting European expertise with African innovation and local health priorities, we can develop more accessible, affordable, and sustainable healthcare systems.\n\n🇹🇳 Tunisia could play a strategic role as a regional hub for digital health innovation, research collaboration, and AI-driven healthcare solutions.\n\nThe future lies not in one-way assistance, but in equitable partnerships, shared knowledge, and co-created solutions that benefit both continents.\n\n💡 How can we turn European–African collaboration into tangible improvements in global health?\n\n🚀 Europe–Africa partnerships can transform healthcare by combining European scientific expertise and technological innovation with Africa’s growing entrepreneurial ecosystem and understanding of local health needs. Through collaboration in artificial intelligence, digital health, joint research, medical training, and HealthTech investment, both continents can accelerate innovation, improve access to quality and affordable care, strengthen disease prevention, and build more resilient health systems. By prioritizing equitable collaboration, knowledge sharing, and locally adapted solutions, this partnership can move beyond traditional aid toward sustainable co-creation, with Tunisia serving as a potential bridge between Europe and Africa in advancing healthcare innovation.\n\n🌐 Investraders.net , connecting people, ideas, and opportunities across continents.\n\n#EuropeAfrica #DigitalHealth #HealthTech #AIinHealthcare #GlobalHealth #Innovation #Investraders",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T20:35:56.358937+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791837179989.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "INSIGHT"
+    },
+    {
+      "id": "b24169c5-08c5-4c78-abf1-3f330e90693f",
+      "circle_id": null,
+      "created_by_id": "b5024a8b-6378-4f51-9bf9-e3b1d6f773af",
+      "author_name": "Hejer  Bouzidi",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_b5024a8b-6378-4f51-9bf9-e3b1d6f773af_1791827387741.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Bornia... Vous avez sûrement entendu parler de ces drames récents sur les routes, comme le décès de cette ouvrière agricole sur son chemin de travail, laissant derrière elle de jeunes enfants.\n\n​Imaginez un instant : si elle avait eu accès à une source de revenu stable directement depuis chez elle, pensez-vous qu'elle aurait accepté des conditions de transport et de travail aussi inhumaines ?\n\n​Et maintenant, que diriez-vous d'une solution concrète, locale et pérenne pour transformer cette fatalité en opportunité économique ?",
+      "media_url": null,
+      "likes": 4,
+      "liked_by": [
+        "b5024a8b-6378-4f51-9bf9-e3b1d6f773af",
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "09a60768-21de-420f-b2d2-b0c861708603",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T18:06:48.7049+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791828403994.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "d2fe9b10-3f97-44da-bb88-0d28192c1ae7",
+      "circle_id": null,
+      "created_by_id": "b5024a8b-6378-4f51-9bf9-e3b1d6f773af",
+      "author_name": "Hejer  Bouzidi",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_b5024a8b-6378-4f51-9bf9-e3b1d6f773af_1791827387741.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "Saviez-vous que plus de 500 000 femmes portent le secteur agricole tunisien, souvent au péril de leur vie dans des conditions de transport risquées ? Nous développons une initiative technologique et solidaire qui connecte directement ces productrices rurales à un marché national plus large. Notre modèle garantit une autonomie financière totale et une juste rémunération de leur savoir-faire. Nous bouclons actuellement notre tour de table pour lancer une phase pilote ciblée. Seriez-vous ouvert à en discuter ?",
+      "media_url": null,
+      "likes": 3,
+      "liked_by": [
+        "b5024a8b-6378-4f51-9bf9-e3b1d6f773af",
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T17:57:00.068181+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "INVESTMENT"
+    },
+    {
+      "id": "47ba361d-f264-4def-b624-6caf47db9d65",
+      "circle_id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Pôle B2B & Partenariats",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "🤝 Espace Matchmaking & Partenariats d'Affaires :\n\nLes entreprises participantes peuvent dès à présent se connecter au Matchmaker IA pour planifier leurs rendez-vous bilatéraux prévus à 15h30 lors du forum. Des représentants de fonds d'investissement, de banques de développement et de partenaires européens et du Golfe seront présents.",
+      "media_url": null,
+      "likes": 15,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T13:00:00+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "PARTNERSHIP"
+    },
+    {
+      "id": "c2d93552-d49c-4a07-b0ee-2e0b96dd115d",
+      "circle_id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Cellule IA & Innovation Investraders",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "🚀 Session Phare de 14h00 : Démonstration du Command Center Économique UTICA.\n\nNous présenterons en direct sur écran de projection l'infrastructure d'écoute macroéconomique, la cartographie du sentiment des entreprises dans les 24 gouvernorats, le radar d'affaires B2B et l'assistant décisionnel IA développé au service de l'industrie tunisienne.",
+      "media_url": null,
+      "likes": 24,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T10:00:00+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "OPPORTUNITY"
+    },
+    {
+      "id": "f8f80070-4f1f-4cb5-9430-ab8323c5d180",
+      "circle_id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Comité de Programme & Contenu",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "📋 Programme Officiel de la Journée du 13 Octobre 2026 :\n\n• 08h30 : Accueil des invités & Émargement\n• 09h00 : Allocutions d'ouverture (Présidence UTICA, KAS Tunisie, Ministère des TIC)\n• 10h00 : Keynote d'Ouverture — IA & Souveraineté Économique\n• 11h15 : Panel 1 — Industrie 4.0, Données & Régulation européenne\n• 14h00 : Démonstration exclusive du Command Center UTICA en direct\n• 15h30 : Salon B2B & Matchmaking bilatéral entreprises-investisseurs\n• 17h00 : Recommandations stratégiques & Clôture",
+      "media_url": null,
+      "likes": 18,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T08:30:00+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "INSIGHT"
+    },
+    {
+      "id": "84e48994-3aa7-469d-b5f1-8924f2a114e3",
+      "circle_id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Direction de l'Événement — UTICA / KAS",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "🏛️ Bienvenue sur le Cercle Officiel du Colloque National du 13 Octobre 2026 au Siège de l'UTICA : \"L'Intelligence Artificielle et la Souveraineté Économique\".\n\nCet espace réunit les dirigeants d'entreprises, membres des fédérations sectorielles, partenaires de la Fondation Konrad Adenauer (KAS) et délégations gouvernementales pour suivre le déroulement des travaux, les annonces clés et les opportunités de partenariat.",
+      "media_url": null,
+      "likes": 12,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-12T07:00:00+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "0766f74e-1d75-4603-8cb1-d2338e72e0d3",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "A high level webinar with MIT",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-09T09:32:14.266331+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791538275401.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "PARTNERSHIP"
+    },
+    {
+      "id": "a4aee644-3316-47c0-9c56-9a1412dc5cbe",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Hi investors, Investraders is your ideal platform for European - African Partnership",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {
+        "👍": [
+          "f187dbfa-94d4-4e1f-8806-5f6cd8921b67"
+        ]
+      },
+      "created_date": "2026-10-06T09:27:55.344635+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791278738025.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "34cb07c0-75f3-4986-9068-579b5817a7fe",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Tunisian - Saudi partnership and collaboration can have an outstanding impact on economic growth: Investraders is meant to act on these lost opportunities and turn them into success stories .",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "👍": [
+          "f187dbfa-94d4-4e1f-8806-5f6cd8921b67"
+        ]
+      },
+      "created_date": "2026-10-05T10:23:34.345508+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791195599500.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "PARTNERSHIP"
+    },
+    {
+      "id": "00516a6e-a190-409a-9e90-82753fa0337a",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "A special session about how \"Investraders\" Platform will change the investment landscape",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-05T10:17:29.014613+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791195323124.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "INVESTMENT"
+    },
+    {
+      "id": "558851d5-3eac-449b-af8b-96462c41cf95",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "A High level meeting with AI Hub for sustainable development and African Development Bank",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-10-04T20:18:10.711899+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1791144983690.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "PARTNERSHIP"
+    },
+    {
+      "id": "8c4ce440-031c-4744-85fb-e450244a93c1",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Investment Map is ready Now.",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef",
+        "09a60768-21de-420f-b2d2-b0c861708603"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "🎉": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ],
+        "👍": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ],
+        "😂": [
+          "f187dbfa-94d4-4e1f-8806-5f6cd8921b67"
+        ]
+      },
+      "created_date": "2026-09-27T20:26:31.293879+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1790540757449.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "ff410003-8ba7-456d-80bb-5be23e3531f6",
+      "circle_id": null,
+      "created_by_id": "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+      "author_name": "KARIM NASFI",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_1095bef8-1904-47f2-8bef-1ae1ab2c5d4a_1782248381876.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "https://www.delta-center.org/",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-09-24T12:20:01.344193+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "a075f4ab-76ff-47ec-b776-04118fbaa3e5",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "In preparation for the Event of the October 07th in UTICA : Mega Launching of INVESTRADERS Platform . Thanks to the whole team for the taking care of all the details of the preparations.",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "❤️": [
+          "f187dbfa-94d4-4e1f-8806-5f6cd8921b67"
+        ]
+      },
+      "created_date": "2026-09-03T17:16:48.764042+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1788455612599.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "2d814988-66ed-4b70-a3b8-5b81d2f39517",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "https://www.youtube.com/watch?v=XcpknCgZbec",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-08-05T11:57:25.221806+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "26f02b9b-5ae1-4f16-b73e-40871f959b2b",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Time to start building your Community. Soon it will be your real ASSET.",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-29T22:15:08.935241+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1785363240403.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "dc871d5e-afe0-4605-849d-6908711fe53d",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_10af05af-2778-47ca-afd7-1ac0d7baebef_1784827386533.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Start your first Circle to build your Community",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-24T21:15:53.532491+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1784927712163.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "5a215a4e-6774-4a10-8028-d0157435ef36",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Tunisia Global Forum : \"Building the Future in the AI Era\"",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-23T17:21:49.353863+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1784827296432.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "fa9d122b-fc9d-4243-ad9a-e7a4b85de68a",
+      "circle_id": null,
+      "created_by_id": "82319811-18ae-4493-9b96-34bed6594bd5",
+      "author_name": "Lotfi  Riahi",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_82319811-18ae-4493-9b96-34bed6594bd5_1784799284530.jpg",
+      "visibility": "public",
+      "post_type": "document",
+      "content": "Africa First Exhibition 2026",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "82319811-18ae-4493-9b96-34bed6594bd5",
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "🎉": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-07-23T10:38:31.853314+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1784802991827_DOSSIER%20DE%20PESENTATION%20AFE%202026.pdf",
+      "file_name": "DOSSIER DE PESENTATION AFE 2026.pdf",
+      "file_type": "application/pdf",
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "a058b17f-e76f-42f9-bffa-9cb153868731",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "https://fsc.org.sa/2019/02/27/csc1-6/",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-15T15:50:00.054161+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1784130581666.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "f05d76ec-490f-4b19-8735-42f1274a5cec",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "برنامج سفراء الحكمة بمقر الغرفة التجارية بمدينة جدة/  المملكة العربية السعودية",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-10T09:57:20.928059+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1783677372802.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "14b7b691-5261-4d5e-813d-e5b35ab102f8",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "محاضرة حول قيادة الاستشراف الاستراتيجي بالغرفة التجارية بالرياض/ المملكة العربية السعودية",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-10T09:48:22.657898+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1783676814267.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "f6aa250f-5635-4f67-86bd-01c848a2d882",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "محاضرة ( قيادة الاستشراف الإستراتيجي) التي نظمتها غرفة الرياض\nhttps://www.al-jazirah.com/2015/20150515/ec11.htm",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-10T09:45:10.615253+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "257d3d8c-2364-48df-8b55-75fc7ca93ac0",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "https://www.al-jazirah.com/2015/20150515/ec11.htm",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-10T09:43:31.550819+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "8b753463-5968-43bb-a45b-50844cb28571",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "شكراً لكل الأصدقاء والمتابعين الذين سجلوا في منصة www.investraders.net\nوننتظر مزيدا من التسجيلات ، فالمنصة منكم وإليكم وهي منصة الحلم العربي حيث تجدون عالم المال والأعمال والفرص الإستثمارية بكل المقاييس مهما صغرت أو كبرت...\n\nلا تترددوا في اكتشاف المنصة والتسجيل المبكر من أجل بناء علاقات مال وأعمال نوعية،\nولا يعني إلتحاقكم بمنصة www.investraders.net هو تخليكم على حساباتكم السابقة على الفيسبوك مثلا.\n\n#الجديد الجديد هو أن المنصة أصبحت فيها نسخة عربية الآن ، فألف مبروك",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-07-01T20:29:05.167068+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782937733306.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "458c24ba-37d7-4a11-abcc-bb761fc36a0f",
+      "circle_id": null,
+      "created_by_id": "db5b8ddd-d048-4778-b4ac-be9021960873",
+      "author_name": "Narjes TURKI",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_db5b8ddd-d048-4778-b4ac-be9021960873_1782677328693.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "This circle focuses on exchanging knowledge and ideas and developing talents...",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "❤️": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-06-28T20:33:57.999254+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "eb7a2ee1-4d70-40e2-960f-9345057cc865",
+      "circle_id": null,
+      "created_by_id": "6a651375-ec66-46ba-8c95-c3aab77e3981",
+      "author_name": "Errouki  Import",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "Bonjour\nNous sommes société errouki import export propriétaire exportateur datte deglet nour, exportations \nde tout produit agros alimentaire\nSuivons la demande de nos client merci pour votre collaboration",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-28T06:46:57.535427+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "412ab831-08ea-4bfe-9a1d-668a06d44888",
+      "circle_id": null,
+      "created_by_id": "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+      "author_name": "Mohammed Hassan",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "بسم الله الرحمن الرحيم \nالحمد لله رب العالمين \nوالصلاه والسلام على النبي الكريم الأمين محمد بن عبدالله عليه افضل الصلاه واتم التسليم \nأبحث عن فريق لانشاء تطبيق بالسعودية اذا توافر المبرمجين والطاقم التشغيلي ف راس المال للتشغيل متوفر والحمد لله وهذه دعوه عامه أطمح لبناء علامه تجارية عريقه ومشروح للمستقبل طبعا الدكتور ماهر قائد فريقنا والسلام عليكم ورحمة الله وبركاته",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "❤️": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-06-25T21:13:15.459648+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "b41fa9bd-2210-4fb9-b967-3ba8a80b322e",
+      "circle_id": "6d09fa40-b0ca-4496-8ae1-a3864c1632cf",
+      "created_by_id": null,
+      "author_name": "HECentrepreneurs",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_ba583488-64fb-43e3-8e91-5c4a022fa369_1782155256853.jpg",
+      "visibility": "circle",
+      "post_type": "text",
+      "content": "Welcome to our new circle!",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "ba583488-64fb-43e3-8e91-5c4a022fa369",
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "reactions": {
+        "🎉": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-06-24T14:00:35.824735+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "65c1282b-4017-426f-a270-2a38a01cd121",
+      "circle_id": null,
+      "created_by_id": null,
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "video",
+      "content": "# لا تدع التردد يسرق منك فرصة العمر\nأكثر ما يندم عليه الإنسان في حياته ليس الأخطاء التي ارتكبها، بل الفرص التي كانت أمامه ولم يقتنصها في الوقت المناسب.\nمنذ أيام قرأت خبراً لافتاً للنظر يبين أن مستثمراً لو استثمر فقط 1000 دولار في كل واحدة من سبع شركات تكنولوجية كبرى عام 2015، أي ما مجموعه 7000 دولار، لكانت قيمة استثماره اليوم قد بلغت حوالي 470 ألف دولار.\nللاطلاع على المقال:\n🔗 [https://www.annaharkw.com/Article.aspx?id=1027462...](https://www.annaharkw.com/Article.aspx?id=1027462...)\nتخيلوا أن الفرق بين شخص حقق هذه النتيجة وشخص آخر لم يحققها لم يكن الذكاء الخارق ولا الحظ، بل القدرة على اتخاذ القرار في الوقت المناسب وعدم الاستسلام للتردد.\nوهذه هي الرسالة التي أوجهها اليوم إلى كل شاب عربي طموح:\nلا تنتظر حتى تصبح الفرصة واضحة للجميع، لأن الفرص العظيمة تكون في بداياتها غير مرئية للكثيرين. وعندما يكتشفها الجميع، يكون الرواد قد حصدوا الجزء الأكبر من المكاسب.\nاليوم نحن نعمل على بناء #منصة الحلم العربي – Investraders#، وهي ليست مجرد منصة تواصل اجتماعي، بل فضاء جديد لبناء العلاقات، وإنشاء الدوائر (Circles)، واكتشاف الفرص، وربط الشباب العربي بالمستثمرين ورواد الأعمال وأصحاب المشاريع من مختلف أنحاء العالم.\nقد ينجح المشروع وقد يتطور إلى ما هو أكبر مما نتخيل، لكن المؤكد أن الذين يدخلون مبكراً هم دائماً الأكثر استفادة من بناء شبكات العلاقات والظهور وصناعة الفرص.\nلذلك أدعوكم إلى عدم التردد، وأن تكونوا من أوائل المنضمين إلى هذه المبادرة العربية الطموحة.\n🚀 سجل الآن:\n🔗 [www.investraders.net](http://www.investraders.net)\nفي عالم الفرص، لا يفوز دائماً الأقوى أو الأذكى...\nبل يفوز غالباً من يمتلك الجرأة على اتخاذ الخطوة الأولى.\nكن من الرواد... ولا تترك التردد يحرمك من فرصة قد تغيّر مستقبلك.\n#Investraders\n#الحلم_العربي\n#الشباب_العربي\n#ريادة_الأعمال\n#الاستثمار\n#الفرص\n#MakeMoneyMeanwhile\n#3M\n#CirclesForSuccess",
+      "media_url": null,
+      "likes": 3,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "db5b8ddd-d048-4778-b4ac-be9021960873",
+        "d528f1cd-7553-4134-9a3d-1b3bb82f7d02"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-24T13:26:47.127581+00:00",
+      "image_url": null,
+      "video_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782307524866_WhatsApp%20Video%202026-06-24%20at%2013.28.41.mp4",
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "89ba321e-5212-49f1-9570-59fadfc3f6a0",
+      "circle_id": null,
+      "created_by_id": null,
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "I want to share with you our Weekly Leaderboard. You can be featured next week if you’re so active, posting, commenting and creating Circles . \n\nأشارك معكم قائمة القادة هذا الأسبوع. بإمكانكم التواجد في القائمة الأسبوع القادم بشرط أن تكونوا نشطين بالمشاركة والتعليق وبناء دوائركم",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-24T13:20:12.343248+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782306850930.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "1ddfc94e-d219-4518-9b54-3dcd59751e9d",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "John Doe, your circle is doing well. It's the largest circle so far. You can ask a question or put a subject for discussion so that we can write our comments .",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-24T12:55:38.444837+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782305643302.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "ad7e07d2-f9cc-40e6-850e-18cd1cc48912",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "قبل عشر سنوات، كان الميني فوتبول في إفريقيا مجرد فكرة يؤمن بها عدد قليل من الأشخاص. اليوم أصبح واقعاً رياضياً قائماً بذاته، يضم 48 اتحاداً وطنياً عضواً تحت مظلة الكونفدرالية الإفريقية لكرة القدم المصغرة.\nAfrican Minifootball Confederation \nمن التأسيس... إلى الانتشار...\nومن الانتظار... إلى الاعتراف الرسمي والحصري...\nومن الحلم... إلى الاقتراب من محطة تاريخية تتمثل في إدراج الميني فوتبول ضمن الألعاب الإفريقية القادمة 2027  حيث توجد موافقة مبدئية وتُناقش حالياً بعض الجوانب التنظيمية داخل الهياكل المختصة.\nلقد انتهى زمن التشكيك والتقزيم. فالميني فوتبول لم يعد مشروعاً للمستقبل، بل أصبح حقيقة حاضرة تفرض نفسها بالأرقام والإنجازات والعمل المتواصل.\nما تحقق خلال عشر سنوات كان استثنائياً، وما هو قادم قد يكون أكبر.\nألف مبروك لعائلة الميني فوتبول الافريقية \nMinifootball.africa\nالعبرة بالخواتيم.",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-24T10:38:41.44586+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782297509721.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "bd5f2ee4-e222-4ec7-bb28-c94c2653a5eb",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "منصة الحلم العربي",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-23T21:11:22.876385+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782249050855.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "ebbd0420-0e2a-4e3d-868c-dd3565c278ce",
+      "circle_id": null,
+      "created_by_id": "1095bef8-1904-47f2-8bef-1ae1ab2c5d4a",
+      "author_name": "KARIM NASFI",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_1095bef8-1904-47f2-8bef-1ae1ab2c5d4a_1782248381876.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Soon EV's will be rescued off-grid and will be assisted on their way.",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "❤️": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-06-23T21:05:35.070405+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782248581925.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "483119d7-1dbd-492e-9807-db57f609d65f",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "نرحب بالأخ العزيز الدكتور أشرف بن صالحة رئيس الإتحاد الإفريقي للميني فوتبول ونائب رئيس الإتحاد الدولي President African Minifootball Confederation\nVice President WMF\n شرفتنا بوجودك أخي العزيز",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-23T20:45:21.669159+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782247423122.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "fd0947cc-5ca2-4297-ad1c-a41eb7b4d3d8",
+      "circle_id": null,
+      "created_by_id": "fd409f6e-d133-4465-ad03-30af624bfb4b",
+      "author_name": "Abdaalrahman  Alfagi",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_fd409f6e-d133-4465-ad03-30af624bfb4b_1782231892003.jpg",
+      "visibility": "public",
+      "post_type": "text",
+      "content": "السلام عليكم ورحمة الله وبركاته \nتحيه طيبه للجميع. \nبالتوفيق خونا د ماهر .. وفقك الله واعانكم علي الإنجازات التي تسجيل للعرب.. اعانكم الله",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {
+        "❤️": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ]
+      },
+      "created_date": "2026-06-23T16:49:01.775243+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "80a010a3-cddf-4aad-82c8-602814f222c2",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "Together we CAN make a difference",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "a6fe3800-38bb-4301-8875-e24bdc5de822"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-23T15:28:22.352144+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782228468913.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "ea1c2ad3-709c-4a1b-9710-4a1d33de3a84",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "نرحب بالأخ جمال موسى / خبير دولي في الإتصالات ، أوروبا والشرق الأوسط",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-23T11:38:48.541048+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782214635049.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "38132ef8-427b-41c4-8d94-1e3fe41afc1e",
+      "circle_id": null,
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "author_name": "Dr. Maher Khedher",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/avatar_10af05af-2778-47ca-afd7-1ac0d7baebef_1781654727882.jpg",
+      "visibility": "public",
+      "post_type": "video",
+      "content": "منصة الحلم العربي، منصة النجاح وتفعيل الفرص الضائعة",
+      "media_url": null,
+      "likes": 3,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4",
+        "9be7146a-eece-47ef-b04b-08e878999cf6"
+      ],
+      "saved_by": [],
+      "reactions": {
+        "🎉": [
+          "10af05af-2778-47ca-afd7-1ac0d7baebef"
+        ],
+        "❤️": [
+          "bcd8bbdf-e54b-46d1-bc5a-e881d12b87c4"
+        ]
+      },
+      "created_date": "2026-06-22T20:02:12.881222+00:00",
+      "image_url": null,
+      "video_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1782158465131_1000063964.mp4",
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "9bcac304-bef8-4afc-b63e-6a854766ea6d",
+      "circle_id": null,
+      "created_by_id": "2cf8450e-98e2-49d0-b7ca-980e86bf6518",
+      "author_name": "Mohammed Hassan",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "text",
+      "content": "نتشرف بالانضمام الى صرح نفخر به وينطلق بنا نحو القمم باذن الله شكرا لكل من اسهم وساهم",
+      "media_url": null,
+      "likes": 1,
+      "liked_by": [
+        "10af05af-2778-47ca-afd7-1ac0d7baebef"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-22T16:57:28.409967+00:00",
+      "image_url": null,
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "65befcbd-2737-4dea-8474-5fe746ac2ed0",
+      "circle_id": "13a6c6ba-a440-4da9-a8b8-fb129a15bbd6",
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "author_name": "omar boudaya",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_44d349a7-0435-4361-8af8-034941fb2e73_1781551243735.jpg",
+      "visibility": "circle",
+      "post_type": "announcement",
+      "content": "ouverture de PEAK in Gabes!!",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-22T00:12:37.369513+00:00",
+      "image_url": "",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "c7350dde-9bf7-4695-8e28-03dd8f36c3b9",
+      "circle_id": "ff958789-15df-45d9-8ebb-574f8bc666e6",
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "author_name": "omar boudaya",
+      "author_avatar": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/user_44d349a7-0435-4361-8af8-034941fb2e73_1781551243735.jpg",
+      "visibility": "circle",
+      "post_type": "text",
+      "content": "hello",
+      "media_url": null,
+      "likes": 2,
+      "liked_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73",
+        "fad5b4a0-315a-4f16-bb1a-4c7da6577462"
+      ],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-15T20:19:15.641217+00:00",
+      "image_url": "",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "7f84a4a1-5f11-4514-bc7d-01529cb71487",
+      "circle_id": null,
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "author_name": "omar boudaya",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "video",
+      "content": "Investrade",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [
+        "44d349a7-0435-4361-8af8-034941fb2e73"
+      ],
+      "reactions": {},
+      "created_date": "2026-06-15T18:55:04.383896+00:00",
+      "image_url": "",
+      "video_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1781549644452_WhatsApp%20Video%202026-05-29%20at%2016.43.47.mp4",
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    },
+    {
+      "id": "23b09819-7e36-4854-8dd1-370c8304bf80",
+      "circle_id": null,
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "author_name": "omar boudaya",
+      "author_avatar": null,
+      "visibility": "public",
+      "post_type": "photo",
+      "content": "With Miguel Angel Moratinos / Former Spanish Foreign Minister , and Under Secretary of United Nations in charge the Dialogue between Civilizations",
+      "media_url": null,
+      "likes": 0,
+      "liked_by": [],
+      "saved_by": [],
+      "reactions": {},
+      "created_date": "2026-06-15T18:53:42.147277+00:00",
+      "image_url": "https://earhypzdxwbohdncdzvz.supabase.co/storage/v1/object/public/media/post_media/1781549614250.jpg",
+      "video_url": null,
+      "file_url": null,
+      "file_name": null,
+      "file_type": null,
+      "intent_category": "ANNOUNCEMENT"
+    }
+  ],
+  "events": [
+    {
+      "id": "268e3af3-cadc-4bb2-b845-ae9ef3a4d5af",
+      "circle_id": "ff958789-15df-45d9-8ebb-574f8bc666e6",
+      "title": "meeting",
+      "description": "meeting",
+      "event_date": "2026-06-15T23:00:00+00:00",
+      "status": "approved",
+      "session_active": false,
+      "author_name": "omarboudaya1",
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-06-15T21:08:58.327414+00:00",
+      "event_type": "discussion",
+      "meet_link": ""
+    },
+    {
+      "id": "3d8ee5e1-bfb7-461c-9aad-295eb00b9db7",
+      "circle_id": "ff958789-15df-45d9-8ebb-574f8bc666e6",
+      "title": "meeting ",
+      "description": "gaming",
+      "event_date": "2026-06-15T23:30:00+00:00",
+      "status": "approved",
+      "session_active": false,
+      "author_name": "omarboudaya1",
+      "created_by_id": "44d349a7-0435-4361-8af8-034941fb2e73",
+      "created_date": "2026-06-15T21:10:43.482224+00:00",
+      "event_type": "discussion",
+      "meet_link": "https://meet.google.com/gyi-bzxz-eff"
+    },
+    {
+      "id": "a7257c57-8475-4b48-93ea-4d125ecca136",
+      "circle_id": "f38551e6-1951-4a27-af07-e1a34228c389",
+      "title": "Colloque National : IA et Souveraineté Économique",
+      "description": "Grand rendez-vous institutionnel et économique au Siège de l'UTICA (09h00 - 17h00). Panels ministériels, démonstration en direct du Command Center UTICA et rencontres B2B bilatérales.",
+      "event_date": "2026-10-13T08:00:00+00:00",
+      "status": "approved",
+      "session_active": false,
+      "author_name": "UTICA & Wisdom Net Leadership",
+      "created_by_id": "10af05af-2778-47ca-afd7-1ac0d7baebef",
+      "created_date": "2026-10-12T20:47:42.279626+00:00",
+      "event_type": "meeting",
+      "meet_link": "https://www.investraders.net/event"
+    }
+  ],
+  "market_data": [
+    {
+      "id": "a89be30e-e4d1-4e80-9460-f0e1352340e8",
+      "symbol": "BTC/USD",
+      "price": 86241,
+      "change_pct": 0.85,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "d2d9607f-19e9-4b40-a2c2-89ebdc7f133d",
+      "symbol": "ETH/USD",
+      "price": 2748,
+      "change_pct": 0.58,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "97753760-ff5c-4b06-a3b7-9549c53a0bb5",
+      "symbol": "S&P 500",
+      "price": 7764.64,
+      "change_pct": 1.49,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "5a1118d1-6af3-4b2e-a494-f70d900aa478",
+      "symbol": "NASDAQ",
+      "price": 27244.277,
+      "change_pct": 2.72,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "5d061f44-8cc7-41a2-9284-a6774b106a22",
+      "symbol": "DOW",
+      "price": 51863.69,
+      "change_pct": 0.35,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "672796db-f076-435e-8928-4b4126a972cf",
+      "symbol": "GOLD",
+      "price": 4356.6,
+      "change_pct": -0.45,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "5924c3df-936f-452f-b0f6-42c10af0d7ae",
+      "symbol": "OIL (WTI)",
+      "price": 89.99,
+      "change_pct": -4.86,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "e796c474-fa1e-4a42-9168-bb413199f2ab",
+      "symbol": "EUR/USD",
+      "price": 1.1418,
+      "change_pct": -0.41,
+      "updated_at": "2026-09-23T08:23:10.186+00:00"
+    },
+    {
+      "id": "886df0b0-824c-4b3b-8785-828e7556aee3",
+      "symbol": "TUNINDEX",
+      "price": 18563.67,
+      "change_pct": -0.22,
+      "updated_at": "2026-10-12T20:51:18.193+00:00"
+    },
+    {
+      "id": "57485134-4d66-4c66-b623-442ca8c14e50",
+      "symbol": "BIAT",
+      "price": 162,
+      "change_pct": 0.31,
+      "updated_at": "2026-10-12T20:51:19.012+00:00"
+    },
+    {
+      "id": "e285ff0b-edcc-44fb-bf48-61d13e53902d",
+      "symbol": "SFBT",
+      "price": 13.48,
+      "change_pct": -0.15,
+      "updated_at": "2026-10-12T20:51:19.563+00:00"
+    },
+    {
+      "id": "13225824-39a2-4d4e-aff9-d7d0ca18ac71",
+      "symbol": "BT",
+      "price": 5.48,
+      "change_pct": 0.37,
+      "updated_at": "2026-10-12T20:51:19.925+00:00"
+    },
+    {
+      "id": "2ec52674-c64e-4236-bca2-8283ff5abfd4",
+      "symbol": "SAH",
+      "price": 12.26,
+      "change_pct": 0.49,
+      "updated_at": "2026-10-12T20:51:20.285+00:00"
+    },
+    {
+      "id": "e2acdc84-f939-463b-b5e3-6f93311801d5",
+      "symbol": "PGH",
+      "price": 25.98,
+      "change_pct": -0.38,
+      "updated_at": "2026-10-12T20:51:20.432+00:00"
+    },
+    {
+      "id": "615e66a1-f1d2-4cc1-9c15-65f2ba5a3a86",
+      "symbol": "DH",
+      "price": 15.1,
+      "change_pct": 0.2,
+      "updated_at": "2026-10-12T20:51:20.585+00:00"
+    },
+    {
+      "id": "d4603129-9bea-4ed3-b9ae-b5c47586e802",
+      "symbol": "TRE",
+      "price": 13.5,
+      "change_pct": 0.75,
+      "updated_at": "2026-10-12T20:51:20.761+00:00"
+    },
+    {
+      "id": "20faca4a-16a5-45cd-acba-3004229a5920",
+      "symbol": "TLNET",
+      "price": 9.85,
+      "change_pct": -0.5,
+      "updated_at": "2026-10-12T20:51:20.898+00:00"
+    }
+  ],
+  "projects": []
+}

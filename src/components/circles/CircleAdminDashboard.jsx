@@ -39,7 +39,7 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
 );
 
 export default function CircleAdminDashboard({ circleId, circle }) {
-  const isUticaCircle = circle?.name?.toLowerCase()?.includes('utica') || circle?.category === 'institution';
+  const isUticaCircle = Boolean(circle?.name?.toLowerCase()?.includes('utica'));
   const [viewMode, setViewMode] = useState(isUticaCircle ? 'utica_command' : 'standard');
 
   const { data: posts = [] } = useQuery({
@@ -92,7 +92,7 @@ export default function CircleAdminDashboard({ circleId, circle }) {
     (p) => p.created_date && isWithinInterval(new Date(p.created_date), { start: thisWeekStart, end: thisWeekEnd })
   ).length;
 
-  if (viewMode === 'utica_command') {
+  if (isUticaCircle && viewMode === 'utica_command') {
     return (
       <div className="px-2 pb-6 space-y-4">
         <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-amber-500/10 via-blue-500/10 to-transparent border border-amber-500/20 rounded-xl">
@@ -125,13 +125,15 @@ export default function CircleAdminDashboard({ circleId, circle }) {
             <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Admin Only</span>
           </div>
 
-          <Button
-            size="sm"
-            onClick={() => setViewMode('utica_command')}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs h-7 gap-1"
-          >
-            <Sparkles className="w-3.5 h-3.5" /> UTICA Command Center
-          </Button>
+          {isUticaCircle && (
+            <Button
+              size="sm"
+              onClick={() => setViewMode('utica_command')}
+              className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs h-7 gap-1"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> UTICA Command Center
+            </Button>
+          )}
         </div>
 
         <div className="p-4 space-y-4">

@@ -25,14 +25,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // Hard fallback: If auth checks take longer than 8 seconds, force unblock
+    // Hard fallback: If auth checks take longer than 2 seconds, force unblock
     const fallbackTimer = setTimeout(() => {
       if (isMounted) {
         console.warn('Auth check timeout reached, forcing unblock.');
         setIsLoadingAuth(false);
         setAuthChecked(true);
       }
-    }, 8000);
+    }, 2000);
 
     checkUserAuth().finally(() => clearTimeout(fallbackTimer));
 

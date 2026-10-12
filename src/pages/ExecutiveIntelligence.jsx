@@ -49,6 +49,14 @@ export default function ExecutiveIntelligence() {
           <div className="flex items-center gap-3">
             <Button
               size="sm"
+              variant="outline"
+              className="border-amber-500/40 text-amber-300 hover:text-white hover:bg-amber-500/20 text-xs font-bold gap-1.5 cursor-pointer"
+              onClick={() => navigate('/utica-command?fullscreen=true')}
+            >
+              <Landmark className="w-3.5 h-3.5 text-amber-400" /> UTICA Command Center (Plein Écran)
+            </Button>
+            <Button
+              size="sm"
               className="bg-[#1769FF] hover:bg-blue-600 text-white text-xs font-bold gap-1.5 shadow-md shadow-blue-500/20"
               onClick={() => navigate('/matchmaker')}
             >
@@ -111,30 +119,60 @@ export default function ExecutiveIntelligence() {
             </Card>
           </div>
 
-          {/* TOP EXECUTIVE KPI BAR */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4">
-            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1">
-              <div className="text-xs font-semibold text-slate-400 uppercase">Companies Connected</div>
-              <div className="text-2xl font-extrabold text-white">12,480</div>
-              <div className="text-[10px] text-emerald-400 font-bold">↑ +420 this week</div>
+          {/* Macro Projection / Demo Simulation Disclaimer Banner */}
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-200">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-wider shrink-0">
+                Simulation & Démo
+              </span>
+              <p className="font-medium text-slate-200">
+                <strong>Données de démonstration & Projection macroéconomique</strong> : Indicateurs calculés sur modèles prévisionnels en cours de synchronisation avec le Registre National des Entreprises (RNE) et la Bourse de Tunis (BVMT).
+              </p>
             </div>
-            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1">
-              <div className="text-xs font-semibold text-slate-400 uppercase">Investment Opportunities</div>
+            <span className="text-[11px] text-amber-400 font-bold shrink-0 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+              Modèle Démonstrateur 2026
+            </span>
+          </div>
+
+          {/* TOP EXECUTIVE KPI BAR */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-1">
+            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-400 uppercase">Companies Connected</div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Simulation</span>
+              </div>
+              <div className="text-2xl font-extrabold text-white">12,480</div>
+              <div className="text-[10px] text-emerald-400 font-bold">↑ +420 this week (Projection)</div>
+            </div>
+            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-400 uppercase">Investment Opportunities</div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Simulation</span>
+              </div>
               <div className="text-2xl font-extrabold text-white">1,284</div>
               <div className="text-[10px] text-cyan-400 font-bold">24 Governorates</div>
             </div>
-            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1">
-              <div className="text-xs font-semibold text-slate-400 uppercase">Capital Seeking</div>
+            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-400 uppercase">Capital Seeking</div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Simulation</span>
+              </div>
               <div className="text-2xl font-extrabold text-emerald-400">14.5B TND</div>
-              <div className="text-[10px] text-slate-300 font-medium">~ €4.8 Billion</div>
+              <div className="text-[10px] text-slate-300 font-medium">~ €4.8 Billion (Agrégat simulé)</div>
             </div>
-            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1">
-              <div className="text-xs font-semibold text-slate-400 uppercase">Active Investors</div>
+            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-400 uppercase">Active Investors</div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Exemples Démo</span>
+              </div>
               <div className="text-2xl font-extrabold text-white">642</div>
-              <div className="text-[10px] text-amber-400 font-bold">VC, PE, DFI, SWF</div>
+              <div className="text-[10px] text-amber-400 font-bold">VC, PE, DFI (Illustratif)</div>
             </div>
-            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 col-span-2 sm:col-span-1">
-              <div className="text-xs font-semibold text-slate-400 uppercase">AI Matches Computed</div>
+            <div className="bg-[#0b243b] border border-slate-700/80 rounded-2xl p-4 space-y-1 col-span-2 sm:col-span-1 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-400 uppercase">AI Matches Computed</div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">Algo AI</span>
+              </div>
               <div className="text-2xl font-extrabold text-cyan-400">3,812</div>
               <div className="text-[10px] text-emerald-400 font-bold">High Precision Match</div>
             </div>
