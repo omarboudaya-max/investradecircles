@@ -33,22 +33,35 @@ function getGoogleCalendarUrl(event) {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-const OCTOBER_13_FLAGSHIP_EVENT = {
-  id: 'flagship-oct13-forum-2026',
-  title: 'Colloque National : IA et Souveraineté Économique',
-  description: 'Grand rendez-vous institutionnel au Siège de l\'UTICA (09h00 - 17h00) : Démonstration exclusive du Command Center UTICA, panels ministériels et rencontres B2B bilatérales.',
-  event_date: '2026-10-13T09:00:00+01:00',
-  circle_id: 'f38551e6-1951-4a27-af07-e1a34228c389',
-  event_type: 'meeting',
-  status: 'approved',
-  meet_link: '/event',
-  author_name: 'UTICA × Wisdom Net × KAS'
-};
+const INVESTRADE_1_FLAGSHIP_EVENTS = [
+  {
+    id: 'flagship-investrade1-day1',
+    title: 'Investrade 1: 1st Forum & Exhibition for Investment (Day 1)',
+    description: 'Palais des Congrès, Tunis: Opening Plenary, Curated Cap Tables, Precision B2B Matchmaking & VIP Deal Rooms.',
+    event_date: '2027-04-20T08:30:00+01:00',
+    circle_id: 'flagship-investrade1-circle',
+    event_type: 'meeting',
+    status: 'approved',
+    meet_link: '/event',
+    author_name: 'Investraders Platform'
+  },
+  {
+    id: 'flagship-investrade1-day2',
+    title: 'Investrade 1: Global Roundtables & MOU Signings (Day 2)',
+    description: 'Palais des Congrès, Tunis: Cross-Border Coalitions, FDI Panels, Term Sheet Execution & Official Closing.',
+    event_date: '2027-04-21T09:00:00+01:00',
+    circle_id: 'flagship-investrade1-circle',
+    event_type: 'meeting',
+    status: 'approved',
+    meet_link: '/event',
+    author_name: 'Investraders Platform'
+  }
+];
 
 export default function UpcomingEventsCalendar() {
   const { user } = useAuth();
-  const [currentMonth, setCurrentMonth] = useState(new Date('2026-10-12T00:00:00'));
-  const [selectedDay, setSelectedDay] = useState(new Date('2026-10-13T00:00:00'));
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(new Date());
 
   const { data: circles = [] } = useQuery({
     queryKey: ['my-circles-for-events', user?.id],
@@ -68,12 +81,14 @@ export default function UpcomingEventsCalendar() {
           .limit(50);
 
         const list = Array.isArray(dbEvents) ? [...dbEvents] : [];
-        if (!list.some(e => e.id === OCTOBER_13_FLAGSHIP_EVENT.id || isSameDay(new Date(e.event_date), new Date('2026-10-13')))) {
-          list.push(OCTOBER_13_FLAGSHIP_EVENT);
-        }
+        INVESTRADE_1_FLAGSHIP_EVENTS.forEach(fe => {
+          if (!list.some(e => e.id === fe.id || isSameDay(new Date(e.event_date), new Date(fe.event_date)))) {
+            list.push(fe);
+          }
+        });
         return list;
       } catch (err) {
-        return [OCTOBER_13_FLAGSHIP_EVENT];
+        return [...INVESTRADE_1_FLAGSHIP_EVENTS];
       }
     },
     staleTime: 5 * 60 * 1000,
@@ -81,9 +96,9 @@ export default function UpcomingEventsCalendar() {
 
   const circleMap = useMemo(() => {
     const map = Object.fromEntries(circles.map((c) => [c.id, c]));
-    map['f38551e6-1951-4a27-af07-e1a34228c389'] = {
-      id: 'f38551e6-1951-4a27-af07-e1a34228c389',
-      name: 'Siège UTICA (Colloque IA)',
+    map['flagship-investrade1-circle'] = {
+      id: 'flagship-investrade1-circle',
+      name: 'Palais des Congrès, Tunis (Investrade 1)',
     };
     return map;
   }, [circles]);
@@ -113,6 +128,39 @@ export default function UpcomingEventsCalendar() {
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCurrentMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1))}>
             <ChevronRight className="w-4 h-4" />
           </Button>
+        </div>
+      </div>
+
+      {/* Featured Flagship Summit Highlight */}
+      <div className="mx-4 mt-3.5 p-3 rounded-xl bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-slate-900 border border-cyan-500/30 flex items-center justify-between gap-3 text-left">
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            </span>
+            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Flagship Summit 2027</span>
+          </div>
+          <p className="text-xs font-bold text-slate-100 truncate mt-0.5">Investrade 1 — Palais des Congrès</p>
+          <p className="text-[10px] text-slate-400">April 20–21, 2027 · Tunis, Tunisia</p>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentMonth(new Date('2027-04-01T00:00:00'));
+              setSelectedDay(new Date('2027-04-20T00:00:00'));
+            }}
+            className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            Dates
+          </button>
+          <a
+            href="/event"
+            className="px-2.5 py-1 text-[11px] font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-blue-400 hover:opacity-90 rounded-lg shadow-sm transition-all"
+          >
+            Badge VIP
+          </a>
         </div>
       </div>
 

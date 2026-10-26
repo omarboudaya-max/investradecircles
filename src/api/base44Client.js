@@ -303,15 +303,58 @@ const INITIAL_PROJECTS = [
   }
 ];
 
+// Local storage persistence keys
+const STORAGE_KEYS = {
+  PROJECTS: 'investraders_custom_projects',
+  ORGS: 'investraders_custom_organizations',
+  VEHICLES: 'investraders_custom_vehicles',
+  INTERESTS: 'investraders_custom_interests',
+  SAVED: 'investraders_saved_investments',
+  VIEWS: 'investraders_project_views',
+  DELETED_PROJECTS: 'investraders_deleted_projects',
+  DELETED_ORGS: 'investraders_deleted_orgs'
+};
+
+function readStorage(key) {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeStorage(key, items) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, JSON.stringify(items));
+  } catch (e) {}
+}
+
+function deduplicateById(items) {
+  const seen = new Set();
+  const result = [];
+  for (const item of items) {
+    if (item && item.id && !seen.has(item.id)) {
+      seen.add(item.id);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 // Local store memory fallback
 let governoratesStore = [...INITIAL_GOVERNORATES];
 let sectorsStore = [...INITIAL_SECTORS];
-let projectsStore = [...INITIAL_PROJECTS];
-let organizationsStore = [...INITIAL_ORGANIZATIONS];
-let vehiclesStore = [...INITIAL_VEHICLES];
-let projectViewsStore = [];
-let savedInvestmentsStore = [];
-let investorInterestsStore = [];
+const initialDeletedProjects = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
+const initialDeletedOrgs = readStorage(STORAGE_KEYS.DELETED_ORGS);
+let projectsStore = deduplicateById([...readStorage(STORAGE_KEYS.PROJECTS), ...INITIAL_PROJECTS]).filter((p) => !initialDeletedProjects.includes(p.id));
+let organizationsStore = deduplicateById([...readStorage(STORAGE_KEYS.ORGS), ...INITIAL_ORGANIZATIONS]).filter((o) => !initialDeletedOrgs.includes(o.id));
+let vehiclesStore = deduplicateById([...readStorage(STORAGE_KEYS.VEHICLES), ...INITIAL_VEHICLES]);
+let projectViewsStore = [...readStorage(STORAGE_KEYS.VIEWS)];
+let savedInvestmentsStore = [...readStorage(STORAGE_KEYS.SAVED)];
+let investorInterestsStore = [...readStorage(STORAGE_KEYS.INTERESTS)];
 
 export const base44 = {
   entities: {
@@ -351,71 +394,143 @@ export const base44 = {
 
     InvestmentProject: {
       filter: async (criteria = {}, order = '-created_date', limit = 500) => {
-        try {
-          let query = supabase.from('InvestmentProject').select('*');
-          Object.entries(criteria).forEach(([key, val]) => {
-            query = query.eq(key, val);
+        const all = await base44.entities.InvestmentProject.list(order, limit);
+        return all.filter((p) => {
+          return Object.entries(criteria).every(([key, val]) => {
+            // Include newly submitted or published opportunities on the platform
+            if (key === 'project_status' && val === 'PUBLISHED') {
+              return p.project_status === 'PUBLISHED' || p.project_status === 'SUBMITTED' || !p.project_status;
+            }
+            return p[key] === val;
           });
-          const { data, error } = await query.limit(limit);
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-
-        return projectsStore.filter((p) => {
-          return Object.entries(criteria).every(([key, val]) => p[key] === val);
         });
       },
 
       list: async (order = '-created_date', limit = 500) => {
+        const custom = readStorage(STORAGE_KEYS.PROJECTS);
+        const deleted = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
         try {
           const { data, error } = await supabase.from('InvestmentProject').select('*').limit(limit);
-          if (!error && data && data.length > 0) return data;
+          if (!error && data && data.length > 0) {
+            const combined = deduplicateById([...custom, ...data]).filter((p) => !deleted.includes(p.id));
+            projectsStore = combined;
+            return combined;
+          }
         } catch (e) {}
-        return projectsStore;
+
+        const combined = deduplicateById([...custom, ...INITIAL_PROJECTS]).filter((p) => !deleted.includes(p.id));
+        projectsStore = combined;
+        return combined;
       },
 
       get: async (id) => {
+        const custom = readStorage(STORAGE_KEYS.PROJECTS);
+        const localItem = custom.find((p) => p.id === id);
         try {
           const { data, error } = await supabase.from('InvestmentProject').select('*').eq('id', id).single();
-          if (!error && data) return data;
+          if (!error && data) {
+            const imageVal = data.image_url || localItem?.image_url || localItem?.photo_url || localItem?.image || localItem?.logo || null;
+            return {
+              ...data,
+              ...(localItem || {}),
+              image_url: imageVal,
+              photo_url: imageVal,
+              image: imageVal,
+              logo: imageVal
+            };
+          }
         } catch (e) {}
-        const p = projectsStore.find((item) => item.id === id);
+        const all = await base44.entities.InvestmentProject.list();
+        const p = all.find((item) => item.id === id);
         if (!p) throw new Error('Project not found');
         return p;
       },
 
       create: async (payload) => {
-        const id = payload.id || `proj_${Date.now()}`;
+        const id = payload.id || `proj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+        const imageVal = payload.image_url || payload.photo_url || payload.image || payload.logo || null;
         const newProj = {
           id,
           project_code: payload.project_code || `INV-2026-${Math.floor(100 + Math.random() * 900)}`,
           created_date: new Date().toISOString(),
           project_status: payload.project_status || 'PUBLISHED',
-          is_verified: payload.is_verified ?? true,
+          is_verified: payload.is_verified ?? false,
           featured: payload.featured ?? false,
-          ...payload
+          seeking: payload.seeking || [],
+          target_markets: payload.target_markets || [],
+          export_potential: payload.export_potential || 'MEDIUM',
+          infrastructure_available: payload.infrastructure_available ?? true,
+          land_available: payload.land_available ?? true,
+          ...payload,
+          image_url: imageVal,
+          photo_url: imageVal,
+          image: imageVal,
+          logo: imageVal
         };
 
-        try {
-          await supabase.from('InvestmentProject').insert(newProj);
-        } catch (e) {}
+        // 1. Persist to localStorage immediately
+        const custom = readStorage(STORAGE_KEYS.PROJECTS);
+        writeStorage(STORAGE_KEYS.PROJECTS, [newProj, ...custom]);
 
-        projectsStore = [newProj, ...projectsStore];
+        // 2. Try Supabase insert with sanitized columns
+        const { photo_url, image, logo, ...cleanForSupabase } = newProj;
+        try {
+          await supabase.from('InvestmentProject').insert(cleanForSupabase);
+        } catch (e) {
+          console.warn('Supabase project insert queued locally:', e);
+        }
+
+        projectsStore = deduplicateById([newProj, ...projectsStore]);
         return newProj;
       },
 
       update: async (id, payload) => {
-        try {
-          await supabase.from('InvestmentProject').update(payload).eq('id', id);
-        } catch (e) {}
+        const imageVal = payload.image_url || payload.photo_url || payload.image || payload.logo;
+        const currentItem = projectsStore.find((p) => p.id === id) || INITIAL_PROJECTS.find((p) => p.id === id) || {};
+        const updatedItem = {
+          ...currentItem,
+          ...payload,
+          id,
+          ...(imageVal !== undefined ? { image_url: imageVal, photo_url: imageVal, image: imageVal, logo: imageVal } : {})
+        };
 
-        projectsStore = projectsStore.map((p) => (p.id === id ? { ...p, ...payload } : p));
-        return projectsStore.find((p) => p.id === id);
+        const { photo_url, image, logo, ...cleanForSupabase } = payload;
+        const supabaseUpdate = {
+          ...cleanForSupabase,
+          ...(imageVal !== undefined ? { image_url: imageVal } : {})
+        };
+        try {
+          await supabase.from('InvestmentProject').update(supabaseUpdate).eq('id', id);
+        } catch (e) {
+          console.warn('Supabase project update warning:', e);
+        }
+
+        const custom = readStorage(STORAGE_KEYS.PROJECTS);
+        const exists = custom.some((p) => p.id === id);
+        const newCustom = exists
+          ? custom.map((p) => (p.id === id ? updatedItem : p))
+          : [updatedItem, ...custom];
+        writeStorage(STORAGE_KEYS.PROJECTS, newCustom);
+
+        projectsStore = projectsStore.map((p) => (p.id === id ? updatedItem : p));
+        if (!projectsStore.some((p) => p.id === id)) {
+          projectsStore = [updatedItem, ...projectsStore];
+        }
+        return updatedItem;
       },
 
       delete: async (id) => {
         try {
           await supabase.from('InvestmentProject').delete().eq('id', id);
         } catch (e) {}
+
+        const custom = readStorage(STORAGE_KEYS.PROJECTS).filter((p) => p.id !== id);
+        writeStorage(STORAGE_KEYS.PROJECTS, custom);
+
+        const deleted = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
+        if (!deleted.includes(id)) {
+          writeStorage(STORAGE_KEYS.DELETED_PROJECTS, [...deleted, id]);
+        }
 
         projectsStore = projectsStore.filter((p) => p.id !== id);
         return true;
@@ -429,6 +544,7 @@ export const base44 = {
           await supabase.from('ProjectView').insert(view);
         } catch (e) {}
         projectViewsStore.push(view);
+        writeStorage(STORAGE_KEYS.VIEWS, projectViewsStore);
         return view;
       }
     },
@@ -444,13 +560,16 @@ export const base44 = {
           if (!error && data) return data;
         } catch (e) {}
 
-        return savedInvestmentsStore.filter((item) => {
+        const custom = readStorage(STORAGE_KEYS.SAVED);
+        return custom.filter((item) => {
           return Object.entries(criteria).every(([k, v]) => item[k] === v);
         });
       },
 
       create: async (payload) => {
-        const saved = { id: `save_${Date.now()}`, ...payload };
+        const saved = { id: `save_${Date.now()}`, created_date: new Date().toISOString(), ...payload };
+        const custom = readStorage(STORAGE_KEYS.SAVED);
+        writeStorage(STORAGE_KEYS.SAVED, [saved, ...custom]);
         try {
           await supabase.from('SavedInvestment').insert(saved);
         } catch (e) {}
@@ -462,6 +581,8 @@ export const base44 = {
         try {
           await supabase.from('SavedInvestment').delete().eq('id', id);
         } catch (e) {}
+        const custom = readStorage(STORAGE_KEYS.SAVED).filter((s) => s.id !== id && s.project_id !== id);
+        writeStorage(STORAGE_KEYS.SAVED, custom);
         savedInvestmentsStore = savedInvestmentsStore.filter((s) => s.id !== id);
         return true;
       }
@@ -469,81 +590,160 @@ export const base44 = {
 
     InvestorInterest: {
       create: async (payload) => {
-        const interest = { id: `interest_${Date.now()}`, created_date: new Date().toISOString(), ...payload };
+        const interest = { id: `interest_${Date.now()}`, created_date: new Date().toISOString(), status: 'NEW', ...payload };
+        const custom = readStorage(STORAGE_KEYS.INTERESTS);
+        writeStorage(STORAGE_KEYS.INTERESTS, [interest, ...custom]);
         try {
           await supabase.from('InvestorInterest').insert(interest);
         } catch (e) {}
         investorInterestsStore.push(interest);
         return interest;
+      },
+      list: async () => {
+        try {
+          const { data, error } = await supabase.from('InvestorInterest').select('*');
+          if (!error && data && data.length > 0) return data;
+        } catch (e) {}
+        return readStorage(STORAGE_KEYS.INTERESTS);
       }
     },
 
     InvestmentOrganization: {
       filter: async (criteria = {}, order = '-created_at', limit = 500) => {
-        try {
-          let query = supabase.from('InvestmentOrganization').select('*');
-          Object.entries(criteria).forEach(([key, val]) => {
-            query = query.eq(key, val);
-          });
-          const { data, error } = await query.limit(limit);
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-
-        return organizationsStore.filter((org) => {
+        const all = await base44.entities.InvestmentOrganization.list(order, limit);
+        return all.filter((org) => {
           return Object.entries(criteria).every(([key, val]) => org[key] === val);
         });
       },
 
       list: async (order = '-created_at', limit = 500) => {
+        const custom = readStorage(STORAGE_KEYS.ORGS);
+        const deleted = readStorage(STORAGE_KEYS.DELETED_ORGS);
         try {
           const { data, error } = await supabase.from('InvestmentOrganization').select('*').limit(limit);
-          if (!error && data && data.length > 0) return data;
+          if (!error && data && data.length > 0) {
+            const combined = deduplicateById([...custom, ...data]).filter((o) => !deleted.includes(o.id));
+            organizationsStore = combined;
+            return combined;
+          }
         } catch (e) {}
-        return organizationsStore;
+
+        const combined = deduplicateById([...custom, ...INITIAL_ORGANIZATIONS]).filter((o) => !deleted.includes(o.id));
+        organizationsStore = combined;
+        return combined;
       },
 
       get: async (idOrSlug) => {
+        const custom = readStorage(STORAGE_KEYS.ORGS);
+        const localItem = custom.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
         try {
           const { data, error } = await supabase.from('InvestmentOrganization').select('*').or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`).single();
-          if (!error && data) return data;
+          if (!error && data) {
+            const logoVal = data.logo_url || data.logo || localItem?.logo_url || localItem?.logo || localItem?.image_url || localItem?.photo_url || null;
+            return {
+              ...data,
+              ...(localItem || {}),
+              logo: logoVal,
+              logo_url: logoVal,
+              image_url: logoVal,
+              photo_url: logoVal
+            };
+          }
         } catch (e) {}
-        const org = organizationsStore.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
+        const all = await base44.entities.InvestmentOrganization.list();
+        const org = all.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
         if (!org) return null;
         return org;
       },
 
       create: async (payload) => {
-        const id = payload.id || `org_${Date.now()}`;
+        const id = payload.id || `org_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+        const baseSlug = payload.display_name ? payload.display_name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `org-${Date.now()}`;
+        const logoVal = payload.logo || payload.logo_url || payload.image_url || null;
         const newOrg = {
           id,
-          slug: payload.slug || (payload.display_name ? payload.display_name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `org-${Date.now()}`),
+          slug: payload.slug || `${baseSlug}-${Date.now().toString().slice(-4)}`,
           created_at: new Date().toISOString(),
           verification_status: payload.verification_status || 'PENDING',
           active: payload.active ?? true,
-          ...payload
+          official: payload.official ?? false,
+          featured: payload.featured ?? false,
+          partner: payload.partner ?? false,
+          investment_focus: payload.investment_focus || [],
+          investment_stages: payload.investment_stages || [],
+          geographic_focus: payload.geographic_focus || ['Tunisia'],
+          preferred_currencies: payload.preferred_currencies || ['TND'],
+          ...payload,
+          logo: logoVal,
+          logo_url: logoVal,
+          image_url: logoVal,
+          photo_url: logoVal
         };
 
-        try {
-          await supabase.from('InvestmentOrganization').insert(newOrg);
-        } catch (e) {}
+        // 1. Persist to localStorage immediately
+        const custom = readStorage(STORAGE_KEYS.ORGS);
+        writeStorage(STORAGE_KEYS.ORGS, [newOrg, ...custom]);
 
-        organizationsStore = [newOrg, ...organizationsStore];
+        // 2. Try Supabase insert with clean fields
+        const { photo_url, image, ...cleanForSupabase } = newOrg;
+        try {
+          await supabase.from('InvestmentOrganization').insert(cleanForSupabase);
+        } catch (e) {
+          console.warn('Supabase org insert queued locally:', e);
+        }
+
+        organizationsStore = deduplicateById([newOrg, ...organizationsStore]);
         return newOrg;
       },
 
       update: async (id, payload) => {
-        try {
-          await supabase.from('InvestmentOrganization').update(payload).eq('id', id);
-        } catch (e) {}
+        const logoVal = payload.logo || payload.logo_url || payload.image_url;
+        const currentItem = organizationsStore.find((o) => o.id === id || o.slug === id) || INITIAL_ORGANIZATIONS.find((o) => o.id === id || o.slug === id) || {};
+        const targetId = currentItem.id || id;
+        const updatedItem = {
+          ...currentItem,
+          ...payload,
+          id: targetId,
+          ...(logoVal !== undefined ? { logo: logoVal, logo_url: logoVal, image_url: logoVal, photo_url: logoVal } : {})
+        };
 
-        organizationsStore = organizationsStore.map((o) => (o.id === id ? { ...o, ...payload } : o));
-        return organizationsStore.find((o) => o.id === id);
+        const { photo_url, image, ...cleanForSupabase } = payload;
+        const supabaseUpdate = {
+          ...cleanForSupabase,
+          ...(logoVal !== undefined ? { logo: logoVal, logo_url: logoVal } : {})
+        };
+        try {
+          await supabase.from('InvestmentOrganization').update(supabaseUpdate).eq('id', targetId);
+        } catch (e) {
+          console.warn('Supabase org update warning:', e);
+        }
+
+        const custom = readStorage(STORAGE_KEYS.ORGS);
+        const exists = custom.some((o) => o.id === targetId);
+        const newCustom = exists
+          ? custom.map((o) => (o.id === targetId ? updatedItem : o))
+          : [updatedItem, ...custom];
+        writeStorage(STORAGE_KEYS.ORGS, newCustom);
+
+        organizationsStore = organizationsStore.map((o) => (o.id === targetId ? updatedItem : o));
+        if (!organizationsStore.some((o) => o.id === targetId)) {
+          organizationsStore = [updatedItem, ...organizationsStore];
+        }
+        return updatedItem;
       },
 
       delete: async (id) => {
         try {
           await supabase.from('InvestmentOrganization').delete().eq('id', id);
         } catch (e) {}
+
+        const custom = readStorage(STORAGE_KEYS.ORGS).filter((o) => o.id !== id);
+        writeStorage(STORAGE_KEYS.ORGS, custom);
+
+        const deleted = readStorage(STORAGE_KEYS.DELETED_ORGS);
+        if (!deleted.includes(id)) {
+          writeStorage(STORAGE_KEYS.DELETED_ORGS, [...deleted, id]);
+        }
 
         organizationsStore = organizationsStore.filter((o) => o.id !== id);
         return true;
@@ -552,26 +752,26 @@ export const base44 = {
 
     InvestmentVehicle: {
       filter: async (criteria = {}, order = '-created_at', limit = 500) => {
-        try {
-          let query = supabase.from('InvestmentVehicle').select('*');
-          Object.entries(criteria).forEach(([key, val]) => {
-            query = query.eq(key, val);
-          });
-          const { data, error } = await query.limit(limit);
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-
-        return vehiclesStore.filter((v) => {
+        const all = await base44.entities.InvestmentVehicle.list(order, limit);
+        return all.filter((v) => {
           return Object.entries(criteria).every(([key, val]) => v[key] === val);
         });
       },
 
       list: async (order = '-created_at', limit = 500) => {
+        const custom = readStorage(STORAGE_KEYS.VEHICLES);
         try {
           const { data, error } = await supabase.from('InvestmentVehicle').select('*').limit(limit);
-          if (!error && data && data.length > 0) return data;
+          if (!error && data && data.length > 0) {
+            const combined = deduplicateById([...custom, ...data]);
+            vehiclesStore = combined;
+            return combined;
+          }
         } catch (e) {}
-        return vehiclesStore;
+
+        const combined = deduplicateById([...custom, ...INITIAL_VEHICLES]);
+        vehiclesStore = combined;
+        return combined;
       },
 
       get: async (id) => {
@@ -579,25 +779,32 @@ export const base44 = {
           const { data, error } = await supabase.from('InvestmentVehicle').select('*').eq('id', id).single();
           if (!error && data) return data;
         } catch (e) {}
-        const v = vehiclesStore.find((item) => item.id === id);
+        const all = await base44.entities.InvestmentVehicle.list();
+        const v = all.find((item) => item.id === id);
         if (!v) return null;
         return v;
       },
 
       create: async (payload) => {
-        const id = payload.id || `fund_${Date.now()}`;
+        const id = payload.id || `fund_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
         const newVehicle = {
           id,
           created_at: new Date().toISOString(),
           active: payload.active ?? true,
+          investment_stages: payload.investment_stages || [],
+          sector_focus: payload.sector_focus || [],
+          geographic_focus: payload.geographic_focus || [],
           ...payload
         };
+
+        const custom = readStorage(STORAGE_KEYS.VEHICLES);
+        writeStorage(STORAGE_KEYS.VEHICLES, [newVehicle, ...custom]);
 
         try {
           await supabase.from('InvestmentVehicle').insert(newVehicle);
         } catch (e) {}
 
-        vehiclesStore = [newVehicle, ...vehiclesStore];
+        vehiclesStore = deduplicateById([newVehicle, ...vehiclesStore]);
         return newVehicle;
       }
     }

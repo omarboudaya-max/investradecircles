@@ -14,7 +14,7 @@ export default function WebsiteNavbar() {
 
   const links = [
     { name: isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map'), path: '/investment-map', badge: 'MAP' },
-    { name: isArabic ? 'الملتقى 13 أكتوبر' : (language === 'fr' ? 'Événement 13 Oct' : 'Event 13 Oct'), path: '/event' },
+    { name: isArabic ? 'منتدى Investrade 1' : (language === 'fr' ? 'Forum Investrade 1' : 'Investrade 1 Forum'), path: '/event', badge: '2027' },
   ];
 
   return (

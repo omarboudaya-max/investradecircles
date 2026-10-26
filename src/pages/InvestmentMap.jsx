@@ -2,18 +2,21 @@ import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { Map, Sparkles, TrendingUp, Layers, Coins, Star, X, ArrowRight } from 'lucide-react';
+import { Map, Sparkles, TrendingUp, Layers, Coins, Star, X, ArrowRight, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import TunisiaMap from '@/components/investment/TunisiaMap';
 import WorldMap from '@/components/investment/WorldMap';
 import GovernoratePanel from '@/components/investment/GovernoratePanel';
 import FilterBar from '@/components/investment/FilterBar';
 import ProjectCard from '@/components/investment/ProjectCard';
+import ProjectSubmitForm from '@/components/investment/ProjectSubmitForm';
 import { inBand, formatMTND, formatNumber, DEMO_NOTICE } from '@/lib/investment';
 
 export default function InvestmentMap() {
   const opportunitiesRef = useRef(null);
   const [selectedGovId, setSelectedGovId] = useState(null);
   const [tunisiaOpen, setTunisiaOpen] = useState(false);
+  const [submitOpportunityOpen, setSubmitOpportunityOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: '', governorateId: 'all', sectorId: 'all', sizeBand: 'all', stage: 'all', type: 'all', verifiedOnly: false,
   });
@@ -110,9 +113,18 @@ export default function InvestmentMap() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3">
           Discover Investment-Ready Projects Across Tunisia
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
           Explore projects by governorate, sector, investment size and opportunity type — and connect directly with project owners.
         </p>
+        <div className="flex justify-center">
+          <Button
+            size="lg"
+            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-6 py-2.5 shadow-lg shadow-primary/20 gap-2 transition-all hover:scale-[1.02]"
+            onClick={() => setSubmitOpportunityOpen(true)}
+          >
+            <Plus className="w-5 h-5" /> Propose an Investment Opportunity
+          </Button>
+        </div>
       </div>
 
       {/* Headline stats */}
@@ -171,9 +183,19 @@ export default function InvestmentMap() {
             Investment Opportunities
             <span className="ml-2 text-sm font-normal text-muted-foreground">{filtered.length} projects</span>
           </h2>
-          <span className="inline-flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-full px-3 py-1">
-            <Star className="w-3 h-3" /> {DEMO_NOTICE}
-          </span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/5 text-xs font-semibold"
+              onClick={() => setSubmitOpportunityOpen(true)}
+            >
+              <Plus className="w-3.5 h-3.5" /> Submit Opportunity
+            </Button>
+            <span className="inline-flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-full px-3 py-1">
+              <Star className="w-3 h-3" /> {DEMO_NOTICE}
+            </span>
+          </div>
         </div>
 
         {isLoading ? (
@@ -262,6 +284,14 @@ export default function InvestmentMap() {
           </div>
         </div>
       )}
+
+      {/* Submit Opportunity Modal */}
+      <ProjectSubmitForm
+        open={submitOpportunityOpen}
+        onClose={() => setSubmitOpportunityOpen(false)}
+        governorates={governorates}
+        sectors={sectors}
+      />
     </div>
   );
 }

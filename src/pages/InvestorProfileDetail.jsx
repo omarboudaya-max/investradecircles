@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,21 +22,35 @@ import {
   Calendar,
   Mail,
   Phone,
-  Landmark
+  Landmark,
+  Edit3,
+  Trash2,
+  Loader2
 } from 'lucide-react';
 import MatchingResultsModal from '@/components/investment/MatchingResultsModal';
 import InvestorInterestModal from '@/components/investment/InvestorInterestModal';
+import InvestorRegisterModal from '@/components/investment/InvestorRegisterModal';
 
 export default function InvestorProfileDetail() {
-  const { organizationSlug } = useParams();
+  const { organizationSlug, id } = useParams();
+  const slugOrId = organizationSlug || id;
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [matchingOpen, setMatchingOpen] = useState(false);
   const [interestOpen, setInterestOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [slugOrId]);
 
   // Fetch organization
-  const { data: organization, isLoading, error } = useQuery({
-    queryKey: ['investmentOrganization', organizationSlug],
-    queryFn: () => base44.entities.InvestmentOrganization.get(organizationSlug)
+  const { data: organization, isLoading, error, refetch } = useQuery({
+    queryKey: ['investmentOrganization', slugOrId],
+    queryFn: () => base44.entities.InvestmentOrganization.get(slugOrId)
   });
 
   // Fetch managed funds/vehicles
@@ -53,6 +69,36 @@ export default function InvestorProfileDetail() {
     queryKey: ['allProjectsForMatch'],
     queryFn: () => base44.entities.InvestmentProject.list()
   });
+
+  const isCreator = Boolean(
+    user && (
+      organization?.user_id === user.id ||
+      (organization?.contact_email && organization.contact_email.toLowerCase() === user.email?.toLowerCase()) ||
+      user.role === 'admin'
+    )
+  );
+  const isAdmin = user?.role === 'admin';
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to remove "${organization.display_name}" from the investment platform? This action cannot be undone.`)) return;
+    setDeleting(true);
+    try {
+      await base44.entities.InvestmentOrganization.delete(organization.id);
+      toast({
+        title: 'Investor Removed',
+        description: 'The institution has been removed from the directory.'
+      });
+      navigate('/investment-network');
+    } catch (err) {
+      toast({
+        title: 'Delete Failed',
+        description: err.message || 'Could not delete institution.',
+        variant: 'destructive'
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -107,17 +153,25 @@ export default function InvestorProfileDetail() {
               {/* Profile Card Info */}
               <div className="flex items-start gap-6">
                 {/* Logo profile photo square */}
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-slate-800 p-2 shadow-xl shrink-0 flex items-center justify-center overflow-hidden border border-slate-200/20">
-                  {organization.logo ? (
-                    <img
-                      src={organization.logo}
-                      alt={organization.logo_alt_text || organization.display_name}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                  ) : (
-                    <Building2 className="w-12 h-12 text-slate-400" />
-                  )}
-                </div>
+                {(() => {
+                  const orgPhoto = !logoError
+                    ? (organization?.logo_url || organization?.logo || organization?.image_url || organization?.photo_url || organization?.avatar_url)
+                    : null;
+                  return (
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-slate-800 p-2 shadow-xl shrink-0 flex items-center justify-center overflow-hidden border border-slate-200/20">
+                      {orgPhoto ? (
+                        <img
+                          src={orgPhoto}
+                          alt={organization.logo_alt_text || organization.display_name}
+                          onError={() => setLogoError(true)}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      ) : (
+                        <Building2 className="w-12 h-12 text-slate-400" />
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -176,13 +230,13 @@ export default function InvestorProfileDetail() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto flex-wrap">
                 <Button
                   size="lg"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold gap-2 shadow-lg shadow-emerald-500/20"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold gap-2 shadow-lg shadow-emerald-500/20 whitespace-normal text-center h-auto py-3 px-5"
                   onClick={() => setMatchingOpen(true)}
                 >
-                  <Sparkles className="w-5 h-5 text-slate-950" /> Find Matching Projects
+                  <Sparkles className="w-5 h-5 text-slate-950 shrink-0" /> Find Matching Projects
                 </Button>
                 <Button
                   size="lg"
@@ -192,6 +246,28 @@ export default function InvestorProfileDetail() {
                 >
                   Express Interest
                 </Button>
+                {isCreator && (
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 gap-2 font-semibold"
+                    onClick={() => setEditOpen(true)}
+                  >
+                    <Edit3 className="w-4 h-4" /> Edit Profile
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button
+                    size="lg"
+                    variant="destructive"
+                    className="bg-rose-600 hover:bg-rose-700 text-white gap-2 font-semibold"
+                    onClick={handleDelete}
+                    disabled={deleting}
+                  >
+                    {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    Delete
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -339,10 +415,16 @@ export default function InvestorProfileDetail() {
                     Run the automated deterministic matching algorithm to calculate compatibility scores with published projects on the Investment Map.
                   </p>
                   <Button
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold gap-2 py-5"
+                    className="w-full h-auto py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm gap-2.5 whitespace-normal leading-snug shadow-md"
                     onClick={() => setMatchingOpen(true)}
                   >
-                    <Sparkles className="w-4 h-4 text-slate-950" /> Find Compatible Projects ({allProjects.length} Available)
+                    <Sparkles className="w-4 h-4 text-slate-950 shrink-0" />
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <span>Find Compatible Projects</span>
+                      <span className="text-[11px] font-semibold text-slate-900/80">
+                        ({allProjects.length} Available)
+                      </span>
+                    </div>
                   </Button>
                 </CardContent>
               </Card>
@@ -394,6 +476,19 @@ export default function InvestorProfileDetail() {
         project={{ title: `Connection request with ${organization.display_name}` }}
         mode="interest"
       />
+
+      {/* Edit Profile Modal */}
+      {editOpen && (
+        <InvestorRegisterModal
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          orgToEdit={organization}
+          onSuccess={() => {
+            setEditOpen(false);
+            refetch();
+          }}
+        />
+      )}
     </div>
   );
 }

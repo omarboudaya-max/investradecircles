@@ -50,6 +50,7 @@ import FundProfileDetail from '@/pages/FundProfileDetail';
 import AIMatchmaker from '@/pages/AIMatchmaker';
 import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
 import UTICACommandCenterPage from '@/pages/UTICACommandCenterPage';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
@@ -188,6 +189,7 @@ function App() {
         <LanguageProfileSync />
         <QueryClientProvider client={queryClientInstance}>
           <Router>
+            <ScrollToTop />
             <AuthenticatedApp />
           </Router>
           <Toaster />

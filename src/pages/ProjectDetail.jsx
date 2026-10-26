@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowLeft, MapPin, ShieldCheck, Star, Building2, Coins, TrendingUp, Clock, Users,
   Globe, Target, Check, Lock, Mail, Phone, Bookmark, BookmarkCheck, Share2, Download,
-  Send, FileText, Loader2, Landmark, Plus, Sparkles
+  Send, FileText, Loader2, Landmark, Plus, Sparkles, Edit3, Trash2
 } from 'lucide-react';
 import InvestorInterestModal from '@/components/investment/InvestorInterestModal';
 import MatchingResultsModal from '@/components/investment/MatchingResultsModal';
@@ -36,6 +36,7 @@ function ProfileRow({ label, value }) {
 
 export default function ProjectDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [project, setProject] = useState(null);
@@ -46,10 +47,14 @@ export default function ProjectDetail() {
   const [showContact, setShowContact] = useState(false);
   const [modal, setModal] = useState(null); // 'interest' | 'info' | null
   const [showSubmit, setShowSubmit] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [matchingOpen, setMatchingOpen] = useState(false);
   const [allOrgs, setAllOrgs] = useState([]);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     let active = true;
     (async () => {
       try {
@@ -140,6 +145,36 @@ export default function ProjectDetail() {
     URL.revokeObjectURL(url);
   };
 
+  const isCreator = Boolean(
+    user && (
+      project?.user_id === user.id ||
+      (project?.email && project.email.toLowerCase() === user.email?.toLowerCase()) ||
+      user.role === 'admin'
+    )
+  );
+  const isAdmin = user?.role === 'admin';
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${project.title}"? This action cannot be undone.`)) return;
+    setDeleting(true);
+    try {
+      await base44.entities.InvestmentProject.delete(project.id);
+      toast({
+        title: 'Opportunity Deleted',
+        description: 'The investment opportunity has been deleted successfully.'
+      });
+      navigate('/investment-map');
+    } catch (e) {
+      toast({
+        title: 'Delete Failed',
+        description: e.message || 'Could not delete project.',
+        variant: 'destructive'
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-20 flex justify-center">
@@ -160,6 +195,7 @@ export default function ProjectDetail() {
 
   const Icon = sectorIcon(sector?.icon);
   const color = sector?.color || '#0891b2';
+  const projectImage = project?.image_url || project?.photo_url || project?.image || project?.cover_image_url || project?.logo;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -167,35 +203,86 @@ export default function ProjectDetail() {
         <ArrowLeft className="w-4 h-4" /> Back to Investment Map
       </Link>
 
+      {/* Cover Photo if uploaded */}
+      {projectImage && !imgError && (
+        <div className="relative w-full h-56 sm:h-80 rounded-2xl overflow-hidden mb-6 border bg-muted shadow-sm">
+          <img
+            src={projectImage}
+            alt={project.title}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       {/* Header */}
       <div className="rounded-2xl border bg-card p-6 sm:p-8 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}18`, border: `1px solid ${color}33` }}>
-            <Icon className="w-7 h-7" style={{ color }} />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              {project.is_verified && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Verified by Investraders
-                </span>
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden border shadow-sm" style={{ background: `${color}18`, borderColor: `${color}33` }}>
+              {projectImage && !imgError ? (
+                <img
+                  src={projectImage}
+                  alt={project.title}
+                  onError={() => setImgError(true)}
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              ) : (
+                <Icon className="w-8 h-8" style={{ color }} />
               )}
-              {project.featured && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> Featured
-                </span>
-              )}
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                {STAGE_LABELS[project.investment_stage] || project.investment_stage}
-              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">{project.title}</h1>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
-              <span className="inline-flex items-center gap-1.5"><MapPin className="w-4 h-4" />{governorate?.name || 'Tunisia'}</span>
-              {sector && <span className="inline-flex items-center gap-1.5"><Building2 className="w-4 h-4" />{sector.name}</span>}
-              <span className="font-mono text-xs">{project.project_code}</span>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                {project.is_verified && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Verified by Investraders
+                  </span>
+                )}
+                {project.featured && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> Featured
+                  </span>
+                )}
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {STAGE_LABELS[project.investment_stage] || project.investment_stage}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">{project.title}</h1>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
+                <span className="inline-flex items-center gap-1.5"><MapPin className="w-4 h-4" />{governorate?.name || 'Tunisia'}</span>
+                {sector && <span className="inline-flex items-center gap-1.5"><Building2 className="w-4 h-4" />{sector.name}</span>}
+                <span className="font-mono text-xs">{project.project_code}</span>
+              </div>
             </div>
           </div>
+
+          {/* Edit / Delete action buttons for creator or admin */}
+          {(isCreator || isAdmin) && (
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
+              {isCreator && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowEdit(true)}
+                  className="gap-1.5 text-xs font-semibold border-primary/30 hover:bg-primary/5 text-primary"
+                >
+                  <Edit3 className="w-3.5 h-3.5" /> Edit Opportunity
+                </Button>
+              )}
+              {isAdmin && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="gap-1.5 text-xs font-semibold"
+                >
+                  {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  Delete
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -340,10 +427,10 @@ export default function ProjectDetail() {
 
             <div className="space-y-2 pt-2">
               <Button
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 py-6 shadow-md"
+                className="w-full h-auto py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md whitespace-normal text-center leading-snug"
                 onClick={() => setMatchingOpen(true)}
               >
-                <Sparkles className="w-4 h-4 text-emerald-300" /> Find Matching Investors
+                <Sparkles className="w-4 h-4 text-emerald-300 shrink-0" /> Find Matching Investors
               </Button>
               <Button className="w-full" onClick={() => setModal('interest')}>
                 <Send className="w-4 h-4 mr-2" /> Express Investor Interest
@@ -367,6 +454,35 @@ export default function ProjectDetail() {
             <p className="text-[11px] text-muted-foreground text-center pt-1">
               Demonstration data — not a real investment opportunity.
             </p>
+
+            {/* Owner & Administrator Controls */}
+            {(isCreator || isAdmin) && (
+              <div className="pt-4 border-t space-y-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Opportunity Management
+                </p>
+                {isCreator && (
+                  <Button
+                    variant="outline"
+                    className="w-full text-xs gap-2 border-primary/30 text-primary hover:bg-primary/5"
+                    onClick={() => setShowEdit(true)}
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Modify Opportunity Details
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button
+                    variant="destructive"
+                    className="w-full text-xs gap-2"
+                    onClick={handleDelete}
+                    disabled={deleting}
+                  >
+                    {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                    Delete from Platform (Admin)
+                  </Button>
+                )}
+              </div>
+            )}
 
             {governorate && (
               <div className="pt-4 border-t">
@@ -415,6 +531,17 @@ export default function ProjectDetail() {
         governorate={governorate}
         sector={sector}
       />
+
+      {showEdit && (
+        <ProjectSubmitForm
+          open={showEdit}
+          onClose={() => setShowEdit(false)}
+          governorate={governorate}
+          sector={sector}
+          projectToEdit={project}
+          onSaved={(updated) => setProject((prev) => ({ ...prev, ...updated }))}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Send, MapPin, AlertCircle, Link2 } from 'lucide-react';
+import { Loader2, Send, MapPin, AlertCircle, Link2, Sparkles, Image as ImageIcon, Upload, X, Check } from 'lucide-react';
 import { STAGE_LABELS, TYPE_LABELS } from '@/lib/investment';
 
 const EMPTY = {
@@ -18,6 +19,7 @@ const EMPTY = {
   email: '',
   phone: '',
   city: '',
+  governorate_id: '',
   sector_id: '',
   project_type: 'GREENFIELD',
   investment_stage: 'READY_FOR_INVESTMENT',
@@ -26,6 +28,7 @@ const EMPTY = {
   jobs_created: '',
   short_description: '',
   description: '',
+  image_url: '',
 };
 
 function Field({ label, children }) {
@@ -37,30 +40,126 @@ function Field({ label, children }) {
   );
 }
 
-export default function ProjectSubmitForm({ open, onClose, governorate, sector = null, sectors = [] }) {
+export default function ProjectSubmitForm({
+  open,
+  onClose,
+  governorate = null,
+  governorates: passedGovernorates = [],
+  sector = null,
+  sectors: passedSectors = [],
+  projectToEdit = null,
+  onSaved = null,
+}) {
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Self-load governorates and sectors if not supplied by parent
+  const { data: fetchedGovernorates = [] } = useQuery({
+    queryKey: ['investment-all-govs'],
+    queryFn: () => base44.entities.Governorate.list(),
+    enabled: passedGovernorates.length === 0 && open,
+  });
+  const { data: fetchedSectors = [] } = useQuery({
+    queryKey: ['investment-all-sectors'],
+    queryFn: () => base44.entities.Sector.list(),
+    enabled: passedSectors.length === 0 && open,
+  });
+
+  const allGovernorates = passedGovernorates.length > 0 ? passedGovernorates : fetchedGovernorates;
+  const allSectors = passedSectors.length > 0 ? passedSectors : fetchedSectors;
+
+  const isEditing = !!projectToEdit;
 
   useEffect(() => {
     if (open) {
-      setForm({
-        ...EMPTY,
-        sector_id: sector?.id || '',
-        promoter_name: user?.full_name || '',
-        email: user?.email || '',
-      });
+      if (projectToEdit) {
+        setForm({
+          title: projectToEdit.title || '',
+          company_name: projectToEdit.company_name || '',
+          promoter_name: projectToEdit.promoter_name || '',
+          email: projectToEdit.email || '',
+          phone: projectToEdit.phone || '',
+          city: projectToEdit.city || '',
+          governorate_id: projectToEdit.governorate_id || '',
+          sector_id: projectToEdit.sector_id || '',
+          project_type: projectToEdit.project_type || 'GREENFIELD',
+          investment_stage: projectToEdit.investment_stage || 'READY_FOR_INVESTMENT',
+          investment_required: projectToEdit.investment_required ? String(projectToEdit.investment_required) : '',
+          expected_roi: projectToEdit.expected_roi ? String(projectToEdit.expected_roi) : '',
+          jobs_created: projectToEdit.jobs_created ? String(projectToEdit.jobs_created) : '',
+          short_description: projectToEdit.short_description || '',
+          description: projectToEdit.description || '',
+          image_url: projectToEdit.image_url || '',
+        });
+      } else {
+        setForm({
+          ...EMPTY,
+          governorate_id: governorate?.id || '',
+          sector_id: sector?.id || '',
+          promoter_name: user?.full_name || '',
+          email: user?.email || '',
+        });
+      }
       setError('');
     }
-  }, [open, user, sector]);
+  }, [open, user, governorate, sector, projectToEdit]);
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const setValue = (key) => (value) => setForm((f) => ({ ...f, [key]: value }));
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Selected image is too large. Please select an image under 10MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_W = 1200;
+        const MAX_H = 800;
+        let w = img.width;
+        let h = img.height;
+        if (w > MAX_W || h > MAX_H) {
+          if (w / h > MAX_W / MAX_H) {
+            h = Math.round((h * MAX_W) / w);
+            w = MAX_W;
+          } else {
+            w = Math.round((w * MAX_H) / h);
+            h = MAX_H;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.85);
+        setForm((f) => ({ ...f, image_url: compressed }));
+      };
+      img.onerror = () => {
+        setForm((f) => ({ ...f, image_url: reader.result }));
+      };
+      img.src = reader.result;
+    };
+    reader.onerror = () => {
+      setError('Could not read image file.');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const submit = async () => {
-    if (!governorate) return setError('No governorate is linked to this page.');
+    const targetGovId = governorate?.id || form.governorate_id;
+    if (!targetGovId) return setError('Please choose a governorate for this opportunity.');
     if (!form.title.trim()) return setError('Please enter a project title.');
     if (!sector && !form.sector_id) return setError('Please choose a sector.');
     if (!form.investment_required || Number(form.investment_required) <= 0) {
@@ -72,30 +171,51 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
     try {
       const payload = {
         title: form.title.trim(),
-        short_description: form.short_description.trim(),
-        description: form.description.trim(),
-        governorate_id: governorate?.id,
+        short_description: form.short_description.trim() || form.title.trim(),
+        description: form.description.trim() || form.short_description.trim() || form.title.trim(),
+        governorate_id: targetGovId,
         sector_id: sector?.id || form.sector_id,
         city: form.city.trim(),
         project_type: form.project_type,
         investment_stage: form.investment_stage,
         investment_required: Number(form.investment_required),
-        company_name: form.company_name.trim(),
+        company_name: form.company_name.trim() || 'Independent Promoter',
         promoter_name: form.promoter_name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
-        project_status: 'SUBMITTED',
-        is_verified: false,
-        featured: false,
+        image_url: form.image_url ? form.image_url.trim() : null,
+        photo_url: form.image_url ? form.image_url.trim() : null,
+        image: form.image_url ? form.image_url.trim() : null,
+        logo: form.image_url ? form.image_url.trim() : null,
       };
       if (form.expected_roi) payload.expected_roi = Number(form.expected_roi);
       if (form.jobs_created) payload.jobs_created = Number(form.jobs_created);
 
-      await base44.entities.InvestmentProject.create(payload);
+      let savedRecord;
+      if (isEditing) {
+        savedRecord = await base44.entities.InvestmentProject.update(projectToEdit.id, payload);
+      } else {
+        payload.project_status = 'PUBLISHED';
+        payload.is_verified = false;
+        payload.featured = false;
+        if (user?.id) payload.user_id = user.id;
+        savedRecord = await base44.entities.InvestmentProject.create(payload);
+      }
+
+      // Invalidate queries so the new or updated project appears everywhere immediately
+      queryClient.invalidateQueries({ queryKey: ['investment-projects'] });
+      queryClient.invalidateQueries({ queryKey: ['investmentProjectsForNetwork'] });
+      queryClient.invalidateQueries({ queryKey: ['allProjectsForMatch'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-projects-all'] });
+
       toast({
-        title: 'Project submitted',
-        description: 'An administrator will review it before it appears on the map.',
+        title: isEditing ? 'Opportunity Updated' : 'Opportunity Published',
+        description: isEditing
+          ? 'Your changes have been saved successfully!'
+          : 'Your project is now live on the investment platform!',
       });
+
+      if (onSaved) onSaved(savedRecord || payload);
       onClose();
     } catch (e) {
       setError(e.message || 'Could not submit the project. Please try again.');
@@ -108,18 +228,36 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
     <Dialog open={open} onOpenChange={(v) => !v && !submitting && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Submit a project</DialogTitle>
+          <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
+            <Sparkles className="w-4 h-4" /> {isEditing ? 'Edit Opportunity' : 'Propose Investment Opportunity'}
+          </div>
+          <DialogTitle>{isEditing ? 'Modify Investment Opportunity' : 'Submit an Opportunity'}</DialogTitle>
           <DialogDescription>
-            {governorate
-              ? `This opportunity will be linked to ${governorate.name}${sector ? ` and ${sector.name}` : ''}. It is reviewed by an administrator before it appears on the map.`
-              : 'New projects are reviewed by an administrator before they appear on the map.'}
+            {isEditing
+              ? 'Update the project parameters, description, financial requirements, or cover photo.'
+              : governorate
+              ? `This opportunity will be linked to ${governorate.name}${sector ? ` and ${sector.name}` : ''}. It will appear directly on the platform.`
+              : 'Add an opportunity to connect with institutional funds and verified investors.'}
           </DialogDescription>
         </DialogHeader>
 
-        {governorate && (
+        {governorate && !isEditing ? (
           <div className="inline-flex items-center gap-1.5 self-start rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
             <MapPin className="w-3.5 h-3.5" /> {governorate.name}, {governorate.region}
           </div>
+        ) : (
+          <Field label="Governorate *">
+            <Select value={form.governorate_id} onValueChange={setValue('governorate_id')}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a governorate" />
+              </SelectTrigger>
+              <SelectContent>
+                {allGovernorates.map((g) => (
+                  <SelectItem key={g.id} value={g.id}>{g.name} ({g.region})</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
         )}
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -129,7 +267,7 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
             </Field>
           </div>
 
-          {sector ? (
+          {sector && !isEditing ? (
             <Field label="Sector">
               <div className="flex items-center gap-2 h-9 rounded-md border bg-muted/40 px-3 text-sm">
                 <Link2 className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
@@ -143,7 +281,7 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
                   <SelectValue placeholder="Choose a sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sectors.map((s) => (
+                  {allSectors.map((s) => (
                     <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                   ))}
                 </SelectContent>
@@ -193,6 +331,68 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
             <Input value={form.company_name} onChange={set('company_name')} placeholder="Promoting company" />
           </Field>
 
+          {/* Photo / Image Upload Section */}
+          <div className="sm:col-span-2 rounded-xl border border-dashed border-border p-4 bg-muted/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs font-semibold flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-primary" /> Project Cover Photo
+              </Label>
+              {form.image_url && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setForm((f) => ({ ...f, image_url: '' }))}
+                  className="h-6 text-xs text-destructive hover:text-destructive gap-1 px-2"
+                >
+                  <X className="w-3 h-3" /> Remove Photo
+                </Button>
+              )}
+            </div>
+
+            {form.image_url ? (
+              <div className="relative rounded-lg overflow-hidden border bg-background/50 h-36 max-w-sm">
+                <img
+                  src={form.image_url}
+                  alt="Opportunity Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : null}
+
+            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs gap-1.5 shrink-0"
+              >
+                <Upload className="w-3.5 h-3.5" /> Upload Image File
+              </Button>
+              <div className="flex-1">
+                <Input
+                  type="url"
+                  placeholder="Or paste an image URL (e.g. https://...)"
+                  value={form.image_url.startsWith('data:') ? 'Image uploaded from file' : form.image_url}
+                  onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))}
+                  disabled={form.image_url.startsWith('data:')}
+                  className="text-xs h-9"
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Add a compelling project banner (JPG, PNG, WebP up to 5MB).
+            </p>
+          </div>
+
           <div className="sm:col-span-2">
             <Field label="Short summary">
               <Input value={form.short_description} onChange={set('short_description')} placeholder="One line describing the opportunity" />
@@ -227,8 +427,14 @@ export default function ProjectSubmitForm({ open, onClose, governorate, sector =
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
           <Button variant="outline" onClick={onClose} disabled={submitting}>Cancel</Button>
           <Button onClick={submit} disabled={submitting}>
-            {submitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-            Submit for approval
+            {submitting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : isEditing ? (
+              <Check className="w-4 h-4 mr-2" />
+            ) : (
+              <Send className="w-4 h-4 mr-2" />
+            )}
+            {isEditing ? 'Save Changes' : 'Submit for approval'}
           </Button>
         </div>
       </DialogContent>

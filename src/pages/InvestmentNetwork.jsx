@@ -381,9 +381,9 @@ export default function InvestmentNetwork() {
                       {/* Logo Profile Photo Area & Badges */}
                       <div className="flex items-start justify-between gap-4">
                         <div className="w-16 h-16 rounded-2xl border border-slate-200 dark:border-slate-800 p-1.5 bg-slate-50 dark:bg-slate-800 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
-                          {org.logo ? (
+                          {org.logo_url || org.logo ? (
                             <img
-                              src={org.logo}
+                              src={org.logo_url || org.logo}
                               alt={org.display_name}
                               className="w-full h-full object-cover rounded-xl"
                             />
@@ -412,6 +412,11 @@ export default function InvestmentNetwork() {
                                   🔵 Official
                                 </Badge>
                               )}
+                              {(org.verification_status === 'PENDING' || !org.verification_status) && (
+                                <Badge className="bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 text-[10px]">
+                                  🟡 Active Member
+                                </Badge>
+                              )}
                             </>
                           )}
                         </div>
@@ -419,7 +424,7 @@ export default function InvestmentNetwork() {
 
                       {/* Header info */}
                       <div className="space-y-1">
-                        <h4 className="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-emerald-600 transition-colors">
+                        <h4 className="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-emerald-600 transition-colors line-clamp-1">
                           {org.display_name}
                         </h4>
                         <p className="text-xs text-slate-500 flex items-center gap-1 font-medium">
@@ -460,21 +465,23 @@ export default function InvestmentNetwork() {
                     </CardContent>
 
                     {/* Card Footer Actions */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-xs text-slate-700 dark:text-slate-300"
+                        className="flex-1 min-w-0 text-xs px-2.5 h-9 text-slate-700 dark:text-slate-300"
                         onClick={() => navigate(`/investment-network/${org.slug || org.id}`)}
                       >
-                        View Profile
+                        <span className="truncate">View Profile</span>
                       </Button>
                       <Button
                         size="sm"
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1"
+                        className="flex-1 min-w-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 h-9 gap-1.5 font-medium shrink-0"
                         onClick={() => setMatchingModalOrg(org)}
+                        title="Find Matches"
                       >
-                        <Sparkles className="w-3.5 h-3.5" /> Find Matches
+                        <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Find Matches</span>
                       </Button>
                     </div>
                   </Card>

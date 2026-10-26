@@ -20,14 +20,27 @@ export default function ProjectCard({ project, governorate, sector, index = 0 })
         className="block h-full rounded-2xl border bg-card hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden group"
       >
         <div className="h-1.5" style={{ background: color }} />
+        {(project.image_url || project.photo_url || project.image || project.logo) && (
+          <div className="w-full h-36 overflow-hidden bg-muted relative">
+            <img
+              src={project.image_url || project.photo_url || project.image || project.logo}
+              alt={project.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
         <div className="p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${color}18`, border: `1px solid ${color}33` }}>
               <Icon className="w-5 h-5" style={{ color }} />
             </div>
-            {project.is_verified && (
+            {project.is_verified ? (
               <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <ShieldCheck className="w-3 h-3" /> Verified
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                ✨ Community
               </span>
             )}
           </div>

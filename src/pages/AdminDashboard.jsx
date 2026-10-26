@@ -115,6 +115,23 @@ function InvestorsAdminPanel({ search = '' }) {
     }
   });
 
+  const deleteOrg = useMutation({
+    mutationFn: async (id) => {
+      await base44.entities.InvestmentOrganization.delete(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-investor-orgs'] });
+      queryClient.invalidateQueries({ queryKey: ['investmentOrganizationsList'] });
+      queryClient.invalidateQueries({ queryKey: ['investmentVehiclesList'] });
+    }
+  });
+
+  const handleDeleteOrg = (org) => {
+    if (window.confirm(`Are you sure you want to remove investor "${org.display_name}"? This action cannot be undone.`)) {
+      deleteOrg.mutate(org.id);
+    }
+  };
+
   const q = search.trim().toLowerCase();
   const visible = orgs.filter(o =>
     !q || `${o.display_name || ''} ${o.legal_name || ''} ${o.country || ''} ${o.organization_type || ''}`.toLowerCase().includes(q)
@@ -137,8 +154,8 @@ function InvestorsAdminPanel({ search = '' }) {
           {visible.map((org) => (
             <div key={org.id} className="flex items-center gap-3 px-5 py-3.5">
               <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border overflow-hidden shrink-0 flex items-center justify-center">
-                {org.logo ? (
-                  <img src={org.logo} alt="" className="w-full h-full object-cover rounded-lg" />
+                {org.logo_url || org.logo ? (
+                  <img src={org.logo_url || org.logo} alt="" className="w-full h-full object-cover rounded-lg" />
                 ) : (
                   <Landmark className="w-5 h-5 text-slate-400" />
                 )}
@@ -159,14 +176,26 @@ function InvestorsAdminPanel({ search = '' }) {
                   {org.legal_name} · {org.city ? `${org.city}, ` : ''}{org.country} · Ticket: {org.minimum_ticket ? `${org.minimum_ticket}M - ${org.maximum_ticket}M TND` : 'Custom'}
                 </p>
               </div>
-              <Button
-                size="sm"
-                variant={org.verification_status === 'VERIFIED' ? 'outline' : 'default'}
-                className={`h-8 text-xs shrink-0 ${org.verification_status !== 'VERIFIED' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
-                onClick={() => toggleVerify.mutate({ id: org.id, status: org.verification_status })}
-              >
-                {org.verification_status === 'VERIFIED' ? 'Unverify' : 'Verify Mandate'}
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  size="sm"
+                  variant={org.verification_status === 'VERIFIED' ? 'outline' : 'default'}
+                  className={`h-8 text-xs ${org.verification_status !== 'VERIFIED' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
+                  onClick={() => toggleVerify.mutate({ id: org.id, status: org.verification_status })}
+                >
+                  {org.verification_status === 'VERIFIED' ? 'Unverify' : 'Verify Mandate'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => handleDeleteOrg(org)}
+                  title="Remove investor"
+                  disabled={deleteOrg.isPending}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

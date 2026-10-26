@@ -25,6 +25,10 @@ export default function FundProfileDetail() {
   const navigate = useNavigate();
   const [matchingOpen, setMatchingOpen] = useState(false);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [fundSlug]);
+
   // Fetch fund
   const { data: fund, isLoading, error } = useQuery({
     queryKey: ['investmentVehicleDetail', fundSlug],
@@ -66,6 +70,8 @@ export default function FundProfileDetail() {
     );
   }
 
+  const orgPhoto = organization?.logo_url || organization?.logo || organization?.image_url;
+
   return (
     <div>
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pb-16">
@@ -91,36 +97,47 @@ export default function FundProfileDetail() {
         {/* Hero Header */}
         <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white py-12">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
-                  {fund.vehicle_type}
-                </Badge>
-                <Badge className="bg-emerald-500 text-white text-xs">{fund.fund_status}</Badge>
-              </div>
-
-              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">{fund.name}</h1>
-
-              {organization && (
-                <p className="text-slate-300 text-sm flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-emerald-400" />
-                  Managed by:{' '}
-                  <Link
-                    to={`/investment-network/${organization.slug || organization.id}`}
-                    className="font-bold text-emerald-300 hover:underline"
-                  >
-                    {organization.display_name}
-                  </Link>
-                </p>
+            <div className="flex items-start gap-5">
+              {orgPhoto && (
+                <div className="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 p-2 shadow-xl shrink-0 flex items-center justify-center overflow-hidden border border-slate-200/20">
+                  <img
+                    src={orgPhoto}
+                    alt={organization?.display_name || fund.name}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </div>
               )}
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
+                    {fund.vehicle_type}
+                  </Badge>
+                  <Badge className="bg-emerald-500 text-white text-xs">{fund.fund_status}</Badge>
+                </div>
+
+                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">{fund.name}</h1>
+
+                {organization && (
+                  <p className="text-slate-300 text-sm flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-emerald-400" />
+                    Managed by:{' '}
+                    <Link
+                      to={`/investment-network/${organization.slug || organization.id}`}
+                      className="font-bold text-emerald-300 hover:underline"
+                    >
+                      {organization.display_name}
+                    </Link>
+                  </p>
+                )}
+              </div>
             </div>
 
             <Button
               size="lg"
-              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold gap-2 shadow-lg shadow-emerald-500/20"
+              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold gap-2 shadow-lg shadow-emerald-500/20 whitespace-normal text-center h-auto py-3 px-5"
               onClick={() => setMatchingOpen(true)}
             >
-              <Sparkles className="w-5 h-5 text-slate-950" /> Find Matching Projects
+              <Sparkles className="w-5 h-5 text-slate-950 shrink-0" /> Find Matching Projects
             </Button>
           </div>
         </div>

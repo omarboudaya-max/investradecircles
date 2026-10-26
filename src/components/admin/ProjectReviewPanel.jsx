@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Check, X, RotateCcw, Clock, CheckCircle2, XCircle, FolderKanban, Loader2 } from 'lucide-react';
+import { Check, X, RotateCcw, Clock, CheckCircle2, XCircle, FolderKanban, Loader2, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { CACHE } from '@/lib/query-client';
 import { formatMTND } from '@/lib/investment';
@@ -59,6 +59,23 @@ export default function ProjectReviewPanel({ search = '', addAuditLog }) {
       queryClient.invalidateQueries({ queryKey: ['investment-projects'] });
     },
   });
+
+  const deleteProject = useMutation({
+    mutationFn: (id) => base44.entities.InvestmentProject.delete(id),
+    onSuccess: (_, id) => {
+      if (addAuditLog) addAuditLog('project_deleted', `Deleted investment project ${id}`);
+      queryClient.invalidateQueries({ queryKey: ['admin-projects-all'] });
+      queryClient.invalidateQueries({ queryKey: ['investment-projects'] });
+      queryClient.invalidateQueries({ queryKey: ['investmentProjectsForNetwork'] });
+      queryClient.invalidateQueries({ queryKey: ['allProjectsForMatch'] });
+    },
+  });
+
+  const handleDelete = (p) => {
+    if (window.confirm(`Are you sure you want to delete investment opportunity "${p.title}"? This cannot be undone.`)) {
+      deleteProject.mutate(p.id);
+    }
+  };
 
   const counts = { all: projects.length, SUBMITTED: 0, PUBLISHED: 0, REJECTED: 0 };
   projects.forEach((p) => {
@@ -123,7 +140,7 @@ export default function ProjectReviewPanel({ search = '', addAuditLog }) {
                       submitted {p.created_date ? format(new Date(p.created_date), 'MMM d, yyyy HH:mm') : '—'}
                     </p>
                   </div>
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {p.project_status !== 'PUBLISHED' && (
                       <Button size="sm" className="h-7 text-xs gap-1" disabled={review.isPending}
                         onClick={() => review.mutate({ id: p.id, status: 'PUBLISHED' })}>
@@ -142,6 +159,16 @@ export default function ProjectReviewPanel({ search = '', addAuditLog }) {
                         <X className="w-3 h-3" /> Reject
                       </Button>
                     )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      disabled={deleteProject.isPending}
+                      onClick={() => handleDelete(p)}
+                      title="Delete opportunity"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
                   </div>
                 </div>
               );
