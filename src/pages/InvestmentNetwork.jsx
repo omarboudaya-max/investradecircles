@@ -158,15 +158,6 @@ export default function InvestmentNetwork() {
                 >
                   <PlusCircle className="w-5 h-5 text-slate-950" /> Represent an Investment Institution / Fund
                 </Button>
-
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 gap-2"
-                  onClick={() => navigate('/investment-map')}
-                >
-                  <FolderKanban className="w-5 h-5" /> Explore Investment Map Projects
-                </Button>
               </div>
             </div>
 

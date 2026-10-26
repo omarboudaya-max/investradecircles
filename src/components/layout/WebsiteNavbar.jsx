@@ -13,7 +13,6 @@ export default function WebsiteNavbar() {
   const { isArabic, language } = useLanguage();
 
   const links = [
-    { name: isArabic ? 'خريطة الاستثمار' : (language === 'fr' ? 'Carte des Investissements' : 'Investment Map'), path: '/investment-map', badge: 'MAP' },
     { name: isArabic ? 'منتدى Investrade 1' : (language === 'fr' ? 'Forum Investrade 1' : 'Investrade 1 Forum'), path: '/event', badge: '2027' },
   ];
 

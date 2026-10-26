@@ -774,15 +774,29 @@ export const base44 = {
         return combined;
       },
 
-      get: async (id) => {
+      get: async (idOrSlug) => {
+        if (!idOrSlug) return null;
+        const normalized = String(idOrSlug).toLowerCase().trim();
         try {
-          const { data, error } = await supabase.from('InvestmentVehicle').select('*').eq('id', id).single();
+          const { data, error } = await supabase
+            .from('InvestmentVehicle')
+            .select('*')
+            .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+            .single();
           if (!error && data) return data;
         } catch (e) {}
         const all = await base44.entities.InvestmentVehicle.list();
-        const v = all.find((item) => item.id === id);
-        if (!v) return null;
-        return v;
+        const v = all.find((item) => {
+          if (!item) return false;
+          if (item.id === idOrSlug || String(item.id).toLowerCase() === normalized) return true;
+          if (item.slug && item.slug.toLowerCase() === normalized) return true;
+          if (item.name) {
+            const nameSlug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            if (nameSlug === normalized || item.name.toLowerCase() === normalized) return true;
+          }
+          return false;
+        });
+        return v || null;
       },
 
       create: async (payload) => {

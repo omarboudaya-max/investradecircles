@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -136,12 +136,10 @@ export default function InvestorProfileDetail() {
             >
               <ArrowLeft className="w-4 h-4" /> Back to Investment Network
             </Button>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Link to="/investment-map" className="hover:underline">Investment Map</Link>
+            <div className="flex items-center gap-2 text-xs text-slate-500 truncate max-w-md">
+              <Link to="/investment-network" className="hover:underline shrink-0">Funds & Investors</Link>
               <span>/</span>
-              <Link to="/investment-network" className="hover:underline">Funds & Investors</Link>
-              <span>/</span>
-              <span className="font-semibold text-slate-900 dark:text-white">{organization.display_name}</span>
+              <span className="font-semibold text-slate-900 dark:text-white truncate">{organization.display_name}</span>
             </div>
           </div>
         </div>
@@ -376,23 +374,44 @@ export default function InvestorProfileDetail() {
                 <CardContent className="space-y-4">
                   {vehicles.length > 0 ? (
                     vehicles.map((v) => (
-                      <div
+                      <Link
                         key={v.id}
-                        className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3 bg-slate-50/50 dark:bg-slate-800/30 hover:border-emerald-500/50 transition-all"
+                        to={`/investment-network/fund/${v.id || v.slug}`}
+                        className="block border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3 bg-slate-50/50 dark:bg-slate-800/30 hover:border-emerald-500 hover:bg-emerald-50/20 dark:hover:bg-slate-800/60 transition-all cursor-pointer group"
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-bold text-slate-900 dark:text-white text-base">{v.name}</h4>
-                            <p className="text-xs text-slate-500">{v.vehicle_type} • Category: {v.fund_category}</p>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                {v.name}
+                              </h4>
+                              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="text-xs text-slate-500">
+                              {v.vehicle_type || 'Fund'} • Category: {v.fund_category ? v.fund_category.replace(/_/g, ' ') : 'General'}
+                            </p>
                           </div>
-                          <Badge className="bg-emerald-500 text-white text-xs">{v.fund_status}</Badge>
+                          {v.fund_status && (
+                            <Badge className="bg-emerald-500 text-white text-xs">
+                              {v.fund_status.replace(/_/g, ' ')}
+                            </Badge>
+                          )}
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-300">{v.description}</p>
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
-                          <span>Target Size: <strong>{v.target_size}M {v.currency}</strong></span>
-                          <span>Ticket: <strong>{v.minimum_ticket}M – {v.maximum_ticket}M {v.currency}</strong></span>
+                        {v.description && (
+                          <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                            {v.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 pt-1 border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center gap-4">
+                            <span>Target: <strong className="text-slate-700 dark:text-slate-200">{v.target_size ? `${v.target_size}M ${v.currency || 'TND'}` : 'Undisclosed'}</strong></span>
+                            <span>Ticket: <strong className="text-slate-700 dark:text-slate-200">{v.minimum_ticket && v.maximum_ticket ? `${v.minimum_ticket}M – ${v.maximum_ticket}M ${v.currency || 'TND'}` : 'Flexible'}</strong></span>
+                          </div>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs group-hover:underline flex items-center gap-1">
+                            View Fund Profile &rarr;
+                          </span>
                         </div>
-                      </div>
+                      </Link>
                     ))
                   ) : (
                     <p className="text-slate-500 text-sm italic">No individual funds listed yet for this management company.</p>
