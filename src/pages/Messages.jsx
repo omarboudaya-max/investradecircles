@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Send, MessageCircle, ArrowLeft, Search } from 'lucide-react';
+import { Send, MessageCircle, ArrowLeft, Search, Copy, Check, ChevronDown } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
 
 function makeConversationId(a, b) {
@@ -41,6 +41,29 @@ export default function Messages() {
   const [activeParticipant, setActiveParticipant] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [search, setSearch] = useState('');
+
+  const scrollContainerRef = useRef(null);
+  const isAtBottomRef = useRef(true);
+  const lastMsgIdRef = useRef(null);
+  const prevConvIdRef = useRef(null);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [copiedMsgId, setCopiedMsgId] = useState(null);
+
+  const handleCopyMessage = (msgId, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedMsgId(msgId);
+    setTimeout(() => setCopiedMsgId(null), 2000);
+  };
+
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const atBottom = distanceToBottom < 80;
+    isAtBottomRef.current = atBottom;
+    setShowScrollBottom(!atBottom);
+  };
 
   const { data: sentMessages = [] } = useQuery({
     queryKey: ['dms', user?.id],
@@ -173,9 +196,34 @@ export default function Messages() {
     if (convMessages.length > 0) markRead.mutate(convMessages);
   }, [activeConvId, convMessages.length]);
 
+  // Auto-scroll to bottom once when opening or switching conversation
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [convMessages]);
+    if (activeConvId && activeConvId !== prevConvIdRef.current) {
+      prevConvIdRef.current = activeConvId;
+      isAtBottomRef.current = true;
+      setShowScrollBottom(false);
+      lastMsgIdRef.current = null;
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+      }, 60);
+    }
+  }, [activeConvId]);
+
+  // Only scroll down when a NEW message arrives AND the user is already at the bottom (or sent by user)
+  // Background polling refetches with identical messages will NOT trigger scroll!
+  useEffect(() => {
+    if (!convMessages.length) return;
+    const currentLastMsg = convMessages[convMessages.length - 1];
+    const isNewMessage = currentLastMsg?.id !== lastMsgIdRef.current;
+
+    if (isNewMessage) {
+      lastMsgIdRef.current = currentLastMsg?.id;
+      const isMine = currentLastMsg?.sender_id === user?.id;
+      if (isMine || isAtBottomRef.current) {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [convMessages, user?.id]);
 
   useEffect(() => {
     if (activeConvId) inputRef.current?.focus();
@@ -197,6 +245,10 @@ export default function Messages() {
     onSuccess: () => {
       setNewMessage('');
       queryClient.invalidateQueries({ queryKey: ['dms', user?.id] });
+      isAtBottomRef.current = true;
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
     },
   });
 
@@ -302,7 +354,7 @@ export default function Messages() {
         </div>
 
         {/* Chat panel */}
-        <div className={`flex-1 flex flex-col min-w-0 ${activeConvId ? 'flex' : 'hidden md:flex'}`}>
+        <div className={`relative flex-1 flex flex-col min-w-0 ${activeConvId ? 'flex' : 'hidden md:flex'}`}>
           {!activeConvId ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-4">
               <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500/10 to-cyan-400/10 flex items-center justify-center">
@@ -334,7 +386,12 @@ export default function Messages() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1" style={{ background: 'hsl(var(--muted) / 0.2)' }}>
+              <div 
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="flex-1 overflow-y-auto px-4 py-4 space-y-1 relative" 
+                style={{ background: 'hsl(var(--muted) / 0.2)' }}
+              >
                 {convMessages.length === 0 && (
                   <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-12">
                     <Avatar src={activeParticipant?.avatar} name={activeParticipant?.name} size="lg" />
@@ -372,22 +429,43 @@ export default function Messages() {
                   return (
                     <div 
                       key={msg.id} 
-                      className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-2'}`}
+                      className={`group/msg relative flex items-end gap-1.5 ${isMine ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-2'}`}
                     >
                       {!isMine && (
                         <div className="w-7 h-7 shrink-0">
                           {!isGroupedWithNext && <Avatar src={msg.sender_avatar} name={msg.sender_name} size="sm" />}
                         </div>
                       )}
+
+                      {/* For sent message (isMine): Copy button on left */}
+                      {isMine && (
+                        <button
+                          type="button"
+                          onClick={() => handleCopyMessage(msg.id, msg.content)}
+                          className="opacity-0 group-hover/msg:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground text-xs shrink-0 self-center cursor-pointer"
+                          title="Copy message"
+                          aria-label="Copy message"
+                        >
+                          {copiedMsgId === msg.id ? (
+                            <span className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                              <Check className="w-3 h-3" />
+                              <span>Copied</span>
+                            </span>
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      )}
+
                       <div className={`max-w-[75%] flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
                         <div 
-                          className={`px-3.5 py-2 text-sm shadow-sm ${
+                          className={`px-3.5 py-2 text-sm shadow-sm select-text cursor-text ${
                             isMine 
                               ? 'bg-blue-600 text-white rounded-2xl rounded-br-xs' 
                               : 'bg-card text-foreground rounded-2xl rounded-bl-xs border'
                           }`}
                         >
-                          <p className="leading-relaxed break-words">{msg.content}</p>
+                          <p className="leading-relaxed break-words select-text">{msg.content}</p>
                         </div>
                         {/* Only show timestamp if NOT grouped with next message */}
                         {!isGroupedWithNext && (
@@ -396,11 +474,47 @@ export default function Messages() {
                           </p>
                         )}
                       </div>
+
+                      {/* For received message (!isMine): Copy button on right */}
+                      {!isMine && (
+                        <button
+                          type="button"
+                          onClick={() => handleCopyMessage(msg.id, msg.content)}
+                          className="opacity-0 group-hover/msg:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground text-xs shrink-0 self-center cursor-pointer"
+                          title="Copy message"
+                          aria-label="Copy message"
+                        >
+                          {copiedMsgId === msg.id ? (
+                            <span className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                              <Check className="w-3 h-3" />
+                              <span>Copied</span>
+                            </span>
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      )}
                     </div>
                   );
                 })}
                 <div ref={bottomRef} />
               </div>
+
+              {/* Floating "Latest" jump-down button if scrolled up */}
+              {showScrollBottom && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    setShowScrollBottom(false);
+                    isAtBottomRef.current = true;
+                  }}
+                  className="absolute bottom-16 right-6 px-3 py-1.5 rounded-full bg-slate-900/90 text-white border border-slate-700 shadow-xl hover:bg-slate-800 transition-all z-20 flex items-center gap-1.5 text-xs font-semibold cursor-pointer animate-in fade-in"
+                >
+                  <ChevronDown className="w-4 h-4 text-cyan-400" />
+                  <span className="text-[11px]">Latest</span>
+                </button>
+              )}
 
               {/* Input */}
               <div className="px-4 py-3 border-t bg-card flex items-center gap-2 sticky bottom-0">
@@ -409,9 +523,11 @@ export default function Messages() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onFocus={() => {
-                    setTimeout(() => {
-                      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-                    }, 200);
+                    if (isAtBottomRef.current) {
+                      setTimeout(() => {
+                        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                      }, 200);
+                    }
                   }}
                   placeholder={`Message ${activeParticipant?.name}...`}
                   className="rounded-full flex-1 h-10 bg-muted/50 border-muted focus-visible:ring-1 text-sm"

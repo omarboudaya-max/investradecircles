@@ -37,11 +37,25 @@ import { supabase } from '@/lib/supabase';
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
 import WebsiteFooter from '@/components/layout/WebsiteFooter';
 import EventBadgeCard from '@/components/event/EventBadgeCard';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { getEventTranslations } from '@/lib/i18n/investradeEventTranslations';
 
 export default function EventRegistrationLanding() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { language, setPreference, preference, isArabic, isRTL, dir } = useLanguage();
+
+  // If user passes ?lang=ar or ?lang=fr or ?lang=en in the URL, switch to that language
+  useEffect(() => {
+    const urlLang = searchParams.get('lang');
+    if (urlLang && ['ar', 'fr', 'en'].includes(urlLang.toLowerCase())) {
+      setPreference(urlLang.toLowerCase());
+    }
+  }, [searchParams, setPreference]);
+
+  const t = getEventTranslations(language);
 
   // Selected Attendee Category
   const [selectedCategory, setSelectedCategory] = useState('investor');
@@ -60,7 +74,6 @@ export default function EventRegistrationLanding() {
 
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(null);
-  const [activeTab, setActiveTab] = useState('pillars');
   const [selectedDay, setSelectedDay] = useState(1);
 
   // Live Countdown to April 20, 2027
@@ -95,7 +108,7 @@ export default function EventRegistrationLanding() {
 
   // Check if user already registered previously in localStorage
   useEffect(() => {
-    const savedReg = localStorage.getItem('investraders_investrade1_event_reg') || localStorage.getItem('investraders_oct7_event_reg');
+    const savedReg = localStorage.getItem('investraders_investrade1_event_reg');
     if (savedReg) {
       try {
         const parsed = JSON.parse(savedReg);
@@ -126,7 +139,6 @@ export default function EventRegistrationLanding() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Compress photo via canvas for light, instant payload
         const img = new Image();
         img.onload = () => {
           const maxDim = 500;
@@ -161,37 +173,15 @@ export default function EventRegistrationLanding() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.fullName.trim() || !formData.email.trim()) {
-      alert('Please provide your full name and email address.');
-      return;
-    }
-
     setLoading(true);
 
-    let finalPhotoUrl = formData.photoPreview || user?.user_metadata?.avatar_url || user?.avatar_url || null;
-
-    if (formData.photoFile && user) {
-      try {
-        const filePath = `event_photos/${user.id}_${Date.now()}.jpg`;
-        const { data: uploadData, error: uploadErr } = await supabase.storage
-          .from('media')
-          .upload(filePath, formData.photoFile);
-        if (!uploadErr && uploadData) {
-          const publicUrl = supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl;
-          finalPhotoUrl = publicUrl;
-        }
-      } catch (err) {
-        console.warn('Photo upload fallback to preview:', err);
-      }
-    }
-
     const normalizedEmail = formData.email.trim().toLowerCase();
+    const finalPhotoUrl = formData.photoPreview;
 
-    // Check if user is platform member
-    let isMember = !!user;
     let memberUserId = user?.id || null;
+    let isMember = !!user;
 
-    if (!memberUserId && normalizedEmail) {
+    if (!memberUserId) {
       try {
         const { data: profile } = await supabase
           .from('profiles')
@@ -222,7 +212,6 @@ export default function EventRegistrationLanding() {
     };
 
     try {
-      // Check existing registration
       const { data: existingReg } = await supabase
         .from('event_registrations')
         .select('*')
@@ -263,7 +252,7 @@ export default function EventRegistrationLanding() {
         setRegistrationSuccess(finalRecord);
       }
     } catch (err) {
-      console.warn('Registration save queued locally:', err);
+      console.warn('Registration saved locally:', err);
       const fallbackRecord = { ...regPayload, category: selectedCategory };
       localStorage.setItem('investraders_investrade1_event_reg', JSON.stringify(fallbackRecord));
       setRegistrationSuccess(fallbackRecord);
@@ -275,189 +264,74 @@ export default function EventRegistrationLanding() {
     }
   };
 
-  const audienceCategories = [
-    {
-      id: 'investor',
-      title: 'Capital Providers',
-      subtitle: 'Global & Regional Allocators',
-      icon: TrendingUp,
-      color: 'from-amber-400 to-amber-600',
-      badgeColor: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
-      stakeholders: [
-        'Institutional Investors & Sovereign Wealth Funds (SWFs)',
-        'Venture Capital (VC) & Growth Funds',
-        'Private Equity (PE) & Mezzanine Providers',
-        'Angel Investor Networks & Syndicates',
-        'Development Finance Institutions (DFIs) & Multilaterals',
-        'Single & Multi-Family Offices'
-      ],
-      valueProp: 'Access pre-vetted cap tables, direct deal rooms, and proprietary pipeline across North Africa.'
-    },
-    {
-      id: 'project',
-      title: 'Capital Seekers',
-      subtitle: 'Ventures & Developers',
-      icon: Rocket,
-      color: 'from-emerald-400 to-teal-600',
-      badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-      stakeholders: [
-        'High-growth Tech & AI Startups',
-        'SME Scale-ups seeking series funding or debt',
-        'Large Industrial & Manufacturing Enterprises',
-        'Renewable Solar & Green Hydrogen Developers',
-        'Logistics, Agribusiness & Health Units',
-        'Commercial Real Estate & Infrastructure Promoters'
-      ],
-      valueProp: 'Direct pitch access to 500+ accredited international capital allocators with structured term-sheet matching.'
-    },
-    {
-      id: 'institution',
-      title: 'Institutional & Public Sector',
-      subtitle: 'Policy & Economic Leaders',
-      icon: Building2,
-      color: 'from-cyan-400 to-blue-600',
-      badgeColor: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
-      stakeholders: [
-        'Economic & Finance Ministries',
-        'Investment Promotion Agencies (IPAs & FIPA)',
-        'International Chambers of Commerce & Trade Bodies',
-        'National Registries & Public Holding Entities',
-        'Diplomatic Delegations & Commercial Attachés',
-        'Regional Economic Commissions (COMESA, UMA, EU)'
-      ],
-      valueProp: 'Shape cross-border FDI frameworks, bilateral trade treaties, and public-private co-investment structures.'
-    },
-    {
-      id: 'partner',
-      title: 'Ecosystem Partners',
-      subtitle: 'Enablers & Advisory',
-      icon: Handshake,
-      color: 'from-purple-400 to-indigo-600',
-      badgeColor: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
-      stakeholders: [
-        'Incubators, Accelerators & Tech Hubs',
-        'Corporate Innovation Units & Labs',
-        'International Legal, Audit & Tax Advisory Firms',
-        'M&A and Investment Banking Boutiques',
-        'Technology Providers & Cloud Infrastructure Partners',
-        'Global Financial Media & Industry Analysts'
-      ],
-      valueProp: 'Showcase advisory excellence, build strategic alliances, and power the next wave of cross-border investments.'
-    }
-  ];
-
-  const strategicGoals = [
-    {
-      icon: Zap,
-      title: 'Capital Deployment',
-      desc: 'Accelerate deal-making by connecting investment-ready ventures directly with international equity, debt, and venture capital.',
-      color: 'text-amber-400',
-      border: 'border-amber-500/30',
-      bg: 'bg-amber-500/5'
-    },
-    {
-      icon: Globe,
-      title: 'International Cooperation',
-      desc: 'Strengthen trade, economic ties, and cross-border partnerships between Tunisia, regional economies, and global financial centers.',
-      color: 'text-cyan-400',
-      border: 'border-cyan-500/30',
-      bg: 'bg-cyan-500/5'
-    },
-    {
-      icon: Rocket,
-      title: 'Ecosystem Empowerment',
-      desc: 'Showcase high-potential startups and scale-ups to global investors, elevating regional innovation onto the international stage.',
-      color: 'text-emerald-400',
-      border: 'border-emerald-500/30',
-      bg: 'bg-emerald-500/5'
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Policy & Strategic Dialog',
-      desc: 'Host high-level panel discussions and roundtables focusing on foreign direct investment (FDI) frameworks, green transition, and digital transformation.',
-      color: 'text-purple-400',
-      border: 'border-purple-500/30',
-      bg: 'bg-purple-500/5'
-    }
-  ];
-
-  const eventPillars = [
-    {
-      number: '01',
-      title: 'Powered by Investraders Platform',
-      tag: 'Proprietary Matchmaking Engine',
-      desc: 'At the core of Investrade 1 is the Investraders platform, moving beyond conventional networking into precision algorithmic execution.',
-      features: [
-        'Curated Cap Tables & Project Profiles: Pre-vetted metrics, funding requirements, equity structure, and growth projections.',
-        'Precision Matchmaking: Algorithm pairs investors with opportunities based on sector, maturity stage, ticket size, and geography.',
-        'Structured B2B Scheduling: Browse portfolios in advance, request high-intent 1-on-1 meetings, and secure dedicated deal rooms.'
-      ],
-      icon: Cpu,
-      gradient: 'from-cyan-500 to-blue-600'
-    },
-    {
-      number: '02',
-      title: 'High-Level Forum & Panels',
-      tag: 'Plenary Thought Leadership',
-      desc: 'Two full days of keynote sessions, ministerial panels, and country spotlights analyzing the macro-investment landscape.',
-      features: [
-        'Global Macroeconomic Trends & Inflation Resilient Assets',
-        'Cross-Border Regulatory Frameworks & Regional Integration',
-        'Emerging AI Technologies, Clean Hydrogen & Sustainable Capital'
-      ],
-      icon: Compass,
-      gradient: 'from-purple-500 to-indigo-600'
-    },
-    {
-      number: '03',
-      title: 'Interactive Exhibition Hall',
-      tag: '100+ Showcases & Pavilions',
-      desc: 'A dynamic, high-visibility exhibition space at Palais des Congrès featuring leading corporations, emerging ventures, and global delegations.',
-      features: [
-        'Corporate Innovation & Regional Industrial Champions',
-        'Startup Alley: 50+ Vetted Seed & Series-A Scaleups',
-        'International Country & Investment Agency Pavilions'
-      ],
-      icon: Building2,
-      gradient: 'from-amber-500 to-rose-600'
-    },
-    {
-      number: '04',
-      title: 'Direct Strategic Outcomes',
-      tag: 'Tangible Deal Flow',
-      desc: 'Designed purposefully to translate dialogue into signed commitments, sovereign co-investments, and executed term sheets.',
-      features: [
-        'Signed MOUs & Term Sheets executed directly on site',
-        'Global Media & Investor Community Visibility',
-        'Long-term Cross-Border Trade & Investment Alliances'
-      ],
-      icon: FileCheck2,
-      gradient: 'from-emerald-500 to-teal-600'
-    }
-  ];
-
-  const scheduleDay1 = [
-    { time: '08:30 – 09:30', title: 'Delegate Registration & Networking Breakfast', type: 'Welcome', track: 'Registration Hall' },
-    { time: '09:30 – 10:45', title: 'Grand Opening Plenary: Tunisia at the Crossroads of Global Capital', type: 'Plenary', track: 'Auditorium Hannibal' },
-    { time: '11:00 – 12:30', title: 'High-Level Panel: FDI Modernization, Cross-Border Treaties & European Corridors', type: 'Policy', track: 'Auditorium Hannibal' },
-    { time: '12:30 – 14:00', title: 'VIP Exhibition Hall Inauguration & Executive Networking Luncheon', type: 'Exhibition', track: 'Exhibition Pavilions' },
-    { time: '14:00 – 15:30', title: 'Sovereign Wealth & Infrastructure: Deploying Capital in Clean Energy & Green Hydrogen', type: 'Roundtable', track: 'Hall Carthage' },
-    { time: '15:45 – 17:30', title: 'Structured B2B Matchmaking: 1-on-1 Investor & Enterprise Pre-Scheduled Meetings', type: 'Deal-Room', track: 'Investraders B2B Hub' },
-    { time: '18:00 – 20:00', title: 'VIP Networking Cocktail & Strategic Partnership Announcements', type: 'Reception', track: 'VIP Terrace' }
-  ];
-
-  const scheduleDay2 = [
-    { time: '09:00 – 10:30', title: 'Venture & Scale-Up Arena: Top 25 Regional Startups Pitch to Global VCs', type: 'Pitching', track: 'Auditorium Hannibal' },
-    { time: '10:45 – 12:15', title: 'Sectoral Deep-Dive: Agri-Food Sovereignty, Smart Cold-Chain & Export Logistics', type: 'Sectoral', track: 'Hall Carthage' },
-    { time: '12:15 – 13:45', title: 'Lunch & Exhibition Exploration: Tech & Industrial Innovation Showcases', type: 'Networking', track: 'Exhibition Pavilions' },
-    { time: '13:45 – 15:15', title: 'Advanced Manufacturing, Automotive & Electronics Harness Manufacturing in North Africa', type: 'Industrial', track: 'Hall Carthage' },
-    { time: '15:30 – 16:45', title: 'Final Deal-Room Closures & Term Sheet Execution Sessions', type: 'Deal-Room', track: 'Investraders B2B Hub' },
-    { time: '17:00 – 17:45', title: 'Official Closing Ceremony: Announcement of Signed MOUs & Investrade 2 Roadmap', type: 'Closing', track: 'Auditorium Hannibal' }
-  ];
+  const handleAddToCalendar = () => {
+    const title = encodeURIComponent(t.meta.title);
+    const details = encodeURIComponent(`${t.hero.description}\n\n${t.meta.venue}\n${t.meta.platform} (${t.meta.platformUrl})`);
+    const location = encodeURIComponent(t.meta.venue);
+    const startTime = "20270420T080000Z";
+    const endTime = "20270421T180000Z";
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startTime}/${endTime}&details=${details}&location=${location}`;
+    window.open(googleCalendarUrl, '_blank');
+  };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 overflow-x-hidden">
+    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 overflow-x-hidden" dir={dir}>
       <WebsiteNavbar />
+
+      {/* Floating In-Page Language Switcher Bar */}
+      <div className="w-full bg-[#040a18]/90 border-b border-cyan-500/20 py-2.5 px-4 backdrop-blur-md sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 text-xs flex-wrap">
+          <div className="flex items-center gap-2 text-slate-300">
+            <Globe className="w-4 h-4 text-cyan-400" />
+            <span className="font-semibold">{t.languageSelector.switchPrompt}:</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              onClick={() => setPreference('en')}
+              className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
+                language === 'en' && preference !== 'auto'
+                  ? 'bg-cyan-400 text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
+                  : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setPreference('fr')}
+              className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
+                language === 'fr' && preference !== 'auto'
+                  ? 'bg-cyan-400 text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
+                  : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Français
+            </button>
+            <button
+              onClick={() => setPreference('ar')}
+              className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
+                language === 'ar' && preference !== 'auto'
+                  ? 'bg-cyan-400 text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
+                  : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              العربية
+            </button>
+            <button
+              onClick={() => setPreference('auto')}
+              className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                preference === 'auto'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Automatically detect based on browser / system language"
+            >
+              <Sparkles className="w-3 h-3 text-emerald-400" />
+              <span>{t.languageSelector.auto}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section className="relative pt-12 sm:pt-20 pb-20 sm:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -474,7 +348,7 @@ export default function EventRegistrationLanding() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold mb-6 shadow-[0_0_25px_rgba(6,182,212,0.25)] backdrop-blur-md"
           >
             <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" />
-            <span>1st Forum & Exhibition for Investment and International Cooperation</span>
+            <span>{t.hero.badge}</span>
           </motion.div>
 
           {/* Main Title */}
@@ -482,18 +356,27 @@ export default function EventRegistrationLanding() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight mb-6"
+            className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight mb-4"
           >
-            INVESTRADE <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">1</span>
+            {t.hero.headingMain}
           </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-cyan-300 via-teal-200 to-emerald-300 bg-clip-text text-transparent max-w-3xl mx-auto mb-6"
+          >
+            {t.hero.headingSub}
+          </motion.p>
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="text-base sm:text-xl text-slate-300 max-w-4xl mx-auto mb-10 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-slate-300 max-w-4xl mx-auto mb-10 leading-relaxed font-normal"
           >
-            North Africa’s premier international platform bridging <span className="text-white font-semibold">high-impact projects</span>, <span className="text-white font-semibold">innovative startups</span>, and <span className="text-white font-semibold">expanding corporate enterprises</span> with global investors, venture capitalists, sovereign funds, and financial institutions.
+            {t.hero.description}
           </motion.p>
 
           {/* Key Facts Pill Grid */}
@@ -501,16 +384,20 @@ export default function EventRegistrationLanding() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12 text-left"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12 text-left rtl:text-right"
           >
             <div className="p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/20 backdrop-blur-md flex items-center gap-3.5 shadow-lg">
               <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/30">
                 <Calendar className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Summit Dates</span>
-                <span className="text-sm sm:text-base font-extrabold text-white">April 20 – 21, 2027</span>
-                <span className="text-[10px] text-cyan-300 block font-medium">2 High-Intensity Days</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  {isArabic ? 'تاريخ المنتدى' : (language === 'fr' ? 'Dates du Sommet' : 'Summit Dates')}
+                </span>
+                <span className="text-sm sm:text-base font-extrabold text-white">{t.meta.dates}</span>
+                <span className="text-[10px] text-cyan-300 block font-medium">
+                  {isArabic ? 'يومان مكثفان' : (language === 'fr' ? '2 Journées Intensives' : '2 High-Intensity Days')}
+                </span>
               </div>
             </div>
 
@@ -519,9 +406,13 @@ export default function EventRegistrationLanding() {
                 <MapPin className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Official Venue</span>
-                <span className="text-sm sm:text-base font-extrabold text-white">Palais des Congrès</span>
-                <span className="text-[10px] text-emerald-300 block font-medium">Tunis, Tunisia</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  {isArabic ? 'المقر الرسمي' : (language === 'fr' ? 'Lieu Officiel' : 'Official Venue')}
+                </span>
+                <span className="text-sm sm:text-base font-extrabold text-white">{t.meta.venueShort}</span>
+                <span className="text-[10px] text-emerald-300 block font-medium">
+                  {isArabic ? 'الجمهورية التونسية' : (language === 'fr' ? 'Tunis, Tunisie' : 'Tunis, Tunisia')}
+                </span>
               </div>
             </div>
 
@@ -530,8 +421,10 @@ export default function EventRegistrationLanding() {
                 <Globe className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Matchmaking Engine</span>
-                <span className="text-sm sm:text-base font-extrabold text-white">Investraders Platform</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  {isArabic ? 'المنصة الرقمية' : (language === 'fr' ? 'Plateforme Numérique' : 'Digital Platform')}
+                </span>
+                <span className="text-sm sm:text-base font-extrabold text-white">{t.meta.platform}</span>
                 <span className="text-[10px] text-amber-300 block font-medium">www.investraders.net</span>
               </div>
             </div>
@@ -544,25 +437,28 @@ export default function EventRegistrationLanding() {
             transition={{ delay: 0.25 }}
             className="max-w-2xl mx-auto mb-10 p-5 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl shadow-2xl"
           >
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block mb-3">
-              Official Summit Countdown • April 20, 2027
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block mb-1">
+              {t.countdown.title}
             </span>
+            <p className="text-[11px] text-slate-400 mb-4 font-mono">
+              {t.countdown.subtitle}
+            </p>
             <div className="grid grid-cols-4 gap-3">
               <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/10">
                 <div className="text-2xl sm:text-4xl font-black text-white">{timeLeft.days}</div>
-                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">Days</div>
+                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">{t.countdown.days}</div>
               </div>
               <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/10">
                 <div className="text-2xl sm:text-4xl font-black text-white">{timeLeft.hours}</div>
-                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">Hours</div>
+                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">{t.countdown.hours}</div>
               </div>
               <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/10">
                 <div className="text-2xl sm:text-4xl font-black text-white">{timeLeft.minutes}</div>
-                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">Minutes</div>
+                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">{t.countdown.minutes}</div>
               </div>
               <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/10">
                 <div className="text-2xl sm:text-4xl font-black text-cyan-400 animate-pulse">{timeLeft.seconds}</div>
-                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">Seconds</div>
+                <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">{t.countdown.seconds}</div>
               </div>
             </div>
           </motion.div>
@@ -579,23 +475,23 @@ export default function EventRegistrationLanding() {
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-500 hover:from-cyan-300 hover:to-emerald-400 text-slate-950 font-black text-sm shadow-[0_0_25px_rgba(6,182,212,0.45)] transition-all flex items-center justify-center gap-2 hover:scale-105"
             >
               <Ticket className="w-5 h-5" />
-              Register for Delegate Pass
+              <span>{t.hero.registerBtn}</span>
             </a>
 
-            <a
-              href="#pillars-section"
-              className="w-full sm:w-auto px-7 py-4 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-sm border border-slate-700 transition-all flex items-center justify-center gap-2"
+            <button
+              onClick={handleAddToCalendar}
+              className="w-full sm:w-auto px-7 py-4 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-sm border border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Explore 4 Core Pillars</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
+              <Calendar className="w-4 h-4 text-cyan-400" />
+              <span>{t.hero.calendarBtn}</span>
+            </button>
 
             <a
               href="#schedule-section"
               className="w-full sm:w-auto px-6 py-4 rounded-full bg-white/5 hover:bg-white/10 text-cyan-300 font-bold text-sm border border-cyan-500/30 transition-all flex items-center justify-center gap-2"
             >
               <Clock className="w-4 h-4 text-cyan-400" />
-              2-Day Program Schedule
+              <span>{t.hero.agendaBtn}</span>
             </a>
           </motion.div>
 
@@ -604,26 +500,22 @@ export default function EventRegistrationLanding() {
 
       {/* Key Stats Bar */}
       <section className="border-y border-white/10 bg-slate-950/70 py-8 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div>
-            <div className="text-2xl sm:text-4xl font-extrabold text-cyan-400">2 Full Days</div>
-            <div className="text-xs text-slate-400 mt-1 font-medium">B2B Deal-Making</div>
+            <div className="text-2xl sm:text-4xl font-extrabold text-cyan-400">{t.hero.stats.delegates}</div>
+            <div className="text-xs text-slate-400 mt-1 font-medium">{t.hero.stats.delegatesDesc}</div>
           </div>
           <div>
-            <div className="text-2xl sm:text-4xl font-extrabold text-emerald-400">500+</div>
-            <div className="text-xs text-slate-400 mt-1 font-medium">Accredited Capital Allocators</div>
+            <div className="text-2xl sm:text-4xl font-extrabold text-emerald-400">{t.hero.stats.countries}</div>
+            <div className="text-xs text-slate-400 mt-1 font-medium">{t.hero.stats.countriesDesc}</div>
           </div>
           <div>
-            <div className="text-2xl sm:text-4xl font-extrabold text-amber-400">150+</div>
-            <div className="text-xs text-slate-400 mt-1 font-medium">Pre-Vetted Projects</div>
+            <div className="text-2xl sm:text-4xl font-extrabold text-amber-400">{t.hero.stats.pipeline}</div>
+            <div className="text-xs text-slate-400 mt-1 font-medium">{t.hero.stats.pipelineDesc}</div>
           </div>
           <div>
-            <div className="text-2xl sm:text-4xl font-extrabold text-purple-400">40+</div>
-            <div className="text-xs text-slate-400 mt-1 font-medium">Participating Countries</div>
-          </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="text-2xl sm:text-4xl font-extrabold text-blue-400">$500M+</div>
-            <div className="text-xs text-slate-400 mt-1 font-medium">Target Pipeline Capacity</div>
+            <div className="text-2xl sm:text-4xl font-extrabold text-purple-400">{t.hero.stats.dealRooms}</div>
+            <div className="text-xs text-slate-400 mt-1 font-medium">{t.hero.stats.dealRoomsDesc}</div>
           </div>
         </div>
       </section>
@@ -632,30 +524,36 @@ export default function EventRegistrationLanding() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-12">
         <div className="text-center max-w-3xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-            Executive Framework
+            {t.foundations.badge}
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
-            Transforming Cross-Border Investment Dialog into Concrete Deal Flows
+            {t.foundations.title}
           </h2>
+          <p className="text-xs sm:text-sm text-slate-400 mt-2">
+            {t.foundations.subtitle}
+          </p>
         </div>
 
         {/* Executive Summary Hero Card */}
-        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-slate-900 via-[#0B152A] to-slate-900 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-slate-900 via-[#0B152A] to-slate-900 border border-cyan-500/30 shadow-2xl relative overflow-hidden text-left rtl:text-right">
           <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 flex items-center gap-3">
-            <Award className="w-6 h-6 text-cyan-400" />
-            Executive Summary
+            <Award className="w-6 h-6 text-cyan-400 shrink-0" />
+            <span>{t.foundations.execSummary.title}</span>
           </h3>
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-6 font-normal">
-            Held over two high-intensity days at the <strong>Palais des Congrès in Tunis</strong>, <strong>Investrade 1</strong> is designed to transform cross-border investment dialog into concrete deal flows, joint ventures, and sustainable strategic partnerships.
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-4 font-normal">
+            {t.foundations.execSummary.text1}
           </p>
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-            Powered by the <strong>Investraders</strong> digital platform, the event moves beyond conventional networking by utilizing smart matchmaking tools and curated cap tables to seamlessly connect capital seekers with the right capital providers.
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-4 font-normal">
+            {t.foundations.execSummary.text2}
           </p>
+          <div className="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 leading-relaxed font-medium">
+            💡 {t.foundations.execSummary.highlight}
+          </div>
         </div>
 
         {/* Vision & Mission Split Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left rtl:text-right">
           {/* Vision */}
           <div className="p-8 rounded-3xl bg-slate-900/80 border border-emerald-500/30 shadow-xl relative overflow-hidden flex flex-col justify-between">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -663,17 +561,14 @@ export default function EventRegistrationLanding() {
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-6 border border-emerald-500/30">
                 <Compass className="w-6 h-6" />
               </div>
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-2">Our Vision</span>
-              <h4 className="text-xl sm:text-2xl font-extrabold text-white mb-4">
-                The Central Investment Hub for Africa & Europe
-              </h4>
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-2">{t.foundations.vision.title}</span>
               <p className="text-sm text-slate-300 leading-relaxed">
-                To establish Tunisia as a central investment hub at the crossroads of Africa, Europe, and the Middle East, fostering a dynamic global ecosystem where visionary capital meets transformative projects to drive sustainable economic growth.
+                {t.foundations.vision.text}
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800 flex items-center gap-2 text-xs text-emerald-300 font-semibold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Crossroads of Africa, Europe & Middle East
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>{isArabic ? 'ملتقى إفريقيا وأوروبا والشرق الأوسط' : (language === 'fr' ? 'Carrefour Afrique, Europe & Moyen-Orient' : 'Crossroads of Africa, Europe & Middle East')}</span>
             </div>
           </div>
 
@@ -684,17 +579,14 @@ export default function EventRegistrationLanding() {
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-6 border border-cyan-500/30">
                 <Rocket className="w-6 h-6" />
               </div>
-              <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block mb-2">Our Mission</span>
-              <h4 className="text-xl sm:text-2xl font-extrabold text-white mb-4">
-                Structured, High-Value Deal Execution
-              </h4>
+              <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block mb-2">{t.foundations.mission.title}</span>
               <p className="text-sm text-slate-300 leading-relaxed">
-                To facilitate direct, high-value investment opportunities by providing a structured, data-driven environment for project owners, startups, established companies, and international investors to connect, negotiate, and execute strategic partnerships.
+                {t.foundations.mission.text}
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800 flex items-center gap-2 text-xs text-cyan-300 font-semibold">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-              Data-Driven Negotiation & Strategic Partnering
+              <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+              <span>{isArabic ? 'بيئة مهيكلة ومبنية على البيانات الموثقة' : (language === 'fr' ? 'Environnement structuré et axé sur les données' : 'Data-Driven & Structured Deal Environment')}</span>
             </div>
           </div>
         </div>
@@ -705,23 +597,30 @@ export default function EventRegistrationLanding() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-              Strategic Blueprint
+              {t.goals.badge}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
-              Key Event Objectives & Strategic Goals
+              {t.goals.title}
             </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+              {t.goals.subtitle}
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {strategicGoals.map((goal, idx) => {
-              const Icon = goal.icon;
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left rtl:text-right">
+            {t.goals.items.map((goal, idx) => {
+              const icons = [Zap, Globe, Rocket, ShieldCheck];
+              const colors = ['text-amber-400', 'text-cyan-400', 'text-emerald-400', 'text-purple-400'];
+              const borders = ['border-amber-500/30', 'border-cyan-500/30', 'border-emerald-500/30', 'border-purple-500/30'];
+              const bgs = ['bg-amber-500/10', 'bg-cyan-500/10', 'bg-emerald-500/10', 'bg-purple-500/10'];
+              const Icon = icons[idx % icons.length];
               return (
                 <div 
-                  key={idx}
-                  className={`p-6 rounded-3xl bg-slate-900/80 border ${goal.border} hover:scale-[1.02] transition-transform duration-300 shadow-xl flex flex-col justify-between`}
+                  key={goal.id}
+                  className={`p-6 rounded-3xl bg-slate-900/80 border ${borders[idx]} hover:scale-[1.02] transition-transform duration-300 shadow-xl flex flex-col justify-between`}
                 >
                   <div>
-                    <div className={`w-12 h-12 rounded-2xl ${goal.bg} ${goal.color} flex items-center justify-center mb-5 border border-white/10`}>
+                    <div className={`w-12 h-12 rounded-2xl ${bgs[idx]} ${colors[idx]} flex items-center justify-center mb-5 border border-white/10`}>
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{goal.title}</h3>
@@ -738,19 +637,26 @@ export default function EventRegistrationLanding() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-            Targeted Stakeholders
+            {t.stakeholders.badge}
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4">
-            Curated Ecosystem of Decision Makers
+            {t.stakeholders.title}
           </h2>
           <p className="text-sm text-slate-300">
-            Investrade 1 gathers accredited participants across four complementary investment pillars.
+            {t.stakeholders.subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {audienceCategories.map((cat) => {
-            const Icon = cat.icon;
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left rtl:text-right">
+          {t.stakeholders.categories.map((cat, idx) => {
+            const icons = [TrendingUp, Rocket, Building2, Handshake];
+            const badgeColors = [
+              'bg-amber-500/10 text-amber-300 border-amber-500/30',
+              'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
+              'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
+              'bg-purple-500/10 text-purple-300 border-purple-500/30'
+            ];
+            const Icon = icons[idx];
             return (
               <div 
                 key={cat.id}
@@ -761,21 +667,21 @@ export default function EventRegistrationLanding() {
                     <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 text-cyan-400">
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${cat.badgeColor}`}>
-                      {cat.subtitle}
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${badgeColors[idx]}`}>
+                      {cat.role}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-extrabold text-white mb-3">{cat.title}</h3>
-                  <p className="text-xs text-slate-400 mb-6 font-medium italic">
-                    "{cat.valueProp}"
+                  <h3 className="text-xl font-extrabold text-white mb-3">{cat.name}</h3>
+                  <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                    {cat.desc}
                   </p>
 
                   <div className="space-y-2.5">
-                    {cat.stakeholders.map((s, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-xs text-slate-200">
+                    {cat.bullets.map((bullet, bIdx) => (
+                      <div key={bIdx} className="flex items-start gap-2.5 text-xs text-slate-200">
                         <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                        <span>{s}</span>
+                        <span>{bullet}</span>
                       </div>
                     ))}
                   </div>
@@ -787,7 +693,8 @@ export default function EventRegistrationLanding() {
                     onClick={() => setSelectedCategory(cat.id)}
                     className="text-xs font-bold text-cyan-300 hover:text-cyan-200 flex items-center gap-1.5 transition-colors"
                   >
-                    Register as {cat.title} <ArrowRight className="w-3.5 h-3.5" />
+                    <span>{isArabic ? `التسجيل كـ ${cat.name}` : (language === 'fr' ? `S'inscrire comme ${cat.name}` : `Register as ${cat.name}`)}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>
@@ -801,67 +708,127 @@ export default function EventRegistrationLanding() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-              Signature Pillars
+              {t.pillars.badge}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4">
-              Featured Pillars & Tangible Outcomes
+              {t.pillars.title}
             </h2>
             <p className="text-sm text-slate-300">
-              Four interconnected modules powering cross-border transactions at Palais des Congrès.
+              {t.pillars.subtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {eventPillars.map((pillar, idx) => {
-              const Icon = pillar.icon;
-              return (
-                <div 
-                  key={idx}
-                  className="p-8 rounded-3xl bg-slate-900/80 border border-cyan-500/20 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
-
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-3xl font-black text-cyan-400/30 font-mono">
-                        {pillar.number}
-                      </span>
-                      <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                        {pillar.tag}
-                      </span>
-                    </div>
-
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                      {pillar.title}
-                    </h3>
-
-                    <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
-                      {pillar.desc}
-                    </p>
-
-                    <div className="space-y-3">
-                      {pillar.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-200 flex items-start gap-3">
-                          <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                          <span className="leading-relaxed">{feat}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {pillar.number === '01' && (
-                    <div className="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
-                      <Link
-                        to="/investment-network"
-                        className="text-xs font-bold text-cyan-300 hover:underline flex items-center gap-1.5"
-                      >
-                        Explore Live Matchmaking Network <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left rtl:text-right">
+            {/* Pillar 1: Platform */}
+            <div className="p-8 rounded-3xl bg-slate-900/80 border border-cyan-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-3xl font-black text-cyan-400/30 font-mono">01</span>
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                    {t.pillars.pillar1.badge}
+                  </span>
                 </div>
-              );
-            })}
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                  {t.pillars.pillar1.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                  {t.pillars.pillar1.desc}
+                </p>
+
+                <div className="space-y-3">
+                  {t.pillars.pillar1.features.map((feat, fIdx) => (
+                    <div key={fIdx} className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-200">
+                      <div className="font-bold text-cyan-300 mb-1 flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{feat.title}</span>
+                      </div>
+                      <p className="text-slate-300 leading-relaxed text-[11px]">{feat.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
+                <Link
+                  to="/investment-network"
+                  className="text-xs font-bold text-cyan-300 hover:underline flex items-center gap-1.5"
+                >
+                  <span>{isArabic ? 'استكشاف منصة المطابقة الاستثمارية' : (language === 'fr' ? 'Explorer la plateforme de mise en relation' : 'Explore Matchmaking Network')}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Pillar 2: Forum & Panels */}
+            <div className="p-8 rounded-3xl bg-slate-900/80 border border-purple-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-3xl font-black text-purple-400/30 font-mono">02</span>
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/30">
+                    {t.pillars.pillar2.badge}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                  {t.pillars.pillar2.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                  {t.pillars.pillar2.desc}
+                </p>
+
+                <div className="p-5 rounded-2xl bg-purple-950/30 border border-purple-500/20 text-xs text-purple-200 leading-relaxed">
+                  <Compass className="w-6 h-6 text-purple-400 mb-2" />
+                  <p>{isArabic ? 'جلسات عامة، وكلمات لكبار الشخصيات، ومناقشات حول الاستثمار الأخضر والتحول الرقمي وتدفقات رأس المال العابر للحدود.' : (language === 'fr' ? 'Sessions plénières, keynotes ministérielles et débats sur les investissements durables et les flux de capitaux régionaux.' : 'Plenary keynotes, ministerial panels, and expert country spotlights focusing on global macroeconomic trends and sustainable FDI.')}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pillar 3: Exhibition Hall */}
+            <div className="p-8 rounded-3xl bg-slate-900/80 border border-amber-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-3xl font-black text-amber-400/30 font-mono">03</span>
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                    {t.pillars.pillar3.badge}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                  {t.pillars.pillar3.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                  {t.pillars.pillar3.desc}
+                </p>
+
+                <div className="p-5 rounded-2xl bg-amber-950/30 border border-amber-500/20 text-xs text-amber-200 leading-relaxed">
+                  <Building2 className="w-6 h-6 text-amber-400 mb-2" />
+                  <p>{isArabic ? 'فضاء عرض تفاعلي يضم أجنحة الشركات، والشركات الناشئة الصاعدة، والوكالات الحكومية والبعثات الاقتصادية الدولية.' : (language === 'fr' ? 'Espace d\'exposition interactif réunissant entreprises innovantes, pavillons de pays et agences d\'investissement.' : 'An interactive showcase hosting 100+ vetted enterprise pavilions, startup showcases, and international country delegations.')}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pillar 4: Direct Outcomes */}
+            <div className="p-8 rounded-3xl bg-slate-900/80 border border-emerald-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-3xl font-black text-emerald-400/30 font-mono">04</span>
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                    {t.pillars.pillar4.badge}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                  {t.pillars.pillar4.title}
+                </h3>
+
+                <div className="space-y-3 mt-4">
+                  {t.pillars.pillar4.bullets.map((bullet, bIdx) => (
+                    <div key={bIdx} className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-200 flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <span className="leading-relaxed">{bullet}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -870,17 +837,17 @@ export default function EventRegistrationLanding() {
       <section id="schedule-section" className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-            Summit Program
+            {t.agenda.badge}
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4">
-            Two Days of Strategic Dialog & Deal-Rooms
+            {t.agenda.title}
           </h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            Palais des Congrès, Tunis • High-intensity plenary keynotes, sector deep-dives, and pre-scheduled deal rooms.
+            {t.agenda.subtitle}
           </p>
 
           {/* Day Switcher Tabs */}
-          <div className="flex items-center justify-center gap-4 mt-8">
+          <div className="flex items-center justify-center gap-4 mt-8 flex-wrap">
             <button
               onClick={() => setSelectedDay(1)}
               className={`px-6 py-3 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
@@ -889,7 +856,7 @@ export default function EventRegistrationLanding() {
                   : 'bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-500/40'
               }`}
             >
-              Day 1: Tuesday, April 20, 2027
+              {t.agenda.day1Btn}
             </button>
             <button
               onClick={() => setSelectedDay(2)}
@@ -899,40 +866,27 @@ export default function EventRegistrationLanding() {
                   : 'bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-500/40'
               }`}
             >
-              Day 2: Wednesday, April 21, 2027
+              {t.agenda.day2Btn}
             </button>
           </div>
         </div>
 
         {/* Schedule List */}
-        <div className="space-y-4">
-          {(selectedDay === 1 ? scheduleDay1 : scheduleDay2).map((item, idx) => (
+        <div className="space-y-4 text-left rtl:text-right">
+          {(selectedDay === 1 ? t.agenda.day1 : t.agenda.day2).map((item, idx) => (
             <div
               key={idx}
-              className={`p-5 rounded-2xl border transition-all ${
-                item.type === 'Plenary' || item.type === 'Deal-Room' || item.type === 'Closing'
-                  ? 'bg-slate-900/90 border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.1)]'
-                  : 'bg-slate-900/60 border-slate-800'
-              }`}
+              className="p-5 rounded-2xl border border-slate-800 bg-slate-900/80 hover:border-cyan-500/40 transition-all shadow-md"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="space-y-1">
+                <div className="space-y-1 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 rounded-md bg-cyan-500/10 text-cyan-400 font-mono text-xs font-bold border border-cyan-500/30">
                       {item.time}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/5 text-slate-300 border border-white/10 uppercase">
-                      {item.type}
-                    </span>
                   </div>
                   <h4 className="text-base sm:text-lg font-bold text-white pt-1">{item.title}</h4>
-                </div>
-
-                <div className="text-right sm:text-left bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800 shrink-0">
-                  <span className="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-                    {item.track}
-                  </span>
+                  <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             </div>
@@ -946,24 +900,24 @@ export default function EventRegistrationLanding() {
           
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 font-mono text-xs font-bold border border-cyan-500/30 inline-block mb-3">
-              Official Delegation Registration
+              {t.registration.badge}
             </span>
             <h2 className="text-3xl sm:text-5xl font-black text-white mb-4">
-              Reserve Your Investrade 1 Delegate Pass
+              {t.registration.title}
             </h2>
             <p className="text-slate-300 text-sm max-w-xl mx-auto">
-              Register now to generate your official encrypted QR pass and unlock pre-event cap table matching for April 20–21, 2027 at Palais des Congrès.
+              {t.registration.subtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Left Registration Form */}
-            <div className="lg:col-span-7 bg-slate-900/90 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative">
+            <div className="lg:col-span-7 bg-slate-900/90 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative text-left rtl:text-right">
               
               <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
-                <User className="w-5 h-5 text-cyan-400" />
-                Delegate Information & Cap Table Credentials
+                <User className="w-5 h-5 text-cyan-400 shrink-0" />
+                <span>{t.registration.title}</span>
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -971,27 +925,22 @@ export default function EventRegistrationLanding() {
                 {/* Category Selection Tabs */}
                 <div>
                   <label className="block text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2">
-                    Select Your Participant Category *
+                    {t.registration.categoryLabel} *
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { id: 'investor', label: 'Capital Provider / Investor' },
-                      { id: 'project', label: 'Capital Seeker / Project' },
-                      { id: 'institution', label: 'Institutional / Public' },
-                      { id: 'partner', label: 'Ecosystem Partner / Advisory' },
-                    ].map((cat) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {t.stakeholders.categories.map((cat) => (
                       <button
                         type="button"
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`p-3 rounded-xl text-xs font-bold border transition-all text-left flex items-center justify-between ${
+                        className={`p-3 rounded-xl text-xs font-bold border transition-all text-left rtl:text-right flex items-center justify-between cursor-pointer ${
                           selectedCategory === cat.id
                             ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)]'
                             : 'bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700'
                         }`}
                       >
-                        <span>{cat.label}</span>
-                        {selectedCategory === cat.id && <Check className="w-4 h-4 text-cyan-400" />}
+                        <span>{cat.name}</span>
+                        {selectedCategory === cat.id && <Check className="w-4 h-4 text-cyan-400 shrink-0" />}
                       </button>
                     ))}
                   </div>
@@ -1014,17 +963,17 @@ export default function EventRegistrationLanding() {
                       className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                     />
                   </div>
-                  <div className="flex-1 text-center sm:text-left">
-                    <span className="text-xs font-bold text-white block">Official Pass Photo</span>
+                  <div className="flex-1 text-center sm:text-left rtl:sm:text-right">
+                    <span className="text-xs font-bold text-white block">{t.registration.photoUpload}</span>
                     <span className="text-[11px] text-slate-400 block mt-0.5">
-                      Upload a professional portrait photo to be printed on your digital badge pass.
+                      {t.registration.photoUploadHint}
                     </span>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                    Full Name *
+                    {t.registration.fullName} *
                   </label>
                   <div className="relative">
                     <input
@@ -1033,17 +982,17 @@ export default function EventRegistrationLanding() {
                       required
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      placeholder="e.g. Dr. Alexandre Dupont"
-                      className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
+                      placeholder={t.registration.fullNamePlaceholder}
+                      className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-11 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
                     />
-                    <User className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <User className="w-4 h-4 text-cyan-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                      Work Email *
+                      {t.registration.email} *
                     </label>
                     <div className="relative">
                       <input
@@ -1052,16 +1001,16 @@ export default function EventRegistrationLanding() {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="name@organization.com"
-                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
+                        placeholder={t.registration.emailPlaceholder}
+                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-11 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
                       />
-                      <Mail className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Mail className="w-4 h-4 text-cyan-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                      Phone Number
+                      {t.registration.phone}
                     </label>
                     <div className="relative">
                       <input
@@ -1069,10 +1018,10 @@ export default function EventRegistrationLanding() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+216 -- --- ---"
-                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
+                        placeholder={t.registration.phonePlaceholder}
+                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-11 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
                       />
-                      <Phone className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Phone className="w-4 h-4 text-cyan-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
                 </div>
@@ -1080,7 +1029,7 @@ export default function EventRegistrationLanding() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                      Company / Organization *
+                      {t.registration.company} *
                     </label>
                     <div className="relative">
                       <input
@@ -1089,16 +1038,16 @@ export default function EventRegistrationLanding() {
                         required
                         value={formData.company}
                         onChange={handleInputChange}
-                        placeholder="e.g. Apex Capital Partners"
-                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
+                        placeholder={t.registration.companyPlaceholder}
+                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-11 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
                       />
-                      <Building2 className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Building2 className="w-4 h-4 text-cyan-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                      Role / Position *
+                      {t.registration.role} *
                     </label>
                     <div className="relative">
                       <input
@@ -1107,17 +1056,17 @@ export default function EventRegistrationLanding() {
                         required
                         value={formData.role}
                         onChange={handleInputChange}
-                        placeholder="e.g. Managing Partner / CEO"
-                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
+                        placeholder={t.registration.rolePlaceholder}
+                        className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-11 py-3 text-white placeholder-slate-500 text-sm font-medium focus:outline-none transition-all"
                       />
-                      <Briefcase className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Briefcase className="w-4 h-4 text-cyan-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-cyan-300 mb-1.5 uppercase tracking-wider">
-                    Primary Sector Focus
+                    {t.registration.sector}
                   </label>
                   <select
                     name="sector"
@@ -1125,13 +1074,9 @@ export default function EventRegistrationLanding() {
                     onChange={handleInputChange}
                     className="w-full bg-slate-950/90 border border-slate-700 focus:border-cyan-400 rounded-xl px-4 py-3 text-white text-sm font-medium focus:outline-none transition-all"
                   >
-                    <option value="Technology & AI">Technology & Artificial Intelligence</option>
-                    <option value="Renewable Energy & Solar">Renewable Energy, Solar & Green Hydrogen</option>
-                    <option value="Agri-Food & Smart Farming">Agri-Food, Cold-Chain & Smart Farming</option>
-                    <option value="Advanced Manufacturing & Auto">Advanced Manufacturing & Automotive Cables</option>
-                    <option value="Pharma & Healthcare Biotech">Pharma, Medical Devices & Biotech</option>
-                    <option value="Logistics, Trade & Ports">Logistics, International Trade & Ports</option>
-                    <option value="Venture Capital & Private Equity">Venture Capital & Private Equity Funds</option>
+                    {t.registration.sectors.map((s, idx) => (
+                      <option key={idx} value={s}>{s}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -1141,17 +1086,17 @@ export default function EventRegistrationLanding() {
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-500 hover:from-cyan-300 hover:to-emerald-400 text-slate-950 font-black text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 mt-4 cursor-pointer"
                 >
                   <Zap className="w-5 h-5 fill-current shrink-0" />
-                  <span>{loading ? 'Generating Official Pass...' : 'Confirm Registration & Generate Badge Now'}</span>
+                  <span>{loading ? t.registration.submitting : t.registration.submitBtn}</span>
                 </button>
               </form>
             </div>
 
             {/* Right Badge Preview */}
             <div id="badge-preview-section" className="lg:col-span-5 sticky top-24">
-              <div className="text-center lg:text-left mb-3">
-                <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5 justify-center lg:justify-start">
+              <div className="text-center lg:text-left rtl:lg:text-right mb-3">
+                <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5 justify-center lg:justify-start rtl:lg:justify-end">
                   <ShieldCheck className="w-4 h-4" />
-                  Live Digital Delegate Pass
+                  <span>{t.badgeCard.officialPass}</span>
                 </span>
               </div>
 
@@ -1168,9 +1113,16 @@ export default function EventRegistrationLanding() {
                   <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto border border-cyan-500/20">
                     <Scan className="w-8 h-8" />
                   </div>
-                  <h4 className="text-lg font-bold text-white">Your Pass Awaits Registration</h4>
+                  <h4 className="text-lg font-bold text-white">
+                    {isArabic ? 'بانتظار إدخال بيانات المفوض' : (language === 'fr' ? 'Votre Pass en Attente d\'Inscription' : 'Your Pass Awaits Registration')}
+                  </h4>
                   <p className="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
-                    Fill in your credentials to instantly generate your encrypted QR access code and personalized badge for <strong>Investrade 1 (April 20–21, 2027 at Palais des Congrès, Tunis)</strong>.
+                    {isArabic 
+                      ? 'املأ الاستمارة للحصول فوراً على شارة الدخول الرسمية المزودة برمز QR المشفر والمؤهلة للقاءات الاستثمارية في قصر المؤتمرات بتونس (20-21 أفريل 2027).'
+                      : (language === 'fr'
+                        ? 'Remplissez le formulaire pour obtenir instantanément votre QR code d\'accès officiel pour Investrade 1 (20–21 Avril 2027 au Palais des Congrès, Tunis).'
+                        : 'Fill in your credentials to instantly generate your encrypted QR access code and personalized badge for Investrade 1 (April 20–21, 2027 at Palais des Congrès, Tunis).'
+                      )}
                   </p>
                 </div>
               )}
