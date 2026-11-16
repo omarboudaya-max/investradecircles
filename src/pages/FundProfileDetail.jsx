@@ -8,16 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Landmark,
   Building2,
-  Globe,
-  MapPin,
-  ShieldCheck,
   Sparkles,
   ArrowLeft,
   ExternalLink,
-  DollarSign,
-  Layers,
   Briefcase,
-  CheckCircle2,
   ChevronRight
 } from 'lucide-react';
 import MatchingResultsModal from '@/components/investment/MatchingResultsModal';
@@ -106,7 +100,7 @@ export default function FundProfileDetail() {
         </div>
 
         {/* Hero Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-emerald-950 to-slate-900 text-white py-12 border-b border-slate-800">
+        <div className="bg-gradient-to-r from-emerald-50 via-white to-sky-50 dark:from-slate-950 dark:via-emerald-950 dark:to-slate-900 text-slate-900 dark:text-white py-12 border-b border-slate-200 dark:border-slate-800">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-start gap-5">
               {orgPhoto ? (
@@ -119,14 +113,14 @@ export default function FundProfileDetail() {
                   />
                 </div>
               ) : (
-                <div className="w-20 h-20 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-2 shadow-xl shrink-0 flex items-center justify-center text-emerald-400">
+                <div className="w-20 h-20 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-2 shadow-xl shrink-0 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                   <Landmark className="w-10 h-10" />
                 </div>
               )}
 
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
+                  <Badge className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 text-xs">
                     {fund.vehicle_type || 'Investment Vehicle'}
                   </Badge>
                   {fund.fund_status && (
@@ -135,21 +129,21 @@ export default function FundProfileDetail() {
                     </Badge>
                   )}
                   {fund.fund_category && (
-                    <Badge variant="outline" className="text-slate-300 border-slate-700 text-xs">
+                    <Badge variant="outline" className="text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 text-xs">
                       {fund.fund_category.replace(/_/g, ' ')}
                     </Badge>
                   )}
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">{fund.name}</h1>
+                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">{fund.name}</h1>
 
                 {organization && (
-                  <p className="text-slate-300 text-sm flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <p className="text-slate-600 dark:text-slate-300 text-sm flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     Managed by:{' '}
                     <Link
                       to={`/investment-network/${organization.slug || organization.id}`}
-                      className="font-bold text-emerald-300 hover:underline flex items-center gap-1"
+                      className="font-bold text-emerald-700 dark:text-emerald-300 hover:underline flex items-center gap-1"
                     >
                       {organization.display_name}
                       <ChevronRight className="w-3.5 h-3.5" />

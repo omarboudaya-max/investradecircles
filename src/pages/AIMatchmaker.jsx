@@ -1,292 +1,298 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Building2, Check, Globe, Landmark, Loader2, Rocket, Save, Sparkles, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, ArrowRight, CheckCircle2, ShieldCheck, Landmark, Building2, Globe, Target, Layers, ArrowLeft } from 'lucide-react';
-import { calculateInteractiveMatch } from '@/lib/investmentNetwork';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/lib/AuthContext';
+import { useIntelligence } from '@/hooks/useIntelligence';
+import { OBJECTIVES, REGION_OPTIONS as REGIONS, TICKET_BANDS, findMatches, suggestCriteriaForUser } from '@/lib/intelligence/matching';
+import { SECTORS, SECTOR_BY_ID } from '@/lib/intelligence/signals';
+import { saveMatchProfile } from '@/api/platform';
+import MatchList, { KIND_META } from '@/components/matching/MatchList';
 
-const USER_ROLES = [
+const ROLES = [
+  { id: 'STARTUP', label: 'Startup / innovator', icon: Rocket },
   { id: 'COMPANY', label: 'Company / SME', icon: Building2 },
-  { id: 'INVESTOR', label: 'Investor / Fund', icon: Landmark },
-  { id: 'STARTUP', label: 'Tech Startup', icon: Sparkles },
-  { id: 'PROJECT_OWNER', label: 'Project Promoter', icon: Target },
-  { id: 'INSTITUTION', label: 'Government / Chamber', icon: Globe },
+  { id: 'PROJECT_OWNER', label: 'Project promoter', icon: Target },
+  { id: 'INVESTOR', label: 'Investor / fund', icon: Landmark },
+  { id: 'INSTITUTION', label: 'Institution / chamber', icon: Globe },
 ];
 
-const USER_OBJECTIVES = [
-  { id: 'INVESTMENT', label: 'Seeking Investment / Financing' },
-  { id: 'CAPITAL_ALLOCATION', label: 'Offering Capital / Funding Projects' },
-  { id: 'PARTNER', label: 'Finding Strategic Co-Founder / Partner' },
-  { id: 'DISTRIBUTOR', label: 'Finding Importer / Distributor in EU/GCC' },
-  { id: 'JOINT_VENTURE', label: 'Joint Venture & Industrial M&A' },
-  { id: 'EXPORT_MARKET', label: 'Expanding Export Channels' },
+const STAGES = [
+  { id: '', label: 'Any stage' },
+  { id: 'SEED', label: 'Seed' },
+  { id: 'EARLY_STAGE', label: 'Early stage' },
+  { id: 'GROWTH', label: 'Growth' },
+  { id: 'EXPANSION', label: 'Expansion' },
+  { id: 'GREENFIELD', label: 'Greenfield' },
+  { id: 'R_AND_D', label: 'R&D / innovation' },
 ];
 
-const SECTORS = [
-  { id: 'sec_tech', label: 'Technology & AI' },
-  { id: 'sec_agri', label: 'Agri-Food & Smart Farming' },
-  { id: 'sec_energy', label: 'Renewable Solar & Green Energy' },
-  { id: 'sec_industry', label: 'Advanced Manufacturing & Automotive' },
-  { id: 'sec_pharma', label: 'Pharma & Biotech' },
+const GROUPS = [
+  { id: 'all', label: 'All' },
+  { id: 'investors', label: 'Investors & funds' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'members', label: 'Members' },
+  { id: 'posts', label: 'Posts' },
 ];
+
+const STORAGE_KEY = 'investraders_matchmaker_criteria';
+const DEFAULTS = { role: 'STARTUP', objective: 'INVESTMENT', sectors: [], region: 'Global', ticket: 'any', stage: '' };
+
+function loadStored() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+/** Criteria passed in the URL (for example from a post's "Find related matches" link). */
+function fromQuery(params) {
+  const out = {};
+  const objective = params.get('objective');
+  if (OBJECTIVES.some((o) => o.id === objective)) out.objective = objective;
+  const sectors = (params.get('sectors') || '').split(',').filter((id) => SECTOR_BY_ID[id]);
+  if (sectors.length) out.sectors = sectors.slice(0, 3);
+  const region = params.get('region');
+  if (REGIONS.some((r) => r.id === region)) out.region = region;
+  return out;
+}
+
+function Chip({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+        active ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground'
+      }`}
+    >
+      {active && <Check className="h-3 w-3" />} {children}
+    </button>
+  );
+}
+
+const fieldLabel = 'mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground';
+const selectCls = 'w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
 
 export default function AIMatchmaker() {
   const navigate = useNavigate();
-  const [role, setRole] = useState('COMPANY');
-  const [objective, setObjective] = useState('INVESTMENT');
-  const [sector, setSector] = useState('sec_tech');
-  const [region, setRegion] = useState('Global');
-  const [ticket, setTicket] = useState('0.5-2M');
-  const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState(null);
+  const { toast } = useToast();
+  const { user, refreshProfile } = useAuth();
+  const { raw, isLoading } = useIntelligence();
+  const [searchParams] = useSearchParams();
 
-  const handleRunMatch = () => {
-    setIsSearching(true);
-    setTimeout(() => {
-      const matchResults = calculateInteractiveMatch(role, objective, sector, region, ticket);
-      setResults(matchResults);
-      setIsSearching(false);
-    }, 600);
+  const [criteria, setCriteria] = useState(() => {
+    const query = fromQuery(searchParams);
+    return { ...DEFAULTS, ...(loadStored() || {}), ...query };
+  });
+  const [touched, setTouched] = useState(() => Boolean(loadStored()) || Object.keys(fromQuery(searchParams)).length > 0);
+  const [group, setGroup] = useState('all');
+  const [visible, setVisible] = useState(12);
+  const [saving, setSaving] = useState(false);
+
+  // First visit: start from what the member's profile already tells us.
+  useEffect(() => {
+    if (touched || !user) return;
+    const suggestion = suggestCriteriaForUser(user);
+    const clean = Object.fromEntries(Object.entries(suggestion).filter(([key, value]) => key in DEFAULTS && value !== undefined && value !== null));
+    if (Object.keys(clean).length) setCriteria((prev) => ({ ...prev, ...clean }));
+  }, [user, touched]);
+
+  const update = (patch) => {
+    setTouched(true);
+    setVisible(12);
+    setCriteria((prev) => {
+      const next = { ...prev, ...patch };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
+      return next;
+    });
+  };
+
+  const toggleSector = (id) => update({
+    sectors: criteria.sectors.includes(id) ? criteria.sectors.filter((s) => s !== id) : [...criteria.sectors, id].slice(-3),
+  });
+
+  const objective = OBJECTIVES.find((o) => o.id === criteria.objective) || OBJECTIVES[0];
+  const showsTicket = objective.seeks !== 'partners';
+
+  const matches = useMemo(() => {
+    if (!raw) return [];
+    // Members and their posts are part of the community; visitors only see public listings.
+    const data = user ? raw : { ...raw, profiles: [], posts: [] };
+    return findMatches(criteria, { ...data, currentUserId: user?.id });
+  }, [raw, criteria, user]);
+
+  const counts = useMemo(() => {
+    const c = { all: matches.length, investors: 0, projects: 0, members: 0, posts: 0 };
+    for (const m of matches) c[KIND_META[m.kind].group] += 1;
+    return c;
+  }, [matches]);
+
+  const shown = group === 'all' ? matches : matches.filter((m) => KIND_META[m.kind].group === group);
+  const strong = matches.filter((m) => m.matchScore >= 75).length;
+
+  const savePreferences = async () => {
+    if (!user) { navigate('/login'); return; }
+    setSaving(true);
+    try {
+      await saveMatchProfile(user, criteria);
+      await refreshProfile();
+      toast({ title: 'Matching preferences saved', description: 'Other members can now be matched with you on these criteria.' });
+    } catch (error) {
+      toast({ title: 'Could not save', description: error.message, variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white pb-20">
-      {/* Top Header */}
-      <div className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md py-4 sticky top-0 z-30">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/investment-network')}
-            className="text-slate-400 hover:text-white text-xs gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Investment Network
-          </Button>
+    <div className="mx-auto max-w-5xl space-y-6 pb-16">
+      <Helmet>
+        <title>Matchmaker — Investraders</title>
+        <meta name="description" content="Match innovators with investors: real investor mandates, funds, projects and members ranked against what you are looking for, with a transparent score." />
+      </Helmet>
 
-          <div className="flex items-center gap-2">
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs gap-1">
-              <Sparkles className="w-3.5 h-3.5" /> AI Matchmaker v2.0
-            </Badge>
+      <header className="rounded-2xl border bg-card p-5 sm:p-7">
+        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <Sparkles className="h-3.5 w-3.5" /> Matchmaker
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Find who you should be talking to</h1>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          Tell us what you are looking for. We rank the investors, funds, projects and members that are actually on Investraders
+          against it, and show exactly why each one scores the way it does.
+        </p>
+      </header>
+
+      <section className="space-y-6 rounded-2xl border bg-card p-5 sm:p-7">
+        <div>
+          <span className={fieldLabel}>I am</span>
+          <div className="flex flex-wrap gap-2">
+            {ROLES.map((role) => (
+              <Chip key={role.id} active={criteria.role === role.id} onClick={() => update({ role: role.id })}>
+                <role.icon className="h-3.5 w-3.5" /> {role.label}
+              </Chip>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 pt-12 pb-8 border-b border-slate-800/80">
-        <div className="container mx-auto px-4 text-center max-w-3xl space-y-4">
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-500/30">
-              <Sparkles className="w-4 h-4 text-cyan-400" /> Autonomous Economic Matchmaker
-            </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
-              ⚠️ Données de démonstration & Simulation
-            </span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Find Your Investment & Business Match
-          </h1>
-
-          <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-            Dites à notre moteur IA qui vous êtes et votre besoin de financement ou partenariat. Investraders calcule en temps réel la compatibilité avec les fonds institutionnels partenaires et opportunités du réseau <em>(Mode Démonstrateur & Simulation d'affaires)</em>.
-          </p>
-        </div>
-      </div>
-
-      {/* Interactive Matchmaker Form Container */}
-      <div className="container mx-auto px-4 max-w-4xl -mt-6">
-        <div className="bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-6 sm:p-10 space-y-8">
-          {/* STEP 1: I AM */}
-          <div className="space-y-3">
-            <label className="text-xs font-bold uppercase tracking-wider text-cyan-400 block">
-              Step 1: I am an...
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              {USER_ROLES.map((r) => {
-                const Icon = r.icon;
-                const active = role === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setRole(r.id)}
-                    className={`p-3.5 rounded-2xl border text-center flex flex-col items-center gap-2 transition-all ${
-                      active
-                        ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-lg shadow-cyan-500/10'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-                    }`}
-                  >
-                    <Icon className={`w-5 h-5 ${active ? 'text-cyan-400' : 'text-slate-500'}`} />
-                    <span className="text-xs font-bold leading-tight">{r.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* STEP 2: LOOKING FOR */}
-          <div className="space-y-3">
-            <label className="text-xs font-bold uppercase tracking-wider text-emerald-400 block">
-              Step 2: I am looking for...
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {USER_OBJECTIVES.map((obj) => {
-                const active = objective === obj.id;
-                return (
-                  <button
-                    key={obj.id}
-                    type="button"
-                    onClick={() => setObjective(obj.id)}
-                    className={`p-4 rounded-2xl border text-left text-xs font-semibold transition-all ${
-                      active
-                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-200 shadow-lg shadow-emerald-500/10'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-                    }`}
-                  >
-                    {obj.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* STEP 3: SECTOR & PARAMETERS */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800/80">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Target Sector</label>
-              <select
-                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                value={sector}
-                onChange={(e) => setSector(e.target.value)}
-              >
-                {SECTORS.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Target Geography</label>
-              <select
-                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-              >
-                <option value="Global">Global / Regional</option>
-                <option value="Tunisia">Tunisia</option>
-                <option value="Europe">Europe (Germany, France, UK)</option>
-                <option value="GCC">GCC / Gulf Region</option>
-                <option value="Africa">Sub-Saharan Africa</option>
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Check Size Range</label>
-              <select
-                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                value={ticket}
-                onChange={(e) => setTicket(e.target.value)}
-              >
-                <option value="0.1-0.5M">0.1M – 0.5M TND (Seed)</option>
-                <option value="0.5-2M">0.5M – 2.0M TND (Growth)</option>
-                <option value="2-10M">2.0M – 10.0M TND (Series A/B)</option>
-                <option value="10M+">10.0M+ TND (Infrastructure / Buyout)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* RUN MATCH BUTTON */}
-          <Button
-            size="lg"
-            className="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-extrabold py-7 text-base rounded-2xl shadow-xl shadow-cyan-500/20 gap-2"
-            onClick={handleRunMatch}
-            disabled={isSearching}
-          >
-            {isSearching ? (
-              <>
-                <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                Computing Compatibility Index...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5 text-slate-950" /> 🤖 AI FIND MATCHES NOW
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* RESULTS SECTION */}
-        {results && (
-          <div className="mt-12 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-emerald-400" /> Ranked AI Matches ({results.length} Identified)
-              </h3>
-              <span className="text-xs text-slate-400">Sorted by Strategic Mandate Alignment</span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {results.map((m) => (
-                <Card
-                  key={m.id}
-                  className="bg-slate-900 border-slate-800 hover:border-cyan-500/50 transition-all rounded-2xl overflow-hidden shadow-lg"
+        <div>
+          <span className={fieldLabel}>I want to</span>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {OBJECTIVES.map((o) => {
+              const active = criteria.objective === o.id;
+              return (
+                <button
+                  key={o.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => update({ objective: o.id })}
+                  className={`rounded-xl border p-3.5 text-left transition-colors ${active ? 'border-primary bg-primary/5' : 'bg-background hover:border-primary/40'}`}
                 >
-                  <CardContent className="p-6 space-y-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="font-extrabold text-white text-lg">{m.title}</h4>
-                          <Badge variant="outline" className="text-xs border-slate-700 text-slate-300">
-                            {m.type}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-slate-400 font-semibold">{m.organization} • {m.country}</p>
-                      </div>
+                  <span className={`block text-sm font-semibold ${active ? 'text-primary' : 'text-foreground'}`}>{o.label}</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">{o.description}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <div className="text-2xl font-black text-emerald-400">{m.score}%</div>
-                          <div className="text-[10px] text-slate-400 uppercase font-bold">Match Score</div>
-                        </div>
-                      </div>
-                    </div>
+        <div>
+          <span className={fieldLabel}>Sector <span className="font-normal normal-case tracking-normal">· up to three</span></span>
+          <div className="flex flex-wrap gap-2">
+            {SECTORS.map((sector) => (
+              <Chip key={sector.id} active={criteria.sectors.includes(sector.id)} onClick={() => toggleSector(sector.id)}>{sector.label}</Chip>
+            ))}
+          </div>
+        </div>
 
-                    <p className="text-xs text-slate-300 leading-relaxed">{m.description}</p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label>
+            <span className={fieldLabel}>{objective.seeks === 'partners' ? 'Target market' : 'Geography'}</span>
+            <select className={selectCls} value={criteria.region} onChange={(e) => update({ region: e.target.value })}>
+              {REGIONS.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+            </select>
+          </label>
+          {showsTicket && (
+            <label>
+              <span className={fieldLabel}>{objective.seeks === 'investors' ? 'Amount sought' : 'Ticket size'}</span>
+              <select className={selectCls} value={criteria.ticket} onChange={(e) => update({ ticket: e.target.value })}>
+                {TICKET_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+              </select>
+            </label>
+          )}
+          {showsTicket && (
+            <label>
+              <span className={fieldLabel}>Stage</span>
+              <select className={selectCls} value={criteria.stage} onChange={(e) => update({ stage: e.target.value })}>
+                {STAGES.map((st) => <option key={st.id} value={st.id}>{st.label}</option>)}
+              </select>
+            </label>
+          )}
+        </div>
 
-                    <div className="bg-slate-950/70 rounded-xl p-3.5 border border-slate-800/80 space-y-1 text-xs">
-                      <p className="font-bold text-cyan-400 text-[11px] uppercase tracking-wider">Alignment Factors:</p>
-                      <ul className="space-y-1 text-slate-300">
-                        {m.factors.map((f, idx) => (
-                          <li key={idx} className="flex items-center gap-1.5">
-                            <span className="text-emerald-400 font-bold">•</span> {f}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+          <p className="text-xs text-muted-foreground">
+            Results update as you change the criteria. Save them so investors and innovators can be matched with you too.
+          </p>
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={savePreferences} disabled={saving}>
+            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+            {user ? 'Save as my matching profile' : 'Sign in to save'}
+          </Button>
+        </div>
+      </section>
 
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80 text-xs">
-                      <span className="text-slate-400">Target Check: <strong className="text-white">{m.ticket}</strong></span>
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-foreground">
+              {isLoading ? 'Loading the network…' : `${matches.length} match${matches.length === 1 ? '' : 'es'}`}
+            </h2>
+            {!isLoading && (
+              <p className="text-xs text-muted-foreground">
+                {strong} strong (75%+) · scored on {objective.seeks === 'partners' ? 'need, sector, market and recency' : 'sector, ticket, stage, geography and asset type'}
+                {criteria.sectors.length === 0 && ' · pick a sector for sharper results'}
+                {!user && ' · sign in to also match with members'}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1 rounded-full bg-muted p-1">
+            {GROUPS.filter((g) => g.id === 'all' || counts[g.id] > 0).map((g) => (
+              <button key={g.id} onClick={() => { setGroup(g.id); setVisible(12); }}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${group === g.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                {g.label} · {counts[g.id]}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs gap-1 font-bold"
-                          onClick={() => alert(`Introduction request dispatched for ${m.organization}`)}
-                        >
-                          Request Introduction <ArrowRight className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-3 rounded-2xl border bg-card py-16 text-sm text-muted-foreground">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" /> Reading investors, projects and members…
+          </div>
+        ) : shown.length === 0 ? (
+          <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center">
+            <p className="text-sm font-semibold text-foreground">Nothing on the platform fits these criteria yet</p>
+            <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+              Try widening the geography or ticket size, or remove a sector. You can also save your criteria — new investors and projects are matched against saved profiles.
+            </p>
+          </div>
+        ) : (
+          <MatchList
+            matches={shown.slice(0, visible)}
+            context={{ objective: criteria.objective, sectors: criteria.sectors, region: criteria.region, ticket: criteria.ticket, stage: criteria.stage }}
+          />
+        )}
+
+        {shown.length > visible && (
+          <div className="text-center">
+            <Button variant="outline" onClick={() => setVisible((v) => v + 12)}>Show more ({shown.length - visible} remaining)</Button>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

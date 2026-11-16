@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Map, Sparkles, TrendingUp, Layers, Coins, Star, X, ArrowRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,16 @@ export default function InvestmentMap() {
   const opportunitiesRef = useRef(null);
   const [selectedGovId, setSelectedGovId] = useState(null);
   const [tunisiaOpen, setTunisiaOpen] = useState(false);
-  const [submitOpportunityOpen, setSubmitOpportunityOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [submitOpportunityOpen, setSubmitOpportunityOpen] = useState(() => searchParams.get('submit') === '1');
+  const closeSubmitForm = () => {
+    setSubmitOpportunityOpen(false);
+    if (searchParams.has('submit')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('submit');
+      setSearchParams(next, { replace: true });
+    }
+  };
   const [filters, setFilters] = useState({
     search: '', governorateId: 'all', sectorId: 'all', sizeBand: 'all', stage: 'all', type: 'all', verifiedOnly: false,
   });
@@ -288,7 +297,7 @@ export default function InvestmentMap() {
       {/* Submit Opportunity Modal */}
       <ProjectSubmitForm
         open={submitOpportunityOpen}
-        onClose={() => setSubmitOpportunityOpen(false)}
+        onClose={closeSubmitForm}
         governorates={governorates}
         sectors={sectors}
       />

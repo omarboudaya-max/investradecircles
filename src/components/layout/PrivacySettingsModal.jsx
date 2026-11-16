@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldCheck, Eye, MessageSquare, BellRing, Activity, Check } from 'lucide-react';
+import { X, ShieldCheck, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function PrivacySettingsModal({ isOpen, onClose }) {

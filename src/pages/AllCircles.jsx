@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
-import { Search, Users, ArrowRight, Landmark, Sparkles } from 'lucide-react';
+import { Search, Users, ArrowRight, Landmark } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import { Badge } from '@/components/ui/badge';

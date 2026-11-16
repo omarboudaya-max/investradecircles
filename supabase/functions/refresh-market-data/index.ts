@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
 };
 
 serve(async (req) => {
@@ -12,10 +12,29 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '' // Using ANON KEY since MarketData has RLS disabled
-    );
+    const url = Deno.env.get('SUPABASE_URL') ?? '';
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    if (!url || !serviceKey) throw new Error('Function is not configured');
+
+    // Market data is public to read but must not be writable by visitors, so the caller
+    // has to be a signed-in administrator or present the scheduler's shared secret.
+    const supabaseClient = createClient(url, serviceKey, { auth: { persistSession: false } });
+    const cronSecret = Deno.env.get('CRON_SECRET');
+    const bySecret = Boolean(cronSecret) && req.headers.get('x-cron-secret') === cronSecret;
+    if (!bySecret) {
+      const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
+      const { data: userData } = await supabaseClient.auth.getUser(token);
+      const callerId = userData?.user?.id;
+      const { data: profile } = callerId
+        ? await supabaseClient.from('profiles').select('role').eq('id', callerId).maybeSingle()
+        : { data: null };
+      if (profile?.role !== 'admin') {
+        return new Response(JSON.stringify({ error: 'Administrator access required' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403,
+        });
+      }
+    }
 
     const updated: string[] = [];
     const timeNow = new Date().toISOString();

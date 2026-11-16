@@ -303,24 +303,29 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-// Local storage persistence keys
+// ── Persistence ─────────────────────────────────────────────────────────────
+// Supabase is the source of truth. The bundled seed data is only shown when the
+// database cannot be reached at all, so the investment pages never render empty
+// on a bad connection.
+//
+// Earlier versions wrote every new record to localStorage and ignored database
+// errors, which left "published" records that existed on one device only. Those
+// leftovers are still read (flagged `_localOnly`) and are pushed to the database
+// the next time their owner is signed in.
+
 const STORAGE_KEYS = {
   PROJECTS: 'investraders_custom_projects',
   ORGS: 'investraders_custom_organizations',
   VEHICLES: 'investraders_custom_vehicles',
-  INTERESTS: 'investraders_custom_interests',
-  SAVED: 'investraders_saved_investments',
-  VIEWS: 'investraders_project_views',
-  DELETED_PROJECTS: 'investraders_deleted_projects',
-  DELETED_ORGS: 'investraders_deleted_orgs'
 };
 
 function readStorage(key) {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) {
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((item) => item && item.id) : [];
+  } catch {
     return [];
   }
 }
@@ -328,499 +333,284 @@ function readStorage(key) {
 function writeStorage(key, items) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(key, JSON.stringify(items));
-  } catch (e) {}
+    if (items.length) localStorage.setItem(key, JSON.stringify(items));
+    else localStorage.removeItem(key);
+  } catch { /* storage unavailable */ }
 }
 
-function deduplicateById(items) {
-  const seen = new Set();
-  const result = [];
-  for (const item of items) {
-    if (item && item.id && !seen.has(item.id)) {
-      seen.add(item.id);
-      result.push(item);
-    }
+const slugify = (value) => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const uid = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+function fail(error, action) {
+  const message = error?.code === '42501' || /row-level security/i.test(error?.message || '')
+    ? `You do not have permission to ${action}. Please sign in with the account that owns it.`
+    : error?.message || `Could not ${action}.`;
+  const wrapped = new Error(message);
+  wrapped.code = error?.code;
+  return wrapped;
+}
+
+// The UI reads an image under several historical names; the database stores one.
+const withProjectImage = (row) => {
+  const image = row.image_url || null;
+  return { ...row, image_url: image, photo_url: image, image, logo: image };
+};
+const withOrgLogo = (row) => {
+  const logo = row.logo_url || row.logo || null;
+  return { ...row, logo, logo_url: logo, image_url: logo, photo_url: logo };
+};
+
+function projectRow(payload) {
+  const { photo_url, image, logo, _localOnly, ...rest } = payload;
+  const picture = payload.image_url ?? photo_url ?? image ?? logo;
+  return picture !== undefined ? { ...rest, image_url: picture || null } : rest;
+}
+
+function orgRow(payload) {
+  const { photo_url, image, image_url, _localOnly, ...rest } = payload;
+  const picture = payload.logo_url ?? payload.logo ?? image_url ?? photo_url ?? image;
+  return picture !== undefined ? { ...rest, logo: picture || null, logo_url: picture || null } : rest;
+}
+
+const vehicleRow = ({ _localOnly, ...rest }) => rest;
+
+/**
+ * Read a table. Returns { rows, reachable } — `reachable` is false only when the
+ * request itself failed, which is when seed data may stand in.
+ */
+async function readTable(table, limit = 500) {
+  try {
+    const { data, error } = await supabase.from(table).select('*').limit(limit);
+    if (error) return { rows: [], reachable: false };
+    return { rows: data || [], reachable: true };
+  } catch {
+    return { rows: [], reachable: false };
   }
-  return result;
 }
 
-// Local store memory fallback
-let governoratesStore = [...INITIAL_GOVERNORATES];
-let sectorsStore = [...INITIAL_SECTORS];
-const initialDeletedProjects = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
-const initialDeletedOrgs = readStorage(STORAGE_KEYS.DELETED_ORGS);
-let projectsStore = deduplicateById([...readStorage(STORAGE_KEYS.PROJECTS), ...INITIAL_PROJECTS]).filter((p) => !initialDeletedProjects.includes(p.id));
-let organizationsStore = deduplicateById([...readStorage(STORAGE_KEYS.ORGS), ...INITIAL_ORGANIZATIONS]).filter((o) => !initialDeletedOrgs.includes(o.id));
-let vehiclesStore = deduplicateById([...readStorage(STORAGE_KEYS.VEHICLES), ...INITIAL_VEHICLES]);
-let projectViewsStore = [...readStorage(STORAGE_KEYS.VIEWS)];
-let savedInvestmentsStore = [...readStorage(STORAGE_KEYS.SAVED)];
-let investorInterestsStore = [...readStorage(STORAGE_KEYS.INTERESTS)];
+const synced = new Set();
+
+/** Push records an older version kept only on this device, once per session and table. */
+async function syncLocalOnly(table, storageKey, toRow, existingIds) {
+  const local = readStorage(storageKey);
+  const pending = local.filter((item) => !existingIds.has(item.id));
+  if (pending.length !== local.length) writeStorage(storageKey, pending);
+  if (!pending.length || synced.has(table)) return pending;
+  synced.add(table);
+
+  const { data: { session } = {} } = await supabase.auth.getSession().catch(() => ({ data: {} }));
+  if (!session?.user) return pending;
+
+  const stillLocal = [];
+  for (const item of pending) {
+    // Only the owner may publish it; anything else stays where it is.
+    if (item.user_id && item.user_id !== session.user.id) { stillLocal.push(item); continue; }
+    const { error } = await supabase.from(table).insert(toRow({ ...item, user_id: item.user_id || session.user.id }));
+    if (error && error.code !== '23505') stillLocal.push(item);
+  }
+  writeStorage(storageKey, stillLocal);
+  return stillLocal;
+}
+
+async function listWithFallback({ table, storageKey, toRow, decorate, seed, limit }) {
+  const { rows, reachable } = await readTable(table, limit);
+  if (!reachable) return seed.map(decorate);
+  const leftovers = storageKey ? await syncLocalOnly(table, storageKey, toRow, new Set(rows.map((r) => r.id))) : [];
+  return [...leftovers.map((item) => ({ ...decorate(item), _localOnly: true })), ...rows.map(decorate)];
+}
+
+const matches = (item, criteria) => Object.entries(criteria).every(([key, value]) => item[key] === value);
 
 export const base44 = {
   entities: {
     Governorate: {
-      list: async (order = '-created_date', limit = 50) => {
-        try {
-          const { data, error } = await supabase.from('Governorate').select('*').limit(limit);
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-        return governoratesStore;
+      list: async (_order, limit = 50) => {
+        const { rows } = await readTable('Governorate', limit);
+        return rows.length ? rows : INITIAL_GOVERNORATES;
       },
-      get: async (id) => {
-        try {
-          const { data, error } = await supabase.from('Governorate').select('*').eq('id', id).single();
-          if (!error && data) return data;
-        } catch (e) {}
-        return governoratesStore.find((g) => g.id === id) || null;
-      }
+      get: async (id) => (await base44.entities.Governorate.list()).find((g) => g.id === id) || null,
     },
 
     Sector: {
-      list: async (order = '-created_date', limit = 50) => {
-        try {
-          const { data, error } = await supabase.from('Sector').select('*').limit(limit);
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-        return sectorsStore;
+      list: async (_order, limit = 50) => {
+        const { rows } = await readTable('Sector', limit);
+        return rows.length ? rows : INITIAL_SECTORS;
       },
-      get: async (id) => {
-        try {
-          const { data, error } = await supabase.from('Sector').select('*').eq('id', id).single();
-          if (!error && data) return data;
-        } catch (e) {}
-        return sectorsStore.find((s) => s.id === id) || null;
-      }
+      get: async (id) => (await base44.entities.Sector.list()).find((s) => s.id === id) || null,
     },
 
     InvestmentProject: {
-      filter: async (criteria = {}, order = '-created_date', limit = 500) => {
+      list: (_order, limit = 500) => listWithFallback({
+        table: 'InvestmentProject', storageKey: STORAGE_KEYS.PROJECTS, toRow: projectRow, decorate: withProjectImage, seed: INITIAL_PROJECTS, limit,
+      }),
+
+      filter: async (criteria = {}, order, limit = 500) => {
         const all = await base44.entities.InvestmentProject.list(order, limit);
-        return all.filter((p) => {
-          return Object.entries(criteria).every(([key, val]) => {
-            // Include newly submitted or published opportunities on the platform
-            if (key === 'project_status' && val === 'PUBLISHED') {
-              return p.project_status === 'PUBLISHED' || p.project_status === 'SUBMITTED' || !p.project_status;
-            }
-            return p[key] === val;
-          });
-        });
-      },
-
-      list: async (order = '-created_date', limit = 500) => {
-        const custom = readStorage(STORAGE_KEYS.PROJECTS);
-        const deleted = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
-        try {
-          const { data, error } = await supabase.from('InvestmentProject').select('*').limit(limit);
-          if (!error && data && data.length > 0) {
-            const combined = deduplicateById([...custom, ...data]).filter((p) => !deleted.includes(p.id));
-            projectsStore = combined;
-            return combined;
+        return all.filter((project) => Object.entries(criteria).every(([key, value]) => {
+          // A newly submitted opportunity is listed while it awaits verification.
+          if (key === 'project_status' && value === 'PUBLISHED') {
+            return !project.project_status || project.project_status === 'PUBLISHED' || project.project_status === 'SUBMITTED';
           }
-        } catch (e) {}
-
-        const combined = deduplicateById([...custom, ...INITIAL_PROJECTS]).filter((p) => !deleted.includes(p.id));
-        projectsStore = combined;
-        return combined;
+          return project[key] === value;
+        }));
       },
 
       get: async (id) => {
-        const custom = readStorage(STORAGE_KEYS.PROJECTS);
-        const localItem = custom.find((p) => p.id === id);
-        try {
-          const { data, error } = await supabase.from('InvestmentProject').select('*').eq('id', id).single();
-          if (!error && data) {
-            const imageVal = data.image_url || localItem?.image_url || localItem?.photo_url || localItem?.image || localItem?.logo || null;
-            return {
-              ...data,
-              ...(localItem || {}),
-              image_url: imageVal,
-              photo_url: imageVal,
-              image: imageVal,
-              logo: imageVal
-            };
-          }
-        } catch (e) {}
-        const all = await base44.entities.InvestmentProject.list();
-        const p = all.find((item) => item.id === id);
-        if (!p) throw new Error('Project not found');
-        return p;
+        const { data, error } = await supabase.from('InvestmentProject').select('*').eq('id', id).maybeSingle();
+        if (!error && data) return withProjectImage(data);
+        const fallback = (await base44.entities.InvestmentProject.list()).find((item) => item.id === id);
+        if (!fallback) throw new Error('Project not found');
+        return fallback;
       },
 
       create: async (payload) => {
-        const id = payload.id || `proj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-        const imageVal = payload.image_url || payload.photo_url || payload.image || payload.logo || null;
-        const newProj = {
-          id,
-          project_code: payload.project_code || `INV-2026-${Math.floor(100 + Math.random() * 900)}`,
-          created_date: new Date().toISOString(),
-          project_status: payload.project_status || 'PUBLISHED',
-          is_verified: payload.is_verified ?? false,
-          featured: payload.featured ?? false,
-          seeking: payload.seeking || [],
-          target_markets: payload.target_markets || [],
-          export_potential: payload.export_potential || 'MEDIUM',
-          infrastructure_available: payload.infrastructure_available ?? true,
-          land_available: payload.land_available ?? true,
+        const row = projectRow({
+          id: payload.id || uid('proj'),
+          project_code: payload.project_code || `INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+          project_status: 'PUBLISHED',
+          seeking: [],
+          target_markets: [],
+          export_potential: 'MEDIUM',
+          infrastructure_available: true,
+          land_available: true,
           ...payload,
-          image_url: imageVal,
-          photo_url: imageVal,
-          image: imageVal,
-          logo: imageVal
-        };
-
-        // 1. Persist to localStorage immediately
-        const custom = readStorage(STORAGE_KEYS.PROJECTS);
-        writeStorage(STORAGE_KEYS.PROJECTS, [newProj, ...custom]);
-
-        // 2. Try Supabase insert with sanitized columns
-        const { photo_url, image, logo, ...cleanForSupabase } = newProj;
-        try {
-          await supabase.from('InvestmentProject').insert(cleanForSupabase);
-        } catch (e) {
-          console.warn('Supabase project insert queued locally:', e);
-        }
-
-        projectsStore = deduplicateById([newProj, ...projectsStore]);
-        return newProj;
+        });
+        const { data, error } = await supabase.from('InvestmentProject').insert(row).select().single();
+        if (error) throw fail(error, 'publish this opportunity');
+        return withProjectImage(data);
       },
 
       update: async (id, payload) => {
-        const imageVal = payload.image_url || payload.photo_url || payload.image || payload.logo;
-        const currentItem = projectsStore.find((p) => p.id === id) || INITIAL_PROJECTS.find((p) => p.id === id) || {};
-        const updatedItem = {
-          ...currentItem,
-          ...payload,
-          id,
-          ...(imageVal !== undefined ? { image_url: imageVal, photo_url: imageVal, image: imageVal, logo: imageVal } : {})
-        };
-
-        const { photo_url, image, logo, ...cleanForSupabase } = payload;
-        const supabaseUpdate = {
-          ...cleanForSupabase,
-          ...(imageVal !== undefined ? { image_url: imageVal } : {})
-        };
-        try {
-          await supabase.from('InvestmentProject').update(supabaseUpdate).eq('id', id);
-        } catch (e) {
-          console.warn('Supabase project update warning:', e);
-        }
-
-        const custom = readStorage(STORAGE_KEYS.PROJECTS);
-        const exists = custom.some((p) => p.id === id);
-        const newCustom = exists
-          ? custom.map((p) => (p.id === id ? updatedItem : p))
-          : [updatedItem, ...custom];
-        writeStorage(STORAGE_KEYS.PROJECTS, newCustom);
-
-        projectsStore = projectsStore.map((p) => (p.id === id ? updatedItem : p));
-        if (!projectsStore.some((p) => p.id === id)) {
-          projectsStore = [updatedItem, ...projectsStore];
-        }
-        return updatedItem;
+        const { data, error } = await supabase.from('InvestmentProject').update(projectRow(payload)).eq('id', id).select();
+        if (error) throw fail(error, 'update this opportunity');
+        if (!data?.length) throw fail({ code: '42501' }, 'update this opportunity');
+        return withProjectImage(data[0]);
       },
 
       delete: async (id) => {
-        try {
-          await supabase.from('InvestmentProject').delete().eq('id', id);
-        } catch (e) {}
-
-        const custom = readStorage(STORAGE_KEYS.PROJECTS).filter((p) => p.id !== id);
-        writeStorage(STORAGE_KEYS.PROJECTS, custom);
-
-        const deleted = readStorage(STORAGE_KEYS.DELETED_PROJECTS);
-        if (!deleted.includes(id)) {
-          writeStorage(STORAGE_KEYS.DELETED_PROJECTS, [...deleted, id]);
-        }
-
-        projectsStore = projectsStore.filter((p) => p.id !== id);
+        const { data, error } = await supabase.from('InvestmentProject').delete().eq('id', id).select('id');
+        if (error) throw fail(error, 'delete this opportunity');
+        const local = readStorage(STORAGE_KEYS.PROJECTS);
+        const remaining = local.filter((p) => p.id !== id);
+        if (remaining.length !== local.length) writeStorage(STORAGE_KEYS.PROJECTS, remaining);
+        else if (!data?.length) throw fail({ code: '42501' }, 'delete this opportunity');
         return true;
-      }
+      },
     },
 
     ProjectView: {
+      // Analytics only: a failure here must never get in the way of the page.
       create: async (payload) => {
-        const view = { id: `view_${Date.now()}`, timestamp: new Date().toISOString(), ...payload };
-        try {
-          await supabase.from('ProjectView').insert(view);
-        } catch (e) {}
-        projectViewsStore.push(view);
-        writeStorage(STORAGE_KEYS.VIEWS, projectViewsStore);
-        return view;
-      }
+        const { error } = await supabase.from('ProjectView').insert(payload);
+        return error ? null : payload;
+      },
     },
 
     SavedInvestment: {
       filter: async (criteria = {}) => {
-        try {
-          let query = supabase.from('SavedInvestment').select('*');
-          Object.entries(criteria).forEach(([k, v]) => {
-            query = query.eq(k, v);
-          });
-          const { data, error } = await query;
-          if (!error && data) return data;
-        } catch (e) {}
-
-        const custom = readStorage(STORAGE_KEYS.SAVED);
-        return custom.filter((item) => {
-          return Object.entries(criteria).every(([k, v]) => item[k] === v);
-        });
+        const { data, error } = await supabase.from('SavedInvestment').select('*').match(criteria);
+        return error ? [] : data || [];
       },
-
       create: async (payload) => {
-        const saved = { id: `save_${Date.now()}`, created_date: new Date().toISOString(), ...payload };
-        const custom = readStorage(STORAGE_KEYS.SAVED);
-        writeStorage(STORAGE_KEYS.SAVED, [saved, ...custom]);
-        try {
-          await supabase.from('SavedInvestment').insert(saved);
-        } catch (e) {}
-        savedInvestmentsStore.push(saved);
-        return saved;
+        const { data, error } = await supabase.from('SavedInvestment').insert(payload).select().single();
+        if (error) throw fail(error, 'save this opportunity');
+        return data;
       },
-
       delete: async (id) => {
-        try {
-          await supabase.from('SavedInvestment').delete().eq('id', id);
-        } catch (e) {}
-        const custom = readStorage(STORAGE_KEYS.SAVED).filter((s) => s.id !== id && s.project_id !== id);
-        writeStorage(STORAGE_KEYS.SAVED, custom);
-        savedInvestmentsStore = savedInvestmentsStore.filter((s) => s.id !== id);
+        const { error } = await supabase.from('SavedInvestment').delete().eq('id', id);
+        if (error) throw fail(error, 'remove this saved opportunity');
         return true;
-      }
+      },
     },
 
     InvestorInterest: {
       create: async (payload) => {
-        const interest = { id: `interest_${Date.now()}`, created_date: new Date().toISOString(), status: 'NEW', ...payload };
-        const custom = readStorage(STORAGE_KEYS.INTERESTS);
-        writeStorage(STORAGE_KEYS.INTERESTS, [interest, ...custom]);
-        try {
-          await supabase.from('InvestorInterest').insert(interest);
-        } catch (e) {}
-        investorInterestsStore.push(interest);
-        return interest;
+        const { data, error } = await supabase.from('InvestorInterest').insert({ status: 'NEW', ...payload }).select().single();
+        if (error) throw fail(error, 'send your interest');
+        return data;
       },
+      // Row-level security returns only what the caller may see: their own requests,
+      // interest in their own projects, or everything for an administrator.
       list: async () => {
-        try {
-          const { data, error } = await supabase.from('InvestorInterest').select('*');
-          if (!error && data && data.length > 0) return data;
-        } catch (e) {}
-        return readStorage(STORAGE_KEYS.INTERESTS);
-      }
+        const { data, error } = await supabase.from('InvestorInterest').select('*').order('created_date', { ascending: false });
+        return error ? [] : data || [];
+      },
+      update: async (id, payload) => {
+        const { error } = await supabase.from('InvestorInterest').update(payload).eq('id', id);
+        if (error) throw fail(error, 'update this request');
+        return true;
+      },
     },
 
     InvestmentOrganization: {
-      filter: async (criteria = {}, order = '-created_at', limit = 500) => {
-        const all = await base44.entities.InvestmentOrganization.list(order, limit);
-        return all.filter((org) => {
-          return Object.entries(criteria).every(([key, val]) => org[key] === val);
-        });
-      },
+      list: (_order, limit = 500) => listWithFallback({
+        table: 'InvestmentOrganization', storageKey: STORAGE_KEYS.ORGS, toRow: orgRow, decorate: withOrgLogo, seed: INITIAL_ORGANIZATIONS, limit,
+      }),
 
-      list: async (order = '-created_at', limit = 500) => {
-        const custom = readStorage(STORAGE_KEYS.ORGS);
-        const deleted = readStorage(STORAGE_KEYS.DELETED_ORGS);
-        try {
-          const { data, error } = await supabase.from('InvestmentOrganization').select('*').limit(limit);
-          if (!error && data && data.length > 0) {
-            const combined = deduplicateById([...custom, ...data]).filter((o) => !deleted.includes(o.id));
-            organizationsStore = combined;
-            return combined;
-          }
-        } catch (e) {}
-
-        const combined = deduplicateById([...custom, ...INITIAL_ORGANIZATIONS]).filter((o) => !deleted.includes(o.id));
-        organizationsStore = combined;
-        return combined;
-      },
-
-      get: async (idOrSlug) => {
-        const custom = readStorage(STORAGE_KEYS.ORGS);
-        const localItem = custom.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
-        try {
-          const { data, error } = await supabase.from('InvestmentOrganization').select('*').or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`).single();
-          if (!error && data) {
-            const logoVal = data.logo_url || data.logo || localItem?.logo_url || localItem?.logo || localItem?.image_url || localItem?.photo_url || null;
-            return {
-              ...data,
-              ...(localItem || {}),
-              logo: logoVal,
-              logo_url: logoVal,
-              image_url: logoVal,
-              photo_url: logoVal
-            };
-          }
-        } catch (e) {}
-        const all = await base44.entities.InvestmentOrganization.list();
-        const org = all.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
-        if (!org) return null;
-        return org;
-      },
-
-      create: async (payload) => {
-        const id = payload.id || `org_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-        const baseSlug = payload.display_name ? payload.display_name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `org-${Date.now()}`;
-        const logoVal = payload.logo || payload.logo_url || payload.image_url || null;
-        const newOrg = {
-          id,
-          slug: payload.slug || `${baseSlug}-${Date.now().toString().slice(-4)}`,
-          created_at: new Date().toISOString(),
-          verification_status: payload.verification_status || 'PENDING',
-          active: payload.active ?? true,
-          official: payload.official ?? false,
-          featured: payload.featured ?? false,
-          partner: payload.partner ?? false,
-          investment_focus: payload.investment_focus || [],
-          investment_stages: payload.investment_stages || [],
-          geographic_focus: payload.geographic_focus || ['Tunisia'],
-          preferred_currencies: payload.preferred_currencies || ['TND'],
-          ...payload,
-          logo: logoVal,
-          logo_url: logoVal,
-          image_url: logoVal,
-          photo_url: logoVal
-        };
-
-        // 1. Persist to localStorage immediately
-        const custom = readStorage(STORAGE_KEYS.ORGS);
-        writeStorage(STORAGE_KEYS.ORGS, [newOrg, ...custom]);
-
-        // 2. Try Supabase insert with clean fields
-        const { photo_url, image, ...cleanForSupabase } = newOrg;
-        try {
-          await supabase.from('InvestmentOrganization').insert(cleanForSupabase);
-        } catch (e) {
-          console.warn('Supabase org insert queued locally:', e);
-        }
-
-        organizationsStore = deduplicateById([newOrg, ...organizationsStore]);
-        return newOrg;
-      },
-
-      update: async (id, payload) => {
-        const logoVal = payload.logo || payload.logo_url || payload.image_url;
-        const currentItem = organizationsStore.find((o) => o.id === id || o.slug === id) || INITIAL_ORGANIZATIONS.find((o) => o.id === id || o.slug === id) || {};
-        const targetId = currentItem.id || id;
-        const updatedItem = {
-          ...currentItem,
-          ...payload,
-          id: targetId,
-          ...(logoVal !== undefined ? { logo: logoVal, logo_url: logoVal, image_url: logoVal, photo_url: logoVal } : {})
-        };
-
-        const { photo_url, image, ...cleanForSupabase } = payload;
-        const supabaseUpdate = {
-          ...cleanForSupabase,
-          ...(logoVal !== undefined ? { logo: logoVal, logo_url: logoVal } : {})
-        };
-        try {
-          await supabase.from('InvestmentOrganization').update(supabaseUpdate).eq('id', targetId);
-        } catch (e) {
-          console.warn('Supabase org update warning:', e);
-        }
-
-        const custom = readStorage(STORAGE_KEYS.ORGS);
-        const exists = custom.some((o) => o.id === targetId);
-        const newCustom = exists
-          ? custom.map((o) => (o.id === targetId ? updatedItem : o))
-          : [updatedItem, ...custom];
-        writeStorage(STORAGE_KEYS.ORGS, newCustom);
-
-        organizationsStore = organizationsStore.map((o) => (o.id === targetId ? updatedItem : o));
-        if (!organizationsStore.some((o) => o.id === targetId)) {
-          organizationsStore = [updatedItem, ...organizationsStore];
-        }
-        return updatedItem;
-      },
-
-      delete: async (id) => {
-        try {
-          await supabase.from('InvestmentOrganization').delete().eq('id', id);
-        } catch (e) {}
-
-        const custom = readStorage(STORAGE_KEYS.ORGS).filter((o) => o.id !== id);
-        writeStorage(STORAGE_KEYS.ORGS, custom);
-
-        const deleted = readStorage(STORAGE_KEYS.DELETED_ORGS);
-        if (!deleted.includes(id)) {
-          writeStorage(STORAGE_KEYS.DELETED_ORGS, [...deleted, id]);
-        }
-
-        organizationsStore = organizationsStore.filter((o) => o.id !== id);
-        return true;
-      }
-    },
-
-    InvestmentVehicle: {
-      filter: async (criteria = {}, order = '-created_at', limit = 500) => {
-        const all = await base44.entities.InvestmentVehicle.list(order, limit);
-        return all.filter((v) => {
-          return Object.entries(criteria).every(([key, val]) => v[key] === val);
-        });
-      },
-
-      list: async (order = '-created_at', limit = 500) => {
-        const custom = readStorage(STORAGE_KEYS.VEHICLES);
-        try {
-          const { data, error } = await supabase.from('InvestmentVehicle').select('*').limit(limit);
-          if (!error && data && data.length > 0) {
-            const combined = deduplicateById([...custom, ...data]);
-            vehiclesStore = combined;
-            return combined;
-          }
-        } catch (e) {}
-
-        const combined = deduplicateById([...custom, ...INITIAL_VEHICLES]);
-        vehiclesStore = combined;
-        return combined;
-      },
+      filter: async (criteria = {}, order, limit = 500) => (await base44.entities.InvestmentOrganization.list(order, limit)).filter((org) => matches(org, criteria)),
 
       get: async (idOrSlug) => {
         if (!idOrSlug) return null;
-        const normalized = String(idOrSlug).toLowerCase().trim();
-        try {
-          const { data, error } = await supabase
-            .from('InvestmentVehicle')
-            .select('*')
-            .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
-            .single();
-          if (!error && data) return data;
-        } catch (e) {}
-        const all = await base44.entities.InvestmentVehicle.list();
-        const v = all.find((item) => {
-          if (!item) return false;
-          if (item.id === idOrSlug || String(item.id).toLowerCase() === normalized) return true;
-          if (item.slug && item.slug.toLowerCase() === normalized) return true;
-          if (item.name) {
-            const nameSlug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-            if (nameSlug === normalized || item.name.toLowerCase() === normalized) return true;
-          }
-          return false;
-        });
-        return v || null;
+        const all = await base44.entities.InvestmentOrganization.list();
+        return all.find((org) => org.id === idOrSlug || org.slug === idOrSlug) || null;
       },
 
       create: async (payload) => {
-        const id = payload.id || `fund_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-        const newVehicle = {
-          id,
-          created_at: new Date().toISOString(),
-          active: payload.active ?? true,
-          investment_stages: payload.investment_stages || [],
-          sector_focus: payload.sector_focus || [],
-          geographic_focus: payload.geographic_focus || [],
-          ...payload
-        };
+        const row = orgRow({
+          id: payload.id || uid('org'),
+          slug: payload.slug || `${slugify(payload.display_name) || 'investor'}-${Date.now().toString(36).slice(-4)}`,
+          active: true,
+          investment_focus: [],
+          investment_stages: [],
+          geographic_focus: ['Tunisia'],
+          preferred_currencies: ['TND'],
+          ...payload,
+        });
+        const { data, error } = await supabase.from('InvestmentOrganization').insert(row).select().single();
+        if (error) throw fail(error, 'register this investor');
+        return withOrgLogo(data);
+      },
 
-        const custom = readStorage(STORAGE_KEYS.VEHICLES);
-        writeStorage(STORAGE_KEYS.VEHICLES, [newVehicle, ...custom]);
+      update: async (idOrSlug, payload) => {
+        const current = await base44.entities.InvestmentOrganization.get(idOrSlug);
+        const id = current?.id || idOrSlug;
+        const { data, error } = await supabase.from('InvestmentOrganization').update(orgRow(payload)).eq('id', id).select();
+        if (error) throw fail(error, 'update this investor profile');
+        if (!data?.length) throw fail({ code: '42501' }, 'update this investor profile');
+        return withOrgLogo(data[0]);
+      },
 
-        try {
-          await supabase.from('InvestmentVehicle').insert(newVehicle);
-        } catch (e) {}
+      delete: async (id) => {
+        const { data, error } = await supabase.from('InvestmentOrganization').delete().eq('id', id).select('id');
+        if (error) throw fail(error, 'remove this investor');
+        const local = readStorage(STORAGE_KEYS.ORGS);
+        const remaining = local.filter((o) => o.id !== id);
+        if (remaining.length !== local.length) writeStorage(STORAGE_KEYS.ORGS, remaining);
+        else if (!data?.length) throw fail({ code: '42501' }, 'remove this investor');
+        return true;
+      },
+    },
 
-        vehiclesStore = deduplicateById([newVehicle, ...vehiclesStore]);
-        return newVehicle;
-      }
-    }
-  }
+    InvestmentVehicle: {
+      list: (_order, limit = 500) => listWithFallback({
+        table: 'InvestmentVehicle', storageKey: STORAGE_KEYS.VEHICLES, toRow: vehicleRow, decorate: (v) => v, seed: INITIAL_VEHICLES, limit,
+      }),
+
+      filter: async (criteria = {}, order, limit = 500) => (await base44.entities.InvestmentVehicle.list(order, limit)).filter((v) => matches(v, criteria)),
+
+      get: async (idOrSlug) => {
+        if (!idOrSlug) return null;
+        const wanted = String(idOrSlug).toLowerCase().trim();
+        const all = await base44.entities.InvestmentVehicle.list();
+        return all.find((v) => String(v.id).toLowerCase() === wanted || slugify(v.name) === wanted || String(v.name || '').toLowerCase() === wanted) || null;
+      },
+
+      create: async (payload) => {
+        const row = vehicleRow({ id: payload.id || uid('fund'), active: true, investment_stages: [], sector_focus: [], geographic_focus: [], ...payload });
+        const { data, error } = await supabase.from('InvestmentVehicle').insert(row).select().single();
+        if (error) throw fail(error, 'add this fund');
+        return data;
+      },
+    },
+  },
 };

@@ -8,15 +8,15 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { checkRateLimit } from '@/lib/rateLimiter';
-import { validate, validators, sanitize } from '@/lib/validation';
-import { logger } from '@/lib/logger';
+import { validate, validators } from '@/lib/validation';
 import { CACHE } from '@/lib/query-client';
 import { useTranslation } from '@/lib/i18n/useTranslation';
-import { POST_INTENT_CATEGORIES } from '@/lib/investmentNetwork';
+import { POST_INTENT_CATEGORIES, INTENT_TONES } from '@/lib/investmentNetwork';
+import { notifyCircleMembers } from '@/api/platform';
 
 const ACCEPTED_FILE = '.pdf,.xls,.xlsx,.csv,.doc,.docx';
 
-export default function CreatePostBox() {
+export default function CreatePostBox({ defaultCircle = null }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const t = useTranslation();
@@ -29,7 +29,7 @@ export default function CreatePostBox() {
   const [uploading, setUploading] = useState(false);
   const [uploadingType, setUploadingType] = useState(null); // 'photo' | 'video' | 'file'
   const [showCirclePicker, setShowCirclePicker] = useState(false);
-  const [selectedCircle, setSelectedCircle] = useState(null);
+  const [selectedCircle, setSelectedCircle] = useState(defaultCircle);
   const [circleSearch, setCircleSearch] = useState('');
   const [cropSrc, setCropSrc] = useState(null); // raw object URL for crop modal
   const pendingPhotoFileRef = useRef(null);
@@ -202,7 +202,7 @@ export default function CreatePostBox() {
       queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
       setContent('');
       clearAttachments();
-      setSelectedCircle(null);
+      setSelectedCircle(defaultCircle);
       setPostError(null);
     },
     onError: (err) => {
@@ -231,13 +231,11 @@ export default function CreatePostBox() {
       return;
     }
 
-    const sanitizedContent = sanitize(content);
+    const sanitizedContent = content.trim();
     let postType = 'text';
     if (attachedImage) postType = 'photo';
     else if (attachedVideo) postType = 'video';
     else if (attachedFile) postType = 'document';
-
-    logger.track('post_created', { post_type: postType, has_circle: !!selectedCircle });
 
     const payload = {
       content: sanitizedContent,
@@ -263,7 +261,14 @@ export default function CreatePostBox() {
       payload.file_type = attachedFile.type;
     }
 
-    createPost.mutate(payload);
+    const circle = selectedCircle;
+    createPost.mutate(payload, {
+      onSuccess: () => {
+        if (circle) {
+          notifyCircleMembers({ circle, authorId: user?.id, type: 'new_post', message: `${displayName} posted in ${circle.name}` });
+        }
+      },
+    });
   };
 
   const handleContentChange = (e) => {
@@ -360,9 +365,9 @@ export default function CreatePostBox() {
       {/* Economic Sensor Intent Selector */}
       <div className="mb-2">
         <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-          Signal Type / Post Intent
+          {t.createPost?.intentLabel || 'What is this post about?'}
         </label>
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
+        <div className="flex flex-wrap items-center gap-1.5 pb-1.5">
           {POST_INTENT_CATEGORIES.map((cat) => {
             const active = category === cat.id;
             return (
@@ -372,8 +377,8 @@ export default function CreatePostBox() {
                 onClick={() => setCategory(cat.id)}
                 className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap transition-all border ${
                   active
-                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                    : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
+                    ? `${INTENT_TONES[cat.tone]} shadow-sm`
+                    : 'bg-background text-muted-foreground border-border hover:text-foreground'
                 }`}
               >
                 {cat.label}

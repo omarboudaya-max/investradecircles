@@ -10,11 +10,12 @@ import CircleAdminDashboard from '@/components/circles/CircleAdminDashboard';
 import CircleMemberRoles from '@/components/circles/CircleMemberRoles';
 import InviteToCircleModal from '@/components/circles/InviteToCircleModal';
 import ShareCircleModal from '@/components/circles/ShareCircleModal';
-import { useCircleNotifications } from '@/hooks/useCircleNotifications';
+import { notifyCircleMembers } from '@/api/platform';
+import CircleInsights from '@/components/circles/CircleInsights';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList, Sparkles, FileText, Globe2, Landmark, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, Send, Users, MessageCircle, ChevronUp, ChevronDown, UserPlus, Share2, Newspaper, LayoutList } from 'lucide-react';
 import CircleIcon from '@/components/circles/CircleIcon';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import CircleFeed from '@/components/circles/CircleFeed';
@@ -121,22 +122,7 @@ export default function CircleDetail() {
       }).select();
       if (error) throw error;
 
-      if (circle?.member_ids && circle.member_ids.length > 0) {
-        const notifications = circle.member_ids
-          .filter(memberId => memberId !== user?.id)
-          .map(memberId => ({
-            user_id: memberId,
-            type: 'circle_question',
-            message: `${circle.name} has a new question`,
-            circle_id: id,
-            circle_name: circle.name,
-            target_url: `/circle/${id}`
-          }));
-        
-        if (notifications.length > 0) {
-          await supabase.from('Notification').insert(notifications);
-        }
-      }
+      await notifyCircleMembers({ circle, authorId: user?.id, type: 'circle_question', message: `${circle.name} has a new question` });
 
       return data;
     },
@@ -148,15 +134,19 @@ export default function CircleDetail() {
   });
 
   const submitResponse = useMutation({
-    mutationFn: (text) =>
-      supabase.from('CircleResponse').insert({
+    mutationFn: async (text) => {
+      const authorName = user?.full_name || user?.email?.split('@')[0] || 'User';
+      const { error } = await supabase.from('CircleResponse').insert({
         question_id: activeQuestion.id,
         circle_id: id,
-        response_text: text,
-        author_name: user?.full_name || user?.email?.split('@')[0] || 'User',
+        response_text: text.trim(),
+        author_name: authorName,
         author_avatar: user?.avatar_url || null,
         created_by_id: user?.id,
-      }),
+      });
+      if (error) throw new Error(error.message);
+      await notifyCircleMembers({ circle, authorId: user?.id, type: 'new_response', message: `${authorName} responded to a question in ${circle.name}` });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circle-responses', activeQuestion?.id] });
       setNewResponse('');
@@ -206,32 +196,18 @@ export default function CircleDetail() {
     ...(circle?.created_by_id ? [circle.created_by_id] : []),
   ]));
 
-  useCircleNotifications({ circle, user });
-
-  // Mark all unread notifications for this circle as read when user opens it,
-  // and keep checking periodically to catch new notifications that arrive while viewing
+  // Opening a circle clears its unread notifications.
   useEffect(() => {
-    if (!user?.id || !id) return;
-
-    const markCircleNotifsRead = async () => {
-      try {
-        const notifs = await supabase.from('Notification').select('*').match({ user_id: user.id, circle_id: id, is_read: false }).then(res => res.data || []);
-        if (notifs.length > 0) {
-          for (const n of notifs) {
-            await supabase.from('Notification').update({ is_read: true }).eq('id', n.id);
-          }
-          queryClient.invalidateQueries({ queryKey: ['notifications', user.id] });
-        }
-      } catch (_) { /* ignore transient errors */ }
+    if (!user?.id || !id) return undefined;
+    const markRead = async () => {
+      const { data } = await supabase.from('Notification').update({ is_read: true })
+        .match({ user_id: user.id, circle_id: id, is_read: false }).select('id');
+      if (data?.length) queryClient.invalidateQueries({ queryKey: ['notifications', user.id] });
     };
-
-    // Clear immediately on entry
-    markCircleNotifsRead();
-
-    // Also poll every 4 seconds to clear notifications that arrive while viewing
-    const interval = setInterval(markCircleNotifsRead, 4000);
-    return () => clearInterval(interval);
-  }, [id, user?.id]);
+    markRead();
+    window.addEventListener('focus', markRead);
+    return () => window.removeEventListener('focus', markRead);
+  }, [id, user?.id, queryClient]);
 
   // Fetch real user profiles for ALL circle members including creator
   const allCircleMemberIds = Array.from(new Set([
@@ -313,65 +289,7 @@ export default function CircleDetail() {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
-      {/* Circle AI Intelligence Header */}
-      {circle && (
-        <div className="bg-gradient-to-r from-slate-900 via-[#0b253e] to-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 text-white shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-              <div>
-                <h3 className="font-extrabold text-white text-base">Circle AI Intelligence Ecosystem</h3>
-                <p className="text-[11px] text-cyan-400 font-semibold">Real-time signal analytics for {circle.name}</p>
-              </div>
-            </div>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-cyan-500/40 text-cyan-300 hover:text-white hover:bg-cyan-500/20 text-xs gap-1.5 shrink-0"
-              onClick={() => alert(`Weekly AI Intelligence brief for ${circle.name} generated.`)}
-            >
-              <FileText className="w-3.5 h-3.5" /> Download Circle AI Brief
-            </Button>
-          </div>
-
-          {/* Circle Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Community Members</div>
-              <div className="text-lg font-bold text-white">{allMemberIds.length}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Verified Companies</div>
-              <div className="text-lg font-bold text-cyan-400">{Math.max(8, Math.round(allMemberIds.length * 0.4))}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Active Deals</div>
-              <div className="text-lg font-bold text-emerald-400">{Math.max(3, Math.round(allMemberIds.length * 0.15))}</div>
-            </div>
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-              <div className="text-slate-400 text-[10px] uppercase font-semibold">Capital Demanded</div>
-              <div className="text-lg font-bold text-amber-400">8.4M TND</div>
-            </div>
-          </div>
-
-          {/* Live AI Circle Signals */}
-          <div className="space-y-1.5 pt-1 text-xs">
-            <p className="font-bold text-slate-300 text-[11px] uppercase tracking-wider">Live Community AI Signals:</p>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
-                🔥 Investment demand up +14%
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
-                🤝 8 Partnership requests detected
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-semibold">
-                🌍 Germany & GCC target corridors trending
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+      {circle && isMember && <CircleInsights circle={circle} />}
 
       {/* ── Institutional/Business: premium AI-finance layout ── */}
       {isInstitutional ? (
@@ -403,7 +321,7 @@ export default function CircleDetail() {
               <h3 className="text-lg font-bold text-foreground mb-1">{t.circleDetail.privateInstitution}</h3>
               <p className="text-sm max-w-md mx-auto">{t.circleDetail.mustBeMemberInst}</p>
             </div>
-          ) : isChamberOfCommerce && (circle?.name === 'CCI Tunis' || circle?.name === 'CCITunis') ? (
+          ) : isChamberOfCommerce && /^cci\s*tunis$/i.test((circle?.name || '').trim()) ? (
             <CCITunisLayout {...institutionalProps} />
           ) : isChamberOfCommerce ? (
             <ChamberOfCommerceLayout {...institutionalProps} />

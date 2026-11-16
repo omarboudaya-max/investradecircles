@@ -12,7 +12,7 @@
     --card-foreground: 215 25% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 12%;
-    --primary: 182 90% 42%;
+    --primary: 192 91% 36%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 30% 95%;
     --secondary-foreground: 215 25% 20%;
@@ -24,7 +24,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 210 20% 90%;
     --input: 210 20% 90%;
-    --ring: 189 90% 42%;
+    --ring: 192 91% 36%;
     --chart-1: 211 90% 42%;
     --chart-2: 199 89% 60%;
     --chart-3: 211 70% 55%;
@@ -42,7 +42,7 @@
     --sidebar-accent: 210 30% 95%;
     --sidebar-accent-foreground: 215 25% 20%;
     --sidebar-border: 210 20% 90%;
-    --sidebar-ring: 183 90% 42%;
+    --sidebar-ring: 192 91% 36%;
   }
 
   .dark {

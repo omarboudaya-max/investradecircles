@@ -1,66 +1,41 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Landmark, Maximize2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Landmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UTICABusinessCommandCenter from '@/components/circles/UTICABusinessCommandCenter';
-import { useTheme } from '@/lib/ThemeContext';
 
 export default function UTICACommandCenterPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isDark } = useTheme();
-
-  // If URL has ?fullscreen=true or standalone, initialFullscreen is true
-  const shouldFullscreen = searchParams.get('fullscreen') === 'true' || searchParams.get('fullscreen') === '1';
+  const fullscreen = ['true', '1'].includes(searchParams.get('fullscreen'));
 
   return (
-    <div className={`min-h-screen transition-colors ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+    <div className="min-h-screen bg-background text-foreground">
       <Helmet>
-        <title>UTICA Command Center — Intelligence Économique Nationale | Investraders</title>
-        <meta
-          name="description"
-          content="Tableau de bord stratégique d'Intelligence Économique Nationale et d'écoute en temps réel des entreprises tunisiennes — UTICA, Wisdom Net & KAS."
-        />
+        <title>UTICA Command Center — Intelligence Économique | Investraders</title>
+        <meta name="description" content="Tableau de bord d'intelligence économique et d'écoute des entreprises tunisiennes, calculé à partir de l'activité réelle de la plateforme Investraders." />
       </Helmet>
 
-      {/* Top Standalone Header Bar */}
-      <header className={`sticky top-0 z-50 border-b px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4 backdrop-blur-md transition-colors ${isDark ? 'border-white/10 bg-slate-950/90 text-white' : 'border-slate-200 bg-white/95 text-slate-900 shadow-sm'}`}>
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b bg-background/95 px-4 py-2.5 backdrop-blur sm:px-8">
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className={`rounded-full gap-1.5 text-xs font-semibold ${isDark ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
-          >
-            <ArrowLeft className="w-4 h-4" /> Retour
+          <Button variant="ghost" size="sm" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))} className="gap-1.5 rounded-full text-xs font-semibold">
+            <ArrowLeft className="h-4 w-4" /> Retour
           </Button>
-          <div className="h-4 w-px bg-border hidden sm:block" />
-          <div className="flex items-center gap-2">
-            <Landmark className="w-4 h-4 text-amber-500" />
-            <span className={`text-xs font-bold tracking-wider uppercase ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
-              UTICA Command Center
-            </span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border hidden md:inline ${isDark ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-800 border-emerald-200'}`}>
-              LIVE DEMO
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-muted-foreground font-medium hidden sm:inline">
-            Astuce : Appuyez sur <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-[10px] border border-border">F</kbd> pour le Plein Écran
+          <div className="hidden h-4 w-px bg-border sm:block" />
+          <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground">
+            <Landmark className="h-4 w-4 text-primary" /> UTICA Command Center
           </span>
         </div>
+        <span className="hidden text-[11px] text-muted-foreground sm:inline">
+          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground">F</kbd> mode présentation ·{' '}
+          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground">←</kbd>{' '}
+          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground">→</kbd> onglets
+        </span>
       </header>
 
-      {/* Main Command Center Container */}
-      <main className="p-2 sm:p-6 max-w-[1700px] mx-auto">
-        <UTICABusinessCommandCenter
-          isDark={isDark}
-          initialFullscreen={shouldFullscreen}
-          onExitFullscreen={() => {}}
-        />
+      <main className="mx-auto max-w-[1500px] p-3 sm:p-6">
+        <UTICABusinessCommandCenter initialFullscreen={fullscreen} />
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   Sparkles, 
   Calendar, 
@@ -15,22 +15,15 @@ import {
   ShieldCheck, 
   Zap, 
   Award, 
-  Cpu, 
-  Network, 
-  Users, 
   Scan,
   Ticket,
   Camera,
-  Layers,
   ArrowRight,
   TrendingUp,
-  FileCheck2,
   Handshake,
   Compass,
   Rocket,
-  Check,
-  ChevronRight,
-  Share2
+  Check
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { supabase } from '@/lib/supabase';
@@ -141,7 +134,7 @@ export default function EventRegistrationLanding() {
       reader.onloadend = () => {
         const img = new Image();
         img.onload = () => {
-          const maxDim = 500;
+          const maxDim = 320;
           let w = img.width;
           let h = img.height;
           if (w > maxDim || h > maxDim) {
@@ -158,7 +151,7 @@ export default function EventRegistrationLanding() {
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', 0.88);
+          const compressed = canvas.toDataURL('image/jpeg', 0.8);
           setFormData(prev => ({
             ...prev,
             photoPreview: compressed,
@@ -212,6 +205,27 @@ export default function EventRegistrationLanding() {
     };
 
     try {
+      // Preferred path: one server-side call that creates or updates the registration
+      // without exposing anyone else's record to the browser.
+      const viaFunction = await supabase.rpc('register_for_event', {
+        p_full_name: regPayload.full_name,
+        p_email: normalizedEmail,
+        p_phone: regPayload.phone,
+        p_company: formData.company.trim(),
+        p_role: formData.role.trim(),
+        p_sector: regPayload.sector,
+        p_photo_url: finalPhotoUrl || null,
+      });
+      if (!viaFunction.error && viaFunction.data) {
+        const finalRecord = { ...viaFunction.data, photo_url: finalPhotoUrl, category: selectedCategory };
+        localStorage.setItem('investraders_investrade1_event_reg', JSON.stringify(finalRecord));
+        setRegistrationSuccess(finalRecord);
+        return;
+      }
+      if (viaFunction.error && !['PGRST202', '42883'].includes(viaFunction.error.code)) {
+        throw new Error(viaFunction.error.message);
+      }
+
       const { data: existingReg } = await supabase
         .from('event_registrations')
         .select('*')

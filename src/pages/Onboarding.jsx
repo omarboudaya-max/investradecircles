@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useQuery } from '@tanstack/react-query';
-import { Camera, ChevronRight, Loader2, UserPlus, Hash, Check } from 'lucide-react';
+import { Camera, Loader2, UserPlus, Check } from 'lucide-react';
 import ImageCropModal from '@/components/ui/ImageCropModal';
 
 export default function Onboarding() {

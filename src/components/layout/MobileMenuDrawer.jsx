@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, User, Bookmark, Users, Globe, MessageCircle, Bell, Map,
   ChevronDown, ChevronUp, Settings, HelpCircle, LogOut, 
-  Moon, Sun, Languages, Lock, ShieldCheck, Eye, CircleDot, FileText, MessageSquare
+  Moon, Sun, Languages, Lock, ShieldCheck, Eye, FileText, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useTheme } from '@/lib/ThemeContext';
@@ -22,7 +22,7 @@ import CircleIcon from '@/components/circles/CircleIcon';
 import LanguageSelector from '@/components/layout/LanguageSelector';
 
 export default function MobileMenuDrawer({ isOpen, onClose }) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { isArabic, language } = useLanguage();
   const t = useTranslation();
@@ -264,7 +264,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }) {
                   </div>
 
                   {/* Admin Dashboard Tile for Admin Accounts */}
-                  {(user?.role === 'admin' || user?.is_admin || userProfile?.role === 'admin' || userProfile?.is_admin || user?.app_metadata?.role === 'admin') && (
+                  {isAdmin && (
                     <div 
                       onClick={() => handleNav('/admin')}
                       className="bg-amber-500/10 dark:bg-amber-500/20 rounded-2xl p-3.5 shadow-sm border border-amber-500/40 flex flex-col gap-2 cursor-pointer hover:bg-amber-500/20 transition-all col-span-2"

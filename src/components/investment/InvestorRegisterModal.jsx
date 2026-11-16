@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { INVESTOR_TYPES, FUND_CATEGORIES } from '@/lib/investmentNetwork';
-import { Building2, Landmark, CheckCircle2, Loader2, ShieldCheck, Upload, Image as ImageIcon, X, Check } from 'lucide-react';
+import { INVESTOR_TYPES } from '@/lib/investmentNetwork';
+import { Landmark, CheckCircle2, Loader2, Upload, Image as ImageIcon, X, Check } from 'lucide-react';
 
 const selectCls = 'w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
 
@@ -145,6 +145,11 @@ export default function InvestorRegisterModal({ open, onClose, onSuccess, orgToE
         description: 'Please fill in the organization name and contact email.',
         variant: 'destructive'
       });
+      return;
+    }
+
+    if (!user) {
+      toast({ title: 'Please sign in first', description: 'An account is needed so you can manage your investor profile and receive introductions.', variant: 'destructive' });
       return;
     }
 

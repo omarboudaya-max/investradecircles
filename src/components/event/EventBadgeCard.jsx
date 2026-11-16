@@ -5,17 +5,12 @@ import {
   Download, 
   Calendar, 
   CheckCircle2, 
-  Building2, 
-  Briefcase, 
   LogIn, 
   UserPlus, 
   ShieldCheck, 
   Sparkles,
   Copy,
-  User,
-  MapPin,
-  ExternalLink,
-  QrCode
+  User
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import EventQRCode from './EventQRCode';

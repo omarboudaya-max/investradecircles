@@ -9,23 +9,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Search,
   Building2,
-  Globe2,
   Landmark,
   ShieldCheck,
   Sparkles,
-  ArrowRight,
-  Filter,
-  CheckCircle2,
-  DollarSign,
-  Briefcase,
   Layers,
   MapPin,
-  Star,
-  Users,
-  PlusCircle,
-  FolderKanban
+  PlusCircle
 } from 'lucide-react';
-import { INVESTOR_TYPES, FUND_CATEGORIES } from '@/lib/investmentNetwork';
+import { INVESTOR_TYPES } from '@/lib/investmentNetwork';
 import MatchingResultsModal from '@/components/investment/MatchingResultsModal';
 import InvestorRegisterModal from '@/components/investment/InvestorRegisterModal';
 
@@ -126,26 +117,26 @@ export default function InvestmentNetwork() {
     <div>
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pb-16">
         {/* HERO SECTION */}
-        <section className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white relative overflow-hidden border-b border-slate-800">
+        <section className="bg-gradient-to-r from-emerald-50 via-white to-sky-50 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 text-slate-900 dark:text-white relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
           <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
-            <Landmark className="w-96 h-96 text-emerald-400" />
+            <Landmark className="w-96 h-96 text-emerald-600 dark:text-emerald-400" />
           </div>
 
           <div className="container mx-auto px-4 py-14 sm:py-20 relative z-10 space-y-8">
             <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-                <Sparkles className="w-4 h-4 text-emerald-400" /> Investment Ecosystem — Capital & Funds Directory
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Investment Ecosystem — Capital & Funds Directory
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                 Investment Network
               </h1>
 
-              <h2 className="text-xl sm:text-2xl font-semibold text-emerald-400">
+              <h2 className="text-xl sm:text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
                 Connect Capital With Opportunity
               </h2>
 
-              <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+              <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
                 Explore investment funds, asset managers, family offices, sovereign wealth funds, and institutional capital partners — and discover the projects that match their investment mandates.
               </p>
 
@@ -162,26 +153,26 @@ export default function InvestmentNetwork() {
             </div>
 
             {/* DYNAMIC STATISTICS BAR (Database Generated) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-6 border-t border-slate-800">
-              <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{totalOrgs}+</div>
-                <div className="text-xs text-slate-300 font-medium">Investment Institutions</div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+              <div className="p-4 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{totalOrgs}+</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">Investment Institutions</div>
               </div>
-              <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{totalCountries}+</div>
-                <div className="text-xs text-slate-300 font-medium">Target Countries</div>
+              <div className="p-4 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{totalCountries}+</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">Target Countries</div>
               </div>
-              <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{totalCategories}</div>
-                <div className="text-xs text-slate-300 font-medium">Investor Categories</div>
+              <div className="p-4 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{totalCategories}</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">Investor Categories</div>
               </div>
-              <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{publishedProjects}</div>
-                <div className="text-xs text-slate-300 font-medium">Projects Available</div>
+              <div className="p-4 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{publishedProjects}</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">Projects Available</div>
               </div>
-              <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 col-span-2 sm:col-span-1">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{potentialMatchesEstimate}+</div>
-                <div className="text-xs text-slate-300 font-medium">Potential Matches</div>
+              <div className="p-4 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 col-span-2 sm:col-span-1">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">{potentialMatchesEstimate}+</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">Potential Matches</div>
               </div>
             </div>
           </div>
@@ -301,7 +292,7 @@ export default function InvestmentNetwork() {
             <Button
               variant={selectedType === 'ALL' ? 'default' : 'outline'}
               size="sm"
-              className={`rounded-full text-xs shrink-0 ${selectedType === 'ALL' ? 'bg-slate-900 text-white' : ''}`}
+              className={`rounded-full text-xs shrink-0 ${selectedType === 'ALL' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
               onClick={() => setSelectedType('ALL')}
             >
               All Capital Partners ({organizations.length})
@@ -506,15 +497,15 @@ export default function InvestmentNetwork() {
 
         {/* BOTTOM CALL TO ACTION BANNER */}
         <section className="container mx-auto px-4 pt-8">
-          <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+          <div className="bg-gradient-to-r from-emerald-50 via-white to-sky-50 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 rounded-3xl p-8 sm:p-12 text-slate-900 dark:text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
             <div className="space-y-3 max-w-xl text-center md:text-left">
-              <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
+              <Badge className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 text-xs">
                 Capital Partner Onboarding
               </Badge>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                 Are you an Investor or Asset Manager?
               </h3>
-              <p className="text-slate-300 text-sm leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                 Join the Investraders Investment Network to publish your investment mandate, gain visibility among top Tunisian & Mediterranean promoters, and receive automated dealflow matches.
               </p>
             </div>

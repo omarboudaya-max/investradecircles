@@ -331,6 +331,7 @@ const ar = {
   home: {
     noPostsTitle: 'لا توجد منشورات بعد',
     noPostsSubtitle: 'كن أول من يشارك شيئاً مع دوائره!',
+    beFirstToPost: 'كن أول من يشارك شيئاً مع دوائرك!',
   },
   savedPosts: {
     title: 'المنشورات المحفوظة',
@@ -499,23 +500,6 @@ const ar = {
     deleteCircle: 'حذف الدائرة',
     resolve: 'حلّ',
   },
-  circleDetail: {
-    members: 'الأعضاء',
-    posts: 'المنشورات',
-    about: 'حول',
-    join: 'انضم',
-    leave: 'مغادرة',
-    joined: 'منضم',
-    invite: 'دعوة',
-    settings: 'الإعدادات',
-    noDescription: 'لم يتم تقديم وصف.',
-    noPosts: 'لا توجد منشورات في هذه الدائرة بعد.',
-    beFirst: 'كن أول من ينشر!',
-    createPost: 'إنشاء منشور',
-    private: 'خاص',
-    public: 'عام',
-    joinToSee: 'انضم إلى هذه الدائرة لرؤية محتواها.',
-  },
   joinCircle: {
     title: 'الانضمام إلى دائرة',
     enterCode: 'أدخل رمز الدعوة',
@@ -536,6 +520,7 @@ const ar = {
     clickToOpen: 'انقر للفتح',
     unknown: 'غير معروف',
     public: 'عام',
+    postError: 'فشل تحديث المنشور',
   },
   commentSection: {
     placeholder: 'اكتب تعليقاً...',
@@ -619,26 +604,6 @@ const ar = {
     verified: 'موثّق',
     official: 'رسمي',
     posting: 'نشر إلى:',
-  },
-  postCard: {
-    unknown: 'مستخدم',
-    public: 'عام',
-    copyLink: 'نسخ الرابط',
-    linkCopied: 'تم نسخ الرابط',
-    deletePost: 'حذف المنشور',
-    postDeleted: 'تم حذف المنشور',
-    reportPost: 'الإبلاغ عن منشور',
-    postReported: 'تم الإبلاغ عن المنشور',
-    reportThankYou: 'شكراً لك على المساعدة في الحفاظ على أمان مجتمعنا.',
-    attachedDocument: 'مستند مرفق',
-    clickToOpen: 'انقر للفتح / التنزيل',
-    comment: 'تعليق',
-    postError: 'فشل تحديث المنشور',
-  },
-  home: {
-    noPostsTitle: 'لا توجد منشورات بعد',
-    noPostsSubtitle: 'كن أول من يشارك شيئاً مع دوائرك!',
-    beFirstToPost: 'كن أول من يشارك شيئاً مع دوائرك!',
   },
 };
 

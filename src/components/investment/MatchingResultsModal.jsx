@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, CheckCircle2, ShieldCheck, ArrowRight, Building2, MapPin, DollarSign, Layers, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, CheckCircle2, ShieldCheck, ArrowRight, Building2, MapPin, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
 import { calculateInvestorProjectMatch } from '@/lib/investmentNetwork';
 import { useNavigate } from 'react-router-dom';
 import { formatMTND } from '@/lib/investment';
@@ -55,22 +55,22 @@ export default function MatchingResultsModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
         {/* Header Hero */}
-        <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-6 sm:p-8 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-50 via-white to-sky-50 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 p-6 sm:p-8 text-slate-900 dark:text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <Sparkles className="w-48 h-48 text-emerald-400" />
+            <Sparkles className="w-48 h-48 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="relative z-10 space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold border border-emerald-500/30">
               <Sparkles className="w-3.5 h-3.5" /> Deterministic Match Engine
             </div>
-            <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               {mode === 'project-to-investors' ? (
-                <>Matching Capital Partners for <span className="text-emerald-400">{targetEntity.title}</span></>
+                <>Matching Capital Partners for <span className="text-emerald-600 dark:text-emerald-400">{targetEntity.title}</span></>
               ) : (
-                <>Compatible Projects for <span className="text-emerald-400">{targetEntity.display_name}</span></>
+                <>Compatible Projects for <span className="text-emerald-600 dark:text-emerald-400">{targetEntity.display_name}</span></>
               )}
             </DialogTitle>
-            <DialogDescription className="text-slate-300 text-sm max-w-2xl">
+            <DialogDescription className="text-slate-600 dark:text-slate-300 text-sm max-w-2xl">
               {mode === 'project-to-investors' ? (
                 `Found ${matches.length} institutional investors & investment vehicles aligned with sector, ticket size, and target growth stage.`
               ) : (

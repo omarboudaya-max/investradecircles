@@ -158,6 +158,7 @@ export default function ProjectSubmitForm({
   };
 
   const submit = async () => {
+    if (!user) return setError('Please sign in to publish an opportunity, so that you can edit it later and investors can reach you.');
     const targetGovId = governorate?.id || form.governorate_id;
     if (!targetGovId) return setError('Please choose a governorate for this opportunity.');
     if (!form.title.trim()) return setError('Please enter a project title.');

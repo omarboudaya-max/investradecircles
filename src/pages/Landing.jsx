@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
-import WebsiteFooter from '@/components/layout/WebsiteFooter';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import DownloadAppButton from '@/components/layout/DownloadAppButton';
 

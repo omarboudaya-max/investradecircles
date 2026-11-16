@@ -15,13 +15,8 @@ import {
   Sparkles,
   ArrowLeft,
   ExternalLink,
-  DollarSign,
-  Layers,
   Briefcase,
-  CheckCircle2,
   Calendar,
-  Mail,
-  Phone,
   Landmark,
   Edit3,
   Trash2,
@@ -145,7 +140,7 @@ export default function InvestorProfileDetail() {
         </div>
 
         {/* Hero Banner */}
-        <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white py-12">
+        <div className="bg-gradient-to-r from-emerald-50 via-white to-sky-50 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 text-slate-900 dark:text-white py-12">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               {/* Profile Card Info */}
@@ -165,7 +160,7 @@ export default function InvestorProfileDetail() {
                           className="w-full h-full object-cover rounded-xl"
                         />
                       ) : (
-                        <Building2 className="w-12 h-12 text-slate-400" />
+                        <Building2 className="w-12 h-12 text-slate-500 dark:text-slate-400" />
                       )}
                     </div>
                   );
@@ -173,11 +168,11 @@ export default function InvestorProfileDetail() {
 
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
+                    <Badge className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 text-xs">
                       {organization.organization_type?.replace(/_/g, ' ')}
                     </Badge>
                     {(organization.is_illustrative || organization.id === 'org_cdc_gestion' || organization.id === 'org_blackrock' || organization.id === 'org_kkr_infra') ? (
-                      <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/40 text-xs font-bold">
+                      <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40 text-xs font-bold">
                         ⚠️ Exemple illustratif (Démonstration)
                       </Badge>
                     ) : (
@@ -188,7 +183,7 @@ export default function InvestorProfileDetail() {
                           </Badge>
                         )}
                         {organization.official && (
-                          <Badge variant="outline" className="border-white/30 text-white text-xs">
+                          <Badge variant="outline" className="border-slate-300 dark:border-white/30 text-slate-900 dark:text-white text-xs">
                             Official Partner
                           </Badge>
                         )}
@@ -196,20 +191,20 @@ export default function InvestorProfileDetail() {
                     )}
                   </div>
 
-                  <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+                  <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                     {organization.display_name}
                   </h1>
 
-                  <p className="text-slate-300 text-sm">{organization.legal_name}</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm">{organization.legal_name}</p>
 
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-300 pt-1">
                     <span className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4 text-emerald-400" />
+                      <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                       {organization.city ? `${organization.city}, ` : ''}{organization.country}
                     </span>
                     {organization.year_founded && (
                       <span className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-emerald-400" />
+                        <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         Est. {organization.year_founded}
                       </span>
                     )}
@@ -218,7 +213,7 @@ export default function InvestorProfileDetail() {
                         href={organization.website}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 text-emerald-300 hover:text-emerald-200 underline"
+                        className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 dark:hover:text-emerald-200 underline"
                       >
                         <Globe className="w-4 h-4" /> Website <ExternalLink className="w-3 h-3" />
                       </a>
@@ -239,7 +234,7 @@ export default function InvestorProfileDetail() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
+                  className="border-slate-200 dark:border-white/20 text-slate-900 dark:text-white hover:bg-white/10"
                   onClick={() => setInterestOpen(true)}
                 >
                   Express Interest
@@ -248,7 +243,7 @@ export default function InvestorProfileDetail() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 gap-2 font-semibold"
+                    className="border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 gap-2 font-semibold"
                     onClick={() => setEditOpen(true)}
                   >
                     <Edit3 className="w-4 h-4" /> Edit Profile
@@ -423,13 +418,13 @@ export default function InvestorProfileDetail() {
             {/* Right Col: Quick Actions & Intelligence Box */}
             <div className="space-y-6">
               {/* Match Callout Card */}
-              <Card className="bg-gradient-to-br from-slate-900 to-emerald-950 text-white border-0 shadow-xl">
+              <Card className="bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-emerald-950 text-slate-900 dark:text-white border border-emerald-100 dark:border-0 shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
-                    <Sparkles className="w-5 h-5 text-emerald-400" /> Investraders Matching Engine
+                  <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Investraders Matching Engine
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 text-xs text-slate-300">
+                <CardContent className="space-y-4 text-xs text-slate-600 dark:text-slate-300">
                   <p>
                     Run the automated deterministic matching algorithm to calculate compatibility scores with published projects on the Investment Map.
                   </p>

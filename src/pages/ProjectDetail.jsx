@@ -6,7 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import {
   ArrowLeft, MapPin, ShieldCheck, Star, Building2, Coins, TrendingUp, Clock, Users,
-  Globe, Target, Check, Lock, Mail, Phone, Bookmark, BookmarkCheck, Share2, Download,
+  Globe, Target, Check, Lock, Mail, Bookmark, BookmarkCheck, Share2, Download,
   Send, FileText, Loader2, Landmark, Plus, Sparkles, Edit3, Trash2
 } from 'lucide-react';
 import InvestorInterestModal from '@/components/investment/InvestorInterestModal';

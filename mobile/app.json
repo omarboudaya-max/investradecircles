@@ -15,7 +15,7 @@
     },
     "android": {
       "package": "com.investraders.app",
-      "usesCleartextTraffic": true,
+      "usesCleartextTraffic": false,
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE",

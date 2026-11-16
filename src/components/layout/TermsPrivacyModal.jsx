@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, FileText, ShieldCheck } from 'lucide-react';
+import { X, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function TermsPrivacyModal({ isOpen, onClose }) {

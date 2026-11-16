@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import RightPanel from './RightPanel';
 import BottomNav from './BottomNav';
+import PageBoundary from './PageBoundary';
 import { useAuth } from '@/lib/AuthContext';
 import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -36,7 +37,7 @@ export default function AppLayout() {
           <div className="flex flex-1 min-h-0">
             <Sidebar />
             <main className="flex-1 min-w-0 p-3 sm:p-4">
-              <Outlet />
+              <PageBoundary><Outlet /></PageBoundary>
             </main>
             <RightPanel />
           </div>

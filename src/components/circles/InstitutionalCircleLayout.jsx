@@ -8,8 +8,7 @@ import {
   TrendingUp, TrendingDown, Megaphone, Newspaper, LayoutList,
   BarChart2, Globe, Users, Plus, Send, MessageCircle,
   ChevronUp, ChevronDown, Landmark, Sparkles, Maximize2,
-  Target, Eye, BookOpen, Briefcase, ShoppingBag,
-  Sun, Moon
+  Target, Eye, BookOpen, Briefcase, ShoppingBag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Rocket, Handshake, Globe2, Landmark, CheckCircle2 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Globe2, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
@@ -16,7 +16,10 @@ import { getAppUrl } from '@/lib/app-url';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { detectTextLanguage, LANGUAGES } from '@/lib/i18n/languages';
-import { POST_INTENT_CATEGORIES, extractPostEconomicSignal } from '@/lib/investmentNetwork';
+import { INTENT_TONES, intentMeta } from '@/lib/investmentNetwork';
+import { extractPostSignal } from '@/lib/intelligence/signals';
+import SentimentBadge from '@/components/intelligence/SentimentBadge';
+import { reportPost } from '@/api/platform';
 
 export default function PostCard({ post, onDeleted, readOnly = false }) {
   const { user } = useAuth();
@@ -32,8 +35,19 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const isOwn = post.created_by_id === user?.id;
   const saved = post.saved_by?.includes(user?.id);
 
-  const intentObj = POST_INTENT_CATEGORIES.find((c) => c.id === post.intent_category) || POST_INTENT_CATEGORIES[0];
-  const signal = extractPostEconomicSignal(post.content || '', post.intent_category || 'ANNOUNCEMENT');
+  const signal = useMemo(() => extractPostSignal(post.content || '', post.intent_category || 'ANNOUNCEMENT'), [post.content, post.intent_category]);
+  // Show an intent chip when the author chose one, or when the text clearly carries one.
+  const intentObj = signal.hasSignal ? intentMeta(signal.intentId) : null;
+  const showSentiment = signal.sentiment.label !== 'neutral' && signal.sentiment.confidence >= 0.3;
+  const matchmakerLink = useMemo(() => {
+    if (!signal.hasSignal) return null;
+    // The reader is the counterpart: someone seeking capital is found by someone deploying it.
+    const objective = { INVESTMENT: 'CAPITAL_ALLOCATION', PARTNERSHIP: 'PARTNER', EXPANSION: 'DISTRIBUTOR', NEED: 'PARTNER', OPPORTUNITY: 'PARTNER' }[signal.intentId];
+    if (!objective) return null;
+    const params = new URLSearchParams({ objective });
+    if (signal.sectorId) params.set('sectors', signal.sectorId);
+    return `/matchmaker?${params.toString()}`;
+  }, [signal]);
   const detectedLang = detectTextLanguage(post.content);
   const showOriginalBadge = detectedLang && detectedLang !== language;
 
@@ -185,7 +199,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={() => deletePost.mutate()}
+                  onClick={() => { if (window.confirm(t.postCard?.confirmDelete || 'Delete this post? This cannot be undone.')) deletePost.mutate(); }}
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> {t.postCard?.deletePost || 'Delete post'}
                 </DropdownMenuItem>
@@ -196,7 +210,16 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-orange-600 focus:text-orange-600"
-                  onClick={() => toast({ title: t.postCard?.postReported || 'Post reported', description: t.postCard?.reportThankYou || 'Thank you' })}
+                  onClick={async () => {
+                    const reason = window.prompt(t.postCard?.reportReason || 'What is wrong with this post? (optional)');
+                    if (reason === null) return;
+                    try {
+                      await reportPost({ user, post, reason });
+                      toast({ title: t.postCard?.postReported || 'Post reported', description: t.postCard?.reportThankYou || 'Thank you — moderators have been notified.' });
+                    } catch (error) {
+                      toast({ title: 'Could not report this post', description: error.message, variant: 'destructive' });
+                    }
+                  }}
                 >
                   <Flag className="w-4 h-4 mr-2" /> {t.postCard?.reportPost || 'Report post'}
                 </DropdownMenuItem>
@@ -210,14 +233,15 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
       <div className="px-4 pb-3 space-y-2">
         {/* Intent Badge & Original Language Indicator */}
         <div className="flex items-center gap-2 flex-wrap">
-          {post.intent_category && (
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border" style={{ backgroundColor: `${intentObj.color}15`, color: intentObj.color, borderColor: `${intentObj.color}40` }}>
+          {intentObj && (
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${INTENT_TONES[intentObj.tone]}`}>
               {intentObj.label}
-            </div>
+            </span>
           )}
+          {showSentiment && <SentimentBadge sentiment={signal.sentiment} />}
           {showOriginalBadge && (
             <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-muted/60 border border-border/50 px-2 py-0.5 rounded-full">
-              <Globe2 className="w-3 h-3 text-cyan-400" />
+              <Globe2 className="w-3 h-3" />
               Original: {LANGUAGES[detectedLang]?.nativeLabel || detectedLang.toUpperCase()}
             </span>
           )}
@@ -225,42 +249,32 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
 
         <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{renderContent(post.content)}</p>
 
-        {/* AI Economic Sensor Signal Pill */}
-        <div className="bg-slate-900/50 dark:bg-slate-900 border border-slate-700/60 rounded-xl p-3 text-xs space-y-2 text-slate-200 mt-2">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-cyan-400 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-300" /> AI Economic Signal Detected
+        {/* Business signal — only when the post actually carries one */}
+        {signal.hasSignal && (signal.sector || signal.targetCountry || matchmakerLink) && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+              <Sparkles className="h-3.5 w-3.5 text-primary" /> {signal.intent}
             </span>
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-              (signal.confidenceScore || 90) >= 94
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-            }`}>
-              {signal.confidenceLabel || signal.confidence || '94% Confidence'}
-            </span>
+            {signal.sector && <span>{signal.sector}</span>}
+            {signal.targetCountry && <span>→ {signal.targetCountry}</span>}
+            {matchmakerLink && !isOwn && (
+              <button
+                onClick={() => navigate(matchmakerLink)}
+                className="ml-auto inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+              >
+                Find related matches <ArrowRight className="h-3 w-3" />
+              </button>
+            )}
+            {isOwn && signal.intentId === 'INVESTMENT' && (
+              <button
+                onClick={() => navigate('/investment-map?submit=1')}
+                className="ml-auto inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+              >
+                List it as an investment opportunity <ArrowRight className="h-3 w-3" />
+              </button>
+            )}
           </div>
-
-          <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
-            <div><span className="text-slate-400">Intent:</span> <strong>{signal.intent}</strong></div>
-            <div><span className="text-slate-400">Target:</span> <strong>{signal.targetCountry}</strong></div>
-          </div>
-
-          <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-            <span className="text-[10px] text-slate-400">Sector: {signal.sector}</span>
-            <button
-              onClick={() => {
-                toast({
-                  title: '🚀 Converting Post to Structured Opportunity',
-                  description: 'Elevating post update into published Investment Map project & Network listing.',
-                });
-                navigate('/investment-map');
-              }}
-              className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 transition-all"
-            >
-              🚀 Turn into Opportunity
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
       {post.image_url && (
@@ -286,19 +300,19 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
             href={post.file_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors group"
+            className="flex items-center gap-3 p-3 rounded-xl border bg-muted/40 hover:bg-muted transition-colors group"
           >
             {post.file_type?.includes('spreadsheet') || post.file_name?.match(/\.(xls|xlsx|csv)$/i)
               ? <FileSpreadsheet className="w-8 h-8 text-green-600 shrink-0" />
               : post.file_type?.includes('pdf') || post.file_name?.match(/\.pdf$/i)
               ? <FileText className="w-8 h-8 text-red-500 shrink-0" />
-              : <File className="w-8 h-8 text-amber-600 shrink-0" />
+              : <File className="w-8 h-8 text-muted-foreground shrink-0" />
             }
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-amber-800 truncate">{post.file_name || t.postCard?.attachedDocument || 'Attached document'}</p>
-              <p className="text-xs text-amber-600">{t.postCard?.clickToOpen || 'Click to open'}</p>
+              <p className="text-sm font-medium text-foreground truncate">{post.file_name || t.postCard?.attachedDocument || 'Attached document'}</p>
+              <p className="text-xs text-muted-foreground">{t.postCard?.clickToOpen || 'Click to open'}</p>
             </div>
-            <Download className="w-4 h-4 text-amber-500 group-hover:text-amber-700 shrink-0" />
+            <Download className="w-4 h-4 text-muted-foreground group-hover:text-foreground shrink-0" />
           </a>
         </div>
       )}

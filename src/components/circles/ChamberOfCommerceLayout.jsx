@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -8,14 +8,12 @@ import {
   TrendingUp, TrendingDown, Megaphone, Newspaper, LayoutList,
   BarChart2, Globe, Users, Plus, Send, MessageCircle,
   ChevronUp, ChevronDown, Landmark, Sparkles,
-  Target, Eye, BookOpen, Briefcase, ShoppingBag,
-  Sun, Moon
+  Target, BookOpen, Briefcase
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
-import ProductGallery from '@/components/circles/ProductGallery';
 import CircleFeed from '@/components/circles/CircleFeed';
 import CircleLeaderboard from '@/components/circles/CircleLeaderboard';
 import CircleEventCalendar from '@/components/circles/CircleEventCalendar';

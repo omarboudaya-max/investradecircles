@@ -5,7 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 // Load env variables from .env.local
 const envPath = path.join(process.cwd(), '.env.local');
 let supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+// Writing market data requires the service role key (never the public anon key).
+let supabaseAnonKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
@@ -16,6 +17,7 @@ if (fs.existsSync(envPath)) {
       const key = parts[0].trim();
       const val = parts.slice(1).join('=').trim();
       if (key === 'VITE_SUPABASE_URL' && !supabaseUrl) supabaseUrl = val;
+      if (key === 'SUPABASE_SERVICE_ROLE_KEY') supabaseAnonKey = val;
       if (key === 'VITE_SUPABASE_ANON_KEY' && !supabaseAnonKey) supabaseAnonKey = val;
     }
   }
@@ -26,7 +28,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn('SUPABASE_SERVICE_ROLE_KEY is not set: writes will be rejected once row-level security is enabled.');
+}
+const supabase = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } });
 
 const TUNISIAN_STOCKS = [
   { symbol: 'PX1', name: 'TUNINDEX' },

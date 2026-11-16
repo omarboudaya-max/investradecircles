@@ -1,6 +1,6 @@
 /**
  * Investraders Investment Network Engine
- * Data models, seed datasets, taxonomy constants and deterministic 2-way matching engine
+ * Data models, seed datasets and taxonomy constants
  */
 
 // Taxonomy Constants
@@ -33,18 +33,35 @@ export const FUND_CATEGORIES = [
   { id: 'FUND_OF_FUNDS', label: 'Fund of Funds' },
 ];
 
-// Structured Economic Sensor Feed Taxonomies
+// Post intents. `tone` maps to INTENT_TONES below; `color` is kept for charts.
 export const POST_INTENT_CATEGORIES = [
-  { id: 'ANNOUNCEMENT', label: '📢 Announcement', badge: 'News', color: '#3b82f6' },
-  { id: 'INVESTMENT', label: '💰 Funding / Investment', badge: 'Capital', color: '#10b981' },
-  { id: 'PARTNERSHIP', label: '🤝 Strategic Partnership', badge: 'Partner', color: '#8b5cf6' },
-  { id: 'EXPANSION', label: '🌍 International Export', badge: 'Global', color: '#0ea5e9' },
-  { id: 'PRODUCT', label: '📦 Product Launch', badge: 'Product', color: '#6366f1' },
-  { id: 'INSIGHT', label: '📈 Market Intelligence', badge: 'Insight', color: '#f59e0b' },
-  { id: 'OPPORTUNITY', label: '💡 Business Opportunity', badge: 'Deal', color: '#ec4899' },
-  { id: 'NEED', label: '🔎 Need / Request', badge: 'Procurement', color: '#14b8a6' },
-  { id: 'CHALLENGE', label: '⚠️ Market Challenge', badge: 'Risk', color: '#ef4444' },
+  { id: 'ANNOUNCEMENT', label: 'Announcement', icon: 'Megaphone', badge: 'News', tone: 'slate', color: '#64748b' },
+  { id: 'INVESTMENT', label: 'Funding / Investment', icon: 'Coins', badge: 'Capital', tone: 'emerald', color: '#059669' },
+  { id: 'PARTNERSHIP', label: 'Partnership', icon: 'Handshake', badge: 'Partner', tone: 'violet', color: '#7c3aed' },
+  { id: 'EXPANSION', label: 'International expansion', icon: 'Globe2', badge: 'Global', tone: 'sky', color: '#0284c7' },
+  { id: 'PRODUCT', label: 'Product launch', icon: 'Package', badge: 'Product', tone: 'indigo', color: '#4f46e5' },
+  { id: 'INSIGHT', label: 'Market insight', icon: 'LineChart', badge: 'Insight', tone: 'amber', color: '#d97706' },
+  { id: 'OPPORTUNITY', label: 'Business opportunity', icon: 'Lightbulb', badge: 'Deal', tone: 'teal', color: '#0d9488' },
+  { id: 'NEED', label: 'Need / Request', icon: 'Search', badge: 'Request', tone: 'cyan', color: '#0891b2' },
+  { id: 'CHALLENGE', label: 'Challenge', icon: 'AlertTriangle', badge: 'Risk', tone: 'rose', color: '#e11d48' },
 ];
+
+// Soft, theme-aware chip styles. Written out in full so Tailwind keeps the classes.
+export const INTENT_TONES = {
+  slate: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
+  emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900',
+  violet: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900',
+  sky: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900',
+  indigo: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900',
+  amber: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900',
+  teal: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900',
+  cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-900',
+  rose: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900',
+};
+
+export function intentMeta(id) {
+  return POST_INTENT_CATEGORIES.find((c) => c.id === id) || POST_INTENT_CATEGORIES[0];
+}
 
 // High quality initial seed organizations
 export const INITIAL_ORGANIZATIONS = [
@@ -365,302 +382,7 @@ export const INITIAL_VEHICLES = [
   },
 ];
 
-/**
- * Deterministic Matching Engine Algorithm
- * Calculates compatibility score (0-100%) between an Investor (or Mandate) and an Investment Project
- */
-export function calculateInvestorProjectMatch(investor, project) {
-  if (!investor || !project) return { matchScore: 0, factors: [], nonFactors: [], explanation: 'Insufficient data' };
-
-  let score = 0;
-  const factors = [];
-  const nonFactors = [];
-
-  // 1. Sector Alignment (Weight: 25%)
-  const investorSectors = investor.investment_focus || investor.preferred_sectors || [];
-  if (investorSectors.includes(project.sector_id) || investorSectors.includes('all')) {
-    score += 25;
-    factors.push('✓ Sector aligned with investor mandate');
-  } else {
-    nonFactors.push('✕ Sector out of primary focus');
-  }
-
-  // 2. Investment Ticket Compatibility (Weight: 20%)
-  const req = project.investment_required || 0;
-  const minT = investor.minimum_ticket || 0;
-  const maxT = investor.maximum_ticket || 9999;
-  if (req >= minT && req <= maxT) {
-    score += 20;
-    factors.push(`✓ Required ticket (${req}M TND) fits investor range (${minT}M – ${maxT}M TND)`);
-  } else if (req > 0 && Math.abs(req - maxT) <= maxT * 0.3) {
-    score += 10;
-    factors.push(`~ Ticket (${req}M TND) close to target capacity`);
-  } else {
-    nonFactors.push(`✕ Ticket requirement (${req}M TND) outside ticket range`);
-  }
-
-  // 3. Geographic Mandate (Weight: 15%)
-  const geo = investor.geographic_focus || investor.preferred_geographies || [];
-  if (geo.includes('Tunisia') || geo.includes('Global') || geo.includes('North Africa') || geo.includes('Africa')) {
-    score += 15;
-    factors.push('✓ Project location falls within geographic mandate');
-  } else {
-    nonFactors.push('✕ Geographic mandate restricted to other regions');
-  }
-
-  // 4. Investment Stage Alignment (Weight: 15%)
-  const stages = investor.investment_stages || investor.preferred_stages || [];
-  if (stages.includes(project.investment_stage) || stages.includes('all')) {
-    score += 15;
-    factors.push(`✓ Growth stage (${project.investment_stage}) matches investor profile`);
-  } else {
-    nonFactors.push('✕ Stage non-matching');
-  }
-
-  // 5. Project Type / Asset Class (Weight: 10%)
-  const types = investor.project_types || [];
-  if (types.includes(project.project_type) || types.length === 0) {
-    score += 10;
-    factors.push('✓ Asset type and operational model compatible');
-  } else {
-    nonFactors.push('✕ Asset type non-standard for vehicle');
-  }
-
-  // 6. Export / Impact / Strategic Value (Weight: 15%)
-  if (project.export_potential === 'HIGH' || project.featured || project.is_verified) {
-    score += 15;
-    factors.push('✓ High export readiness & verified governance');
-  } else {
-    score += 8;
-  }
-
-  // Ensure score within 45% - 98% range for realistic matching UI
-  const matchScore = Math.min(98, Math.max(45, Math.round(score)));
-
-  const explanation = `${factors.length} key alignment criteria met including sector focus, ticket size and geographic compatibility.`;
-
-  return {
-    matchScore,
-    factors,
-    nonFactors,
-    explanation,
-  };
-}
-
-/**
- * Extract AI Economic Signals from feed posts
- */
-export function extractPostEconomicSignal(content = '', category = 'ANNOUNCEMENT') {
-  const text = content.toLowerCase();
-  let intent = 'General Business Communication';
-  let sector = 'Multi-sector';
-  let targetCountry = 'Tunisia / Regional';
-  let confidenceScore = 88;
-
-  // Country / Target Corridor
-  if (text.includes('german') || text.includes('germany') || text.includes('allemagne')) {
-    targetCountry = 'Germany (EU Gateway)';
-    confidenceScore += 4;
-  } else if (text.includes('france') || text.includes('french')) {
-    targetCountry = 'France (EU Market)';
-    confidenceScore += 3;
-  } else if (text.includes('saudi') || text.includes('saoudite') || text.includes('riyadh') || text.includes('uae') || text.includes('dubai') || text.includes('gcc') || text.includes('السعودية')) {
-    targetCountry = 'GCC / Saudi Arabia';
-    confidenceScore += 6;
-  } else if (text.includes('africa') || text.includes('sub-saharan') || text.includes('afrique')) {
-    targetCountry = 'Europe–Africa Corridor';
-    confidenceScore += 5;
-  } else if (text.includes('tunis') || text.includes('national') || text.includes('local') || text.includes('rurale')) {
-    targetCountry = 'Tunisia (Marché National)';
-    confidenceScore += 2;
-  }
-
-  // Sector Matching with smart word boundaries and domain prioritization
-  const isAgri = /\b(agri|agricole|agricultrice|agriculteur|ouvri[èe]re|productrice|productrices|rural|rurale|rurales|ferme|farm|food|agroalimentaire|terroir|olive|huiles?)\b/i.test(text);
-  const isHealth = /\b(health|santé|médical|medical|medtech|pharma|biotech|hôpital|soins?)\b/i.test(text);
-  const isEnergy = /\b(solar|solaire|energy|énergie|renewable|renouvelable|green|photovoltaïque|climat|cleantech)\b/i.test(text);
-  const isTech = /\b(software|logiciel|saas|fintech|deep learning|llm|cyber|cloud|application|code|ia générative)\b/i.test(text) ||
-                 /\b(ai|ia|tech|startup)\b/i.test(text);
-  const isIndustry = /\b(factory|usine|industrie|manufactur|textile|confection|automobile|mécanique|câblage)\b/i.test(text);
-
-  if (isAgri) {
-    sector = 'Agri-Food, ESS & Rural Impact';
-    confidenceScore = Math.min(97, confidenceScore + 7);
-  } else if (isHealth) {
-    sector = 'Digital Health & MedTech';
-    confidenceScore = Math.min(96, confidenceScore + 6);
-  } else if (isEnergy) {
-    sector = 'Renewable Solar & Green Energy';
-    confidenceScore = Math.min(95, confidenceScore + 6);
-  } else if (isTech) {
-    sector = 'Technology & AI';
-    confidenceScore = Math.min(95, confidenceScore + 4);
-  } else if (isIndustry) {
-    sector = 'Advanced Manufacturing & Industry';
-    confidenceScore = Math.min(93, confidenceScore + 3);
-  }
-
-  // Intent
-  if (category === 'INVESTMENT' || text.includes('tour de table') || text.includes('fund') || text.includes('levée') || text.includes('raise') || text.includes('capital') || text.includes('investor') || text.includes('financement')) {
-    intent = 'Capital Seeking / Equity Financing';
-  } else if (category === 'PARTNERSHIP' || text.includes('partenariat') || text.includes('cooperation') || text.includes('collaboration') || text.includes('distributor') || text.includes('partner') || text.includes('joint venture')) {
-    intent = 'Strategic Commercial Partnership';
-  } else if (category === 'EXPANSION' || text.includes('export') || text.includes('expand') || text.includes('expansion') || text.includes('market')) {
-    intent = 'International Market Expansion';
-  } else if (category === 'INSIGHT' || text.includes('programme') || text.includes('analyse') || text.includes('perspective')) {
-    intent = 'Economic Insight & Policy Intelligence';
-  }
-
-  const confidenceLabel = `${confidenceScore}% Confidence`;
-
-  return {
-    intent,
-    sector,
-    targetCountry,
-    confidence: confidenceLabel,
-    confidenceScore,
-    confidenceLabel,
-    timestamp: new Date().toISOString()
-  };
-}
-
-/**
- * Interactive Matchmaker calculation engine
- */
-export function calculateInteractiveMatch(userRole = 'COMPANY', objective = 'INVESTMENT', sector = 'sec_tech', region = 'Global', ticket = '0.5-2M') {
-  // Deterministic mock match generator for interactive UI
-  const matches = [
-    {
-      id: 'match_01',
-      title: 'ANAVA Fund of Funds — Early Tech Vehicle',
-      organization: 'Smart Capital SAS',
-      type: 'Development Finance (DFI)',
-      score: 96,
-      country: 'Tunisia / Global',
-      ticket: '0.5M – 3.0M TND',
-      factors: [
-        '✓ Direct alignment with technology check size requirement',
-        '✓ Stated mandate for North African digital scaling',
-        '✓ Active coinvestment program available'
-      ],
-      description: 'Public-private anchor fund backing tech startups & growth companies across Tunisia and Southern Europe.'
-    },
-    {
-      id: 'match_02',
-      title: '216 Capital Fund I',
-      organization: '216 Capital Ventures',
-      type: 'Venture Capital',
-      score: 93,
-      country: 'Tunisia / France',
-      ticket: '0.2M – 1.5M TND',
-      factors: [
-        '✓ Fast-track check deployment for growth stage founders',
-        '✓ Active mentor & Mediterranean distributor network',
-        '✓ Follow-on capacity for Series A'
-      ],
-      description: 'Pre-seed & seed stage VC firm specializing in software, AI, and cross-border expansion.'
-    },
-    {
-      id: 'match_03',
-      title: 'Global Climate Transition Fund II',
-      organization: 'BlackRock Infrastructure',
-      type: 'Infrastructure & Climate',
-      score: 89,
-      country: 'United States / Global',
-      ticket: '5.0M – 50.0M USD',
-      factors: [
-        '✓ Strategic ESG & Renewable Energy mandate alignment',
-        '✓ Utility scale project co-financing available',
-        '✓ Strong EU & MENA corridor backing'
-      ],
-      description: 'Institutional asset management vehicle allocating capital to renewable solar farms and industrial energy efficiency.'
-    },
-    {
-      id: 'match_04',
-      title: 'German-Tunisian Industrial Gateway',
-      organization: 'Maxula / Euro-Med Partners',
-      type: 'Private Equity & Export',
-      score: 87,
-      country: 'Germany / Tunisia',
-      ticket: '1.0M – 8.0M EUR',
-      factors: [
-        '✓ Direct commercial channel into European industrial buyer network',
-        '✓ Export credit & trade guarantee readiness',
-        '✓ Operational restructuring support'
-      ],
-      description: 'Private equity syndicate facilitating industrial joint ventures and export partnerships across DACH countries.'
-    }
-  ];
-
-  return matches;
-}
-
-// Executive Intelligence & Opportunity Radar Seed Data
-export const FEATURED_OPPORTUNITY_OF_THE_DAY = {
-  id: 'opp_kasserine_solar',
-  title: 'Kasserine 15MW Solar Farm & Smart Storage Park',
-  location: 'Kasserine, Tunisia',
-  sector: 'Renewable Solar & Green Energy',
-  investmentRequired: '12.0M TND',
-  equityRequired: '4.8M TND',
-  expectedRoi: '26%',
-  matchScore: 96,
-  promoter: 'Kasserine Green Power SA',
-  strategicValue: 'Direct grid connection with 20-year PPA off-take agreement and zero-carbon industrial export certification.',
-  updatedAt: 'Today, 09:30 AM'
-};
-
-export const GLOBAL_RADAR_COUNTRIES = [
-  { code: 'DE', name: 'Germany', count: 34, region: 'Europe', flag: '🇩🇪', activeDemand: 'High' },
-  { code: 'FR', name: 'France', count: 27, region: 'Europe', flag: '🇫🇷', activeDemand: 'High' },
-  { code: 'SA', name: 'Saudi Arabia', count: 31, region: 'GCC', flag: '🇸🇦', activeDemand: 'Very High' },
-  { code: 'AE', name: 'UAE', count: 28, region: 'GCC', flag: '🇦🇪', activeDemand: 'Very High' },
-  { code: 'UK', name: 'United Kingdom', count: 21, region: 'Europe', flag: '🇬🇧', activeDemand: 'Medium' },
-  { code: 'MA', name: 'Morocco', count: 19, region: 'North Africa', flag: '🇲🇦', activeDemand: 'Medium' },
-  { code: 'KE', name: 'Kenya', count: 17, region: 'Sub-Saharan Africa', flag: '🇰🇪', activeDemand: 'High' },
-  { code: 'ZA', name: 'South Africa', count: 14, region: 'Sub-Saharan Africa', flag: '🇿🇦', activeDemand: 'Medium' },
-];
-
-export const EXECUTIVE_INTELLIGENCE_SIGNALS = [
-  {
-    id: 'sig_01',
-    type: 'MARKET_TREND',
-    category: '🔥 Market Signal',
-    title: 'Demand for Renewable Energy Financing Up +18% This Month',
-    description: 'AI Economic Sensor detected 46 structured signals across industrial feed posts & energy circles requesting solar co-financing.',
-    impact: 'HIGH',
-    corridor: 'Tunisia ➔ Europe',
-    timestamp: '2 hours ago'
-  },
-  {
-    id: 'sig_02',
-    type: 'INTERNATIONALIZATION',
-    category: '🌍 Internationalization Signal',
-    title: '22 Tunisian Exporters Seeking Distribution Partners in Germany',
-    description: 'Extracted intent metadata from agribusiness & smart manufacturing updates indicates rapid DACH market entry surge.',
-    impact: 'VERY_HIGH',
-    corridor: 'Tunisia ➔ Germany',
-    timestamp: '5 hours ago'
-  },
-  {
-    id: 'sig_03',
-    type: 'CAPITAL_DEMAND',
-    category: '💰 Investment Signal',
-    title: '14 Industrial Expansion Projects Require >50M TND Total Equity',
-    description: 'Concentrated demand in Bizerte, Sfax, and Nabeul industrial zones for machinery modernization and cold-chain logistics.',
-    impact: 'HIGH',
-    corridor: 'Domestic / PE',
-    timestamp: '1 day ago'
-  },
-  {
-    id: 'sig_04',
-    type: 'SUPPLY_CHAIN_RISK',
-    category: '⚠️ Sentiment Signal',
-    title: 'Logistics & Raw Material Cost Concern Spike in Manufacturing',
-    description: 'Sentiment analysis on SME updates flags concerns regarding maritime freight rates to Southern European ports.',
-    impact: 'MEDIUM',
-    corridor: 'Mediterranean Trade',
-    timestamp: '1 day ago'
-  }
-];
-
+// The matching, signal-extraction and sentiment logic lives in src/lib/intelligence.
+// These re-exports keep older import paths working.
+export { calculateInvestorProjectMatch, scoreInvestorProject } from './intelligence/matching.js';
+export { extractPostSignal as extractPostEconomicSignal } from './intelligence/signals.js';

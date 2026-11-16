@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/lib/ThemeContext';
 import {
   Landmark, Globe, Users, Briefcase, BookOpen, Map, Sparkles, TrendingUp, TrendingDown,
-  FileText, ShieldCheck, Search, Download, GraduationCap, Calendar, MessageCircle, Send, Plus,
-  AlertTriangle, CheckCircle2, Clock, ArrowRight, FlaskConical, Building2, HelpCircle, RefreshCw,
-  FileCheck, Scale, Flame, Compass, Layers, CheckSquare, Square, ExternalLink
+  FileText, ShieldCheck, Download, GraduationCap, Calendar, MessageCircle, Newspaper, Settings2,
+  Clock, ArrowRight, FlaskConical, Building2, RefreshCw, Trash2, Share2, Loader2,
+  FileCheck, Scale, Flame, Compass, CheckSquare, Square, ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VerifiedBadge from '@/components/circles/VerifiedBadge';
 import CircleVisual from '@/components/circles/CircleVisual';
+import CircleFeed from '@/components/circles/CircleFeed';
+import CircleEventCalendar from '@/components/circles/CircleEventCalendar';
+import CircleAdminDashboard from '@/components/circles/CircleAdminDashboard';
+import CircleMatchmaking from '@/components/circles/CircleMatchmaking';
+import DiscussionPanel from '@/components/circles/DiscussionPanel';
+import TrainingAcademy from '@/components/circles/TrainingAcademy';
+import { useToast } from '@/components/ui/use-toast';
+import { notifyCircleMembers } from '@/api/platform';
+import { certificateLink, dossierId, dossierToText, downloadDossierPdf, loadDossiers, removeDossier, saveDossier } from '@/lib/exportDossier';
 
 // Simulated Market Ticker (Reused from ChamberOfCommerceLayout but stylized)
 function formatPrice(symbol, price) {
@@ -757,56 +766,90 @@ function evaluateExportCertificates(productRaw, destinationRaw) {
   };
 }
 
-function ExportToolkitTab({ isDark }) {
+function ExportToolkitTab({ isDark, circle, user, isMember }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [product, setProduct] = useState('');
   const [destination, setDestination] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0); // 0: input, 1: step-by-step diagnostic, 2: result
-  const [analyzingStep, setAnalyzingStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0); // 0: input, 2: result
   const [result, setResult] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
+  const [dossiers, setDossiers] = useState(() => loadDossiers());
+  const [exporting, setExporting] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
-  const stepsList = [
-    { title: "1. Nomenclature Douanière SH & Risque Produit", detail: "Détection du HS Code et classification réglementaire (chimique, agroalimentaire, industriel, santé...)" },
-    { title: "2. Accords Commerciaux & Préférences Tarifaires", detail: "Vérification des traités (GAFTA/ZALE, EUR.1/EUR-MED, Accord d'Agadir, ZLECAf, GSP USA...)" },
-    { title: "3. Exigences Critiques du Pays de Destination", detail: "Analyse des blocages bancaires (L/C, ACID, domiciliation) et des inspections pré-embarquement (CoC, FDA, SABER, TRACES)..." },
-    { title: "4. Feuille de Route & Procédures d'Obtention CCI Tunis", detail: "Génération de la liste classée par priorité avec les étapes concrètes, délais et organismes émetteurs..." }
-  ];
+  const countConditions = (evaluation) => evaluation.certificates.reduce((acc, c) => acc + (c.conditions?.length || 0), 0);
 
   const handleStartAnalysis = (prodVal, destVal) => {
     const finalProd = (prodVal ?? product).trim();
     const finalDest = (destVal ?? destination).trim();
     if (!finalProd || !finalDest) return;
 
-    if (prodVal) setProduct(prodVal);
-    if (destVal) setDestination(destVal);
-    setCheckedItems({});
-
-    setCurrentStep(1);
-    setLoading(true);
-    setAnalyzingStep(0);
-
-    setTimeout(() => setAnalyzingStep(1), 500);
-    setTimeout(() => setAnalyzingStep(2), 1000);
-    setTimeout(() => setAnalyzingStep(3), 1500);
-
-    setTimeout(() => {
-      const evaluation = evaluateExportCertificates(finalProd, finalDest);
-      setResult(evaluation);
-      setLoading(false);
-      setCurrentStep(2);
-    }, 2000);
+    setProduct(finalProd);
+    setDestination(finalDest);
+    const evaluation = evaluateExportCertificates(finalProd, finalDest);
+    // Reopening a product × country pair restores the checklist where it was left.
+    const saved = loadDossiers().find((d) => d.id === dossierId(finalProd, finalDest));
+    const checked = saved?.checked || {};
+    setResult(evaluation);
+    setCheckedItems(checked);
+    setDossiers(saveDossier({ product: finalProd, destination: finalDest, checked, total: countConditions(evaluation) }));
+    setCurrentStep(2);
   };
 
   const handleReset = () => {
     setCurrentStep(0);
     setResult(null);
-    setAnalyzingStep(0);
     setCheckedItems({});
   };
 
   const toggleConditionCheck = (key) => {
-    setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }));
+    setCheckedItems((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      if (result) setDossiers(saveDossier({ product, destination, checked: next, total: countConditions(result) }));
+      return next;
+    });
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!result) return;
+    setExporting(true);
+    try {
+      await downloadDossierPdf({ product, destination, result, checked: checkedItems });
+    } catch (error) {
+      toast({ title: 'Le PDF n’a pas pu être généré', description: error.message, variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  // Posts the dossier summary in the circle so the chamber's advisers (and members who
+  // already exported to that market) can answer.
+  const handleShareWithAdvisers = async () => {
+    if (!result || !user?.id || !circle?.id) return;
+    setSharing(true);
+    try {
+      const authorName = user.full_name || user.email?.split('@')[0] || 'Membre';
+      const content = `Demande d'accompagnement export — ${dossierToText({ product, destination, result, checked: checkedItems })}\n\nQuelqu'un a-t-il déjà réalisé cette opération ? Vos conseils sont les bienvenus.`;
+      const { error } = await supabase.from('Post').insert({
+        content,
+        author_name: authorName,
+        author_avatar: user.avatar_url || null,
+        post_type: 'text',
+        created_by_id: user.id,
+        visibility: 'circle',
+        circle_id: circle.id,
+        intent_category: 'NEED',
+      });
+      if (error) throw new Error(error.message);
+      await notifyCircleMembers({ circle, authorId: user.id, type: 'new_post', message: `${authorName} demande un accompagnement export : ${product} → ${destination}` });
+      queryClient.invalidateQueries({ queryKey: ['circle-feed-posts'] });
+      toast({ title: 'Dossier partagé avec la CCI Tunis', description: 'Votre demande est publiée dans le fil du cercle ; les membres ont été notifiés.' });
+    } catch (error) {
+      toast({ title: 'Le partage a échoué', description: error.message, variant: 'destructive' });
+    } finally {
+      setSharing(false);
+    }
   };
 
   // Compute interactive readiness percentage
@@ -838,15 +881,52 @@ function ExportToolkitTab({ isDark }) {
         </div>
 
         {currentStep === 2 && (
-          <Button onClick={handleReset} variant="outline" size="sm" className="text-xs shrink-0 flex items-center gap-1.5">
-            <RefreshCw className="w-3.5 h-3.5" /> Nouvelle Analyse
-          </Button>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <Button onClick={handleDownloadPdf} disabled={exporting} size="sm" className="text-xs flex items-center gap-1.5">
+              {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />} Télécharger le dossier (PDF)
+            </Button>
+            {isMember && (
+              <Button onClick={handleShareWithAdvisers} disabled={sharing} variant="outline" size="sm" className="text-xs flex items-center gap-1.5">
+                {sharing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />} Demander conseil au cercle
+              </Button>
+            )}
+            <Button onClick={handleReset} variant="outline" size="sm" className="text-xs flex items-center gap-1.5">
+              <RefreshCw className="w-3.5 h-3.5" /> Nouvelle analyse
+            </Button>
+          </div>
         )}
       </div>
 
       {/* Step 0: Selection & Input */}
       {currentStep === 0 && (
         <div className="space-y-5">
+          {dossiers.length > 0 && (
+            <div className="space-y-2">
+              <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                <FileCheck className="w-3.5 h-3.5 text-blue-500" /> Mes dossiers en cours
+              </span>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {dossiers.map((d) => {
+                  const pct = d.total ? Math.round((d.done / d.total) * 100) : 0;
+                  return (
+                    <li key={d.id} className={`flex items-center gap-3 rounded-xl border p-3 ${isDark ? 'bg-slate-900/60 border-white/10' : 'bg-white border-slate-200'}`}>
+                      <button onClick={() => handleStartAnalysis(d.product, d.destination)} className="min-w-0 flex-1 text-left">
+                        <span className={`block truncate text-xs font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{d.product} ➔ {d.destination}</span>
+                        <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                          <span className="block h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                        </span>
+                        <span className={`mt-1 block text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{d.done}/{d.total} prérequis prêts · {new Date(d.updatedAt).toLocaleDateString('fr-FR')}</span>
+                      </button>
+                      <button onClick={() => setDossiers(removeDossier(d.id))} className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:text-red-500" aria-label="Supprimer ce dossier">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
           {/* Quick Presets */}
           <div className="space-y-2">
             <label className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -1011,44 +1091,7 @@ function ExportToolkitTab({ isDark }) {
         </div>
       )}
 
-      {/* Step 1: Multi-Step Diagnostic Animation */}
-      {currentStep === 1 && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-2xl border text-center space-y-6 ${isDark ? 'bg-slate-900/60 border-blue-500/30' : 'bg-blue-50/70 border-blue-200'}`}>
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600/20 text-blue-500 flex items-center justify-center animate-spin">
-              <RefreshCw className="w-5 h-5" />
-            </div>
-            <div className="text-left">
-              <h4 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Analyse Réglementaire & Douanière en cours...
-              </h4>
-              <p className={`text-xs ${isDark ? 'text-blue-300/70' : 'text-slate-600'}`}>
-                Croisement des exigences pour : <strong className="text-blue-500">{product}</strong> ➔ <strong className="text-amber-500">{destination}</strong>
-              </p>
-            </div>
-          </div>
-
-          <div className="max-w-lg mx-auto space-y-3">
-            {stepsList.map((st, index) => {
-              const active = index === analyzingStep;
-              const done = index < analyzingStep;
-              return (
-                <div key={index} className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${done ? (isDark ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-900') : active ? (isDark ? 'bg-blue-900/40 border-blue-500/50 text-white scale-[1.02]' : 'bg-white border-blue-400 text-slate-900 shadow-md scale-[1.02]') : (isDark ? 'bg-slate-950/30 border-white/5 text-slate-500' : 'bg-slate-100 border-slate-200 text-slate-400')}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${done ? 'bg-emerald-500 text-white' : active ? 'bg-blue-600 text-white animate-pulse' : 'bg-slate-300 text-slate-700'}`}>
-                    {done ? '✓' : index + 1}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold">{st.title}</p>
-                    <p className="text-[11px] opacity-80">{st.detail}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
-      )}
-
-      {/* Step 2: Comprehensive Results */}
+      {/* Results */}
       {currentStep === 2 && result && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
           {/* 1. Executive Summary Card */}
@@ -1057,7 +1100,7 @@ function ExportToolkitTab({ isDark }) {
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded uppercase tracking-wider bg-blue-500/20 text-blue-500 border border-blue-500/30">
-                    Rapport Officiel de Diagnostic Export
+                    Diagnostic export indicatif
                   </span>
                   <span className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                     Origine : Tunis (Tunisie) ➔ Destination : {destination}
@@ -1200,16 +1243,13 @@ function ExportToolkitTab({ isDark }) {
                     </div>
                   </div>
 
-                  <a
-                    href="https://ccitunis.org.tn/adhesion-en-ligne-eservice/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="shrink-0"
-                  >
-                    <Button size="sm" className="text-xs h-8 bg-blue-600 hover:bg-blue-700 text-white">
-                      <FileText className="w-3.5 h-3.5 mr-1" /> Demander via e-Service <ExternalLink className="w-3 h-3 ml-1" />
-                    </Button>
-                  </a>
+                  {certificateLink(cert.id) && (
+                    <a href={certificateLink(cert.id).url} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                      <Button size="sm" className="text-xs h-8 bg-blue-600 hover:bg-blue-700 text-white">
+                        <FileText className="w-3.5 h-3.5 mr-1" /> {certificateLink(cert.id).label} <ExternalLink className="w-3 h-3 ml-1" />
+                      </Button>
+                    </a>
+                  )}
                 </div>
 
                 {/* Purpose */}
@@ -1270,6 +1310,11 @@ function ExportToolkitTab({ isDark }) {
             ))}
           </div>
 
+          <p className={`text-[11px] leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            Ce diagnostic est un guide de préparation établi à partir des règles générales par produit et par destination. Les exigences évoluent :
+            confirmez chaque formalité auprès de la CCI Tunis, de votre transitaire et de l’autorité compétente avant d’expédier.
+          </p>
+
           {/* 5. CCI Tunis Support Footer */}
           <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isDark ? 'bg-blue-950/30 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}>
             <div className="flex items-center gap-3">
@@ -1295,183 +1340,12 @@ function ExportToolkitTab({ isDark }) {
   );
 }
 
-// 2. Smart B2B Matchmaking (Tunisia Trading)
-function B2BMatchmakingTab({ isDark }) {
-  const opportunities = [
-    { type: 'Tender', title: 'Fourniture d\'équipements IT pour la région MENA', org: 'European Union (Interreg NEXT MED)', val: '1.2M TND', match: 94 },
-    { type: 'Partner', title: 'Recherche de distributeurs de produits agroalimentaires', org: 'ASCAME Network', val: 'Partenariat', match: 88 },
-    { type: 'Tender', title: 'Projet SPEEDUP: Accompagnement de startups', org: 'CCI Tunis / SMAC', val: '250K TND', match: 82 }
-  ];
-
-  return (
-    <div className="p-5 space-y-4">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Briefcase className={`w-5 h-5 ${isDark ? 'text-purple-400' : 'text-purple-700'}`} />
-          <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Tunisia Trading B2B Matchmaking</h3>
-        </div>
-        <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${isDark ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-100 text-purple-700'}`}>
-          AI POWERED
-        </span>
-      </div>
-      <p className={`text-sm ${isDark ? 'text-purple-200/70' : 'text-slate-600'}`}>
-        Opportunités générées automatiquement en fonction du profil de votre entreprise.
-      </p>
-
-      <div className="space-y-3">
-        {opportunities.map((opp, i) => (
-          <div key={i} className={`p-4 rounded-xl border flex items-center justify-between ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white border-slate-200 hover:shadow-md'} transition-all cursor-pointer`}>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className={`text-[10px] font-bold uppercase ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{opp.type}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold`}>{opp.match}% Match</span>
-              </div>
-              <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{opp.title}</p>
-              <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{opp.org}</p>
-            </div>
-            <div className="text-right shrink-0 ml-4">
-              <span className={`text-xs font-bold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{opp.val}</span>
-              <Button size="sm" variant="ghost" className={`mt-2 h-7 text-[11px] ${isDark ? 'text-purple-400 hover:text-purple-300' : 'text-purple-700 hover:bg-purple-50'}`}>View Details</Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// 3. EPC Academy
-function EPCAcademyTab({ isDark }) {
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', company: '' });
-
-  const courses = [
-    { title: 'Executive Master en Commerce Électronique', type: 'Formation Longue', status: 'Inscriptions Ouvertes' },
-    { title: 'Maîtrisez l’Intelligence Artificielle (IA)', type: 'Formation Courte', status: 'Nouveau' },
-    { title: 'Transport et Logistique Internationale (TLI)', type: 'Cycle de formation', status: 'Bientôt' }
-  ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setSelectedCourse(null);
-      setFormData({ fullName: '', email: '', phone: '', company: '' });
-    }, 2500);
-  };
-
-  return (
-    <div className="p-5 space-y-4">
-      <div className="flex items-center gap-2 mb-2">
-        <GraduationCap className={`w-5 h-5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`} />
-        <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>École Pratique de Commerce (EPC)</h3>
-      </div>
-      <p className={`text-sm ${isDark ? 'text-amber-200/70' : 'text-slate-600'}`}>
-        Développez vos compétences avec nos programmes Executive Education certifiants.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {courses.map((c, i) => (
-          <div key={i} className={`p-4 rounded-xl border flex flex-col justify-between ${isDark ? 'bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20' : 'bg-gradient-to-br from-amber-50 to-white border-amber-200'}`}>
-            <div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-800'}`}>{c.status}</span>
-              <p className={`text-sm font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>{c.title}</p>
-              <p className={`text-xs mt-1 ${isDark ? 'text-amber-200/60' : 'text-slate-500'}`}>{c.type}</p>
-            </div>
-            <Button 
-              onClick={() => setSelectedCourse(c)}
-              size="sm" 
-              className="w-full mt-4 h-9 text-xs bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-sm"
-            >
-              S'inscrire à la formation
-            </Button>
-          </div>
-        ))}
-      </div>
-
-      {/* Course Registration Modal */}
-      {selectedCourse && (
-        <div className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setSelectedCourse(null)}>
-          <div className={`w-full max-w-md rounded-2xl p-6 shadow-2xl border ${isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'}`} onClick={(e) => e.stopPropagation()}>
-            {submitted ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-                <h4 className="text-lg font-bold">Demande d'inscription envoyée !</h4>
-                <p className="text-xs text-muted-foreground">Notre équipe EPC Tunis vous contactera dans les plus brefs délais pour valider votre dossier.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-3 border-border">
-                  <div>
-                    <h4 className="font-bold text-sm">Inscription Formation</h4>
-                    <p className="text-xs text-amber-500 font-medium">{selectedCourse.title}</p>
-                  </div>
-                  <button type="button" onClick={() => setSelectedCourse(null)} className="text-muted-foreground hover:text-foreground text-sm p-1">✕</button>
-                </div>
-
-                <div className="space-y-3 text-xs">
-                  <div>
-                    <label className="block mb-1 font-semibold">Nom & Prénom *</label>
-                    <input 
-                      required 
-                      type="text" 
-                      placeholder="Ex: Mohamed Ben Ali"
-                      value={formData.fullName} 
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} 
-                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block mb-1 font-semibold">Adresse Email *</label>
-                    <input 
-                      required 
-                      type="email" 
-                      placeholder="votre@email.com"
-                      value={formData.email} 
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
-                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block mb-1 font-semibold">Téléphone *</label>
-                    <input 
-                      required 
-                      type="tel" 
-                      placeholder="+216 27 777 751"
-                      value={formData.phone} 
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
-                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block mb-1 font-semibold">Entreprise / Organisme (Optionnel)</label>
-                    <input 
-                      type="text" 
-                      placeholder="Nom de votre société"
-                      value={formData.company} 
-                      onChange={(e) => setFormData({ ...formData, company: e.target.value })} 
-                      className={`w-full px-3 py-2 rounded-lg border text-xs outline-none ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300'}`} 
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2">
-                  <Button type="button" variant="outline" onClick={() => setSelectedCourse(null)} className="w-1/2 text-xs">Annuler</Button>
-                  <Button type="submit" className="w-1/2 text-xs bg-amber-600 hover:bg-amber-700 text-white">Confirmer l'inscription</Button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+// Programmes of the École Pratique de Commerce run by CCI Tunis.
+const EPC_COURSES = [
+  { title: 'Executive Master en Commerce Électronique', type: 'Formation longue', status: 'Inscriptions ouvertes', open: true },
+  { title: 'Maîtrisez l’Intelligence Artificielle (IA)', type: 'Formation courte', status: 'Nouveau', open: true },
+  { title: 'Transport et Logistique Internationale (TLI)', type: 'Cycle de formation', status: 'Bientôt', open: false },
+];
 
 // Info Tab
 function CCIInfoTab({ isDark }) {
@@ -1523,8 +1397,11 @@ const TABS = [
   { id: 'info', label: 'Info & Adhésion', Icon: Landmark },
   { id: 'export', label: 'Export Toolkit', Icon: Map },
   { id: 'b2b', label: 'B2B Matchmaking', Icon: Briefcase },
-  { id: 'epc', label: 'EPC Academy', Icon: GraduationCap },
+  { id: 'feed', label: 'Fil du cercle', Icon: Newspaper },
   { id: 'discussion', label: 'Discussions', Icon: MessageCircle },
+  { id: 'events', label: 'Événements', Icon: Calendar },
+  { id: 'epc', label: 'EPC Academy', Icon: GraduationCap },
+  { id: 'manage', label: 'Pilotage', Icon: Settings2, managersOnly: true },
 ];
 
 export default function CCITunisLayout({
@@ -1537,6 +1414,13 @@ export default function CCITunisLayout({
 }) {
   const [activeTab, setActiveTab] = useState('info');
   const { isDark } = useTheme();
+  const canManage = isAdmin || isModerator;
+  const tabs = useMemo(() => TABS.filter((tab) => !tab.managersOnly || canManage), [canManage]);
+
+  // Non-members can read the public information and use the export toolkit; the rest is for members.
+  useEffect(() => {
+    if (!tabs.some((tab) => tab.id === activeTab)) setActiveTab('info');
+  }, [tabs, activeTab]);
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-2xl transition-all duration-300" style={{ background: isDark ? 'linear-gradient(160deg,#040e25 0%,#010510 100%)' : 'linear-gradient(160deg,#f4f7fc 0%,#ffffff 100%)' }}>
@@ -1570,7 +1454,7 @@ export default function CCITunisLayout({
 
       {/* ── Tabs ── */}
       <div className="flex border-b overflow-x-auto scrollbar-none whitespace-nowrap transition-colors duration-300" style={{ background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -1590,9 +1474,23 @@ export default function CCITunisLayout({
       <AnimatePresence mode="wait">
         <motion.div key={activeTab} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}>
           {activeTab === 'info' && <CCIInfoTab isDark={isDark} />}
-          {activeTab === 'export' && <ExportToolkitTab isDark={isDark} />}
-          {activeTab === 'b2b' && <B2BMatchmakingTab isDark={isDark} />}
-          {activeTab === 'epc' && <EPCAcademyTab isDark={isDark} />}
+          {activeTab === 'export' && <ExportToolkitTab isDark={isDark} circle={circle} user={user} isMember={isMember} />}
+          {activeTab === 'b2b' && <CircleMatchmaking circle={circle} onPostNeed={isMember ? () => setActiveTab('feed') : undefined} />}
+          {activeTab === 'feed' && <CircleFeed circle={circle} user={user} />}
+          {activeTab === 'events' && (
+            <CircleEventCalendar circleId={circleId} isMember={isMember} isAdmin={isAdmin} isModerator={isModerator} currentUserId={user?.id} />
+          )}
+          {activeTab === 'epc' && (
+            <TrainingAcademy
+              circle={circle}
+              user={user}
+              isManager={canManage}
+              title="École Pratique de Commerce (EPC)"
+              description="Programmes Executive Education certifiants de la CCI Tunis. Votre inscription est transmise à l’équipe EPC, qui vous recontacte pour valider votre dossier."
+              courses={EPC_COURSES}
+            />
+          )}
+          {activeTab === 'manage' && canManage && <CircleAdminDashboard circleId={circleId} circle={circle} />}
           
           {activeTab === 'discussion' && (
             <div style={{ color: isDark ? 'white' : '#1c1917' }}>
@@ -1609,30 +1507,26 @@ export default function CCITunisLayout({
                 isDark={isDark}
                 allResponses={responses}
               />
-              {Array.isArray(responses) && responses.length > 0 && (
-                <div className="px-6 pb-4 mt-4">
-                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-blue-200' : 'text-slate-800'}`}>
-                    <MessageCircle className={`w-4 h-4 ${isDark ? 'text-blue-400' : 'text-blue-700'}`} /> Réponses
-                  </h3>
-                  <div className="space-y-2">
-                    {responses.map((r) => {
-                      const rProfile = memberProfiles.find((p) => p.id === r.created_by_id);
-                      const avatar = rProfile?.avatar_url || r.author_avatar;
-                      return (
-                        <div key={r.id} className={`p-3 rounded-xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'}`}>
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <div className="w-5 h-5 rounded-full overflow-hidden bg-muted">
-                              {avatar ? <img src={avatar} alt={r.author_name} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-[10px] font-bold">{r.author_name?.[0]?.toUpperCase()}</div>}
-                            </div>
-                            <span className={`text-[11px] font-semibold ${isDark ? 'text-blue-200' : 'text-slate-700'}`}>{r.author_name}</span>
-                          </div>
-                          <p className={`text-sm ${isDark ? 'text-white/90' : 'text-slate-900'}`}>{r.response_text}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <div className="mt-4 text-foreground">
+                <DiscussionPanel
+                  user={user}
+                  activeQuestion={activeQuestion}
+                  responses={responses}
+                  memberProfiles={memberProfiles}
+                  isMember={isMember}
+                  canAsk={canManage}
+                  newResponse={newResponse}
+                  setNewResponse={setNewResponse}
+                  submitResponse={submitResponse}
+                  newQuestion={newQuestion}
+                  setNewQuestion={setNewQuestion}
+                  showQuestionForm={showQuestionForm}
+                  setShowQuestionForm={setShowQuestionForm}
+                  createQuestion={createQuestion}
+                  selectedResponseData={selectedResponseData}
+                  setSelectedResponseData={setSelectedResponseData}
+                />
+              </div>
             </div>
           )}
         </motion.div>

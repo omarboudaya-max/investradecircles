@@ -1,183 +1,144 @@
-import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, Outlet } from 'react-router-dom';
+import React, { lazy } from 'react';
+import { Toaster } from '@/components/ui/toaster';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientInstance } from '@/lib/query-client';
+import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
 import LanguageProfileSync from '@/components/layout/LanguageProfileSync';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-import Home from '@/pages/Home';
-import CreateCircle from '@/pages/CreateCircle';
-import MyCircles from '@/pages/MyCircles';
-import CircleDetail from '@/pages/CircleDetail';
-import CreatePoll from '@/pages/CreatePoll';
-import UserProfile from '@/pages/UserProfile';
-import AppLayout from '@/components/layout/AppLayout';
-import Messages from '@/pages/Messages';
-import JoinCircle from '@/pages/JoinCircle';
-import SavedPosts from '@/pages/SavedPosts';
-import PostDetail from '@/pages/PostDetail';
-import AdminDashboard from '@/pages/AdminDashboard';
-import AllCircles from '@/pages/AllCircles';
-import Landing from '@/pages/Landing';
-import LandingInstitutions from '@/pages/LandingInstitutions';
-import LandingIndividuals from '@/pages/LandingIndividuals';
-import Landing3M from '@/pages/Landing3M';
-import LandingContact from '@/pages/LandingContact';
-import EventRegistrationLanding from '@/pages/EventRegistrationLanding';
-
+import PageBoundary from '@/components/layout/PageBoundary';
 import GlobalLoader from '@/components/layout/GlobalLoader';
-
+import ScrollToTop from '@/components/ScrollToTop';
+import AppLayout from '@/components/layout/AppLayout';
 import WebsiteNavbar from '@/components/layout/WebsiteNavbar';
 import WebsiteFooter from '@/components/layout/WebsiteFooter';
-import Onboarding from '@/pages/Onboarding';
-import Notifications from '@/pages/Notifications';
-import InvestmentMap from '@/pages/InvestmentMap';
-import ProjectDetail from '@/pages/ProjectDetail';
-import InvestmentNetwork from '@/pages/InvestmentNetwork';
-import InvestorProfileDetail from '@/pages/InvestorProfileDetail';
-import FundProfileDetail from '@/pages/FundProfileDetail';
-import AIMatchmaker from '@/pages/AIMatchmaker';
-import ExecutiveIntelligence from '@/pages/ExecutiveIntelligence';
-import UTICACommandCenterPage from '@/pages/UTICACommandCenterPage';
-import ScrollToTop from '@/components/ScrollToTop';
 
+// Pages are loaded on demand so the first screen does not pay for the whole app.
+const Landing = lazy(() => import('@/pages/Landing'));
+const LandingInstitutions = lazy(() => import('@/pages/LandingInstitutions'));
+const LandingIndividuals = lazy(() => import('@/pages/LandingIndividuals'));
+const Landing3M = lazy(() => import('@/pages/Landing3M'));
+const LandingContact = lazy(() => import('@/pages/LandingContact'));
+const EventRegistrationLanding = lazy(() => import('@/pages/EventRegistrationLanding'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const Home = lazy(() => import('@/pages/Home'));
+const CreateCircle = lazy(() => import('@/pages/CreateCircle'));
+const MyCircles = lazy(() => import('@/pages/MyCircles'));
+const AllCircles = lazy(() => import('@/pages/AllCircles'));
+const CircleDetail = lazy(() => import('@/pages/CircleDetail'));
+const JoinCircle = lazy(() => import('@/pages/JoinCircle'));
+const CreatePoll = lazy(() => import('@/pages/CreatePoll'));
+const UserProfile = lazy(() => import('@/pages/UserProfile'));
+const Messages = lazy(() => import('@/pages/Messages'));
+const Notifications = lazy(() => import('@/pages/Notifications'));
+const SavedPosts = lazy(() => import('@/pages/SavedPosts'));
+const PostDetail = lazy(() => import('@/pages/PostDetail'));
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
+const InvestmentMap = lazy(() => import('@/pages/InvestmentMap'));
+const InvestmentNetwork = lazy(() => import('@/pages/InvestmentNetwork'));
+const InvestorProfileDetail = lazy(() => import('@/pages/InvestorProfileDetail'));
+const FundProfileDetail = lazy(() => import('@/pages/FundProfileDetail'));
+const ProjectDetail = lazy(() => import('@/pages/ProjectDetail'));
+const AIMatchmaker = lazy(() => import('@/pages/AIMatchmaker'));
+const ExecutiveIntelligence = lazy(() => import('@/pages/ExecutiveIntelligence'));
+const UTICACommandCenterPage = lazy(() => import('@/pages/UTICACommandCenterPage'));
+const PageNotFound = lazy(() => import('@/lib/PageNotFound'));
+
+const isInstalledApp = () => typeof window !== 'undefined' && (
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true ||
+  Boolean(window.ReactNativeWebView) ||
+  Boolean(window.Capacitor)
+);
+
+/** Investment pages are public: members see them inside the app, visitors inside the website chrome. */
 const SmartInvestmentLayout = () => {
   const { user } = useAuth();
-  if (user) {
-    return <AppLayout />;
-  }
+  if (user) return <AppLayout />;
   return (
-    <div className="min-h-screen flex flex-col text-white bg-[#030914] antialiased font-sans">
+    <div className="flex min-h-screen flex-col bg-background text-foreground antialiased">
       <WebsiteNavbar />
-      <main className="flex-1">
-        <Outlet />
+      <main className="flex-1 px-3 py-4 sm:px-6">
+        <PageBoundary><Outlet /></PageBoundary>
       </main>
       <WebsiteFooter />
     </div>
   );
 };
 
-const AuthenticatedApp = () => {
-  const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-  const [animationDone, setAnimationDone] = useState(false);
+const page = (element) => <PageBoundary compact={false}>{element}</PageBoundary>;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimationDone(true);
-    }, 400); // Fast fluid transition instead of 2.5s blocking delay
-    return () => clearTimeout(timer);
-  }, []);
+const AppRoutes = () => {
+  const { user, isLoadingAuth } = useAuth();
 
-  const showLoader = (isLoadingPublicSettings || isLoadingAuth) && !animationDone;
+  if (isLoadingAuth) return <GlobalLoader />;
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {showLoader && <GlobalLoader key="loader" />}
-      </AnimatePresence>
+    <Routes>
+      <Route
+        path="/"
+        element={user ? <Navigate to="/home" replace /> : isInstalledApp() ? <Navigate to="/login" replace /> : page(<Landing />)}
+      />
+      <Route path="/institutions" element={page(<LandingInstitutions />)} />
+      <Route path="/individuals" element={page(<LandingIndividuals />)} />
+      <Route path="/3m" element={page(<Landing3M />)} />
+      <Route path="/contact" element={page(<LandingContact />)} />
+      <Route path="/event" element={page(<EventRegistrationLanding />)} />
+      <Route path="/event-registration" element={<Navigate to="/event" replace />} />
+      <Route path="/login" element={page(<Login />)} />
+      <Route path="/register" element={page(<Register />)} />
+      <Route path="/forgot-password" element={page(<ForgotPassword />)} />
+      <Route path="/reset-password" element={page(<ResetPassword />)} />
 
-      {!showLoader && (
-        <>
-          {authError ? (
-            authError.type === 'user_not_registered' ? (
-              <UserNotRegisteredError />
-            ) : authError.type === 'auth_required' ? (
-              (() => {
-                navigateToLogin();
-                return null;
-              })()
-            ) : null
-          ) : (
-            <Routes>
-              {/* Root path '/': renders Landing page for web visitors, or redirects to login/home in mobile app container */}
-              <Route 
-                path="/" 
-                element={
-                  user ? (
-                    <Navigate to="/home" replace />
-                  ) : (typeof window !== 'undefined' && (
-                    window.matchMedia('(display-mode: standalone)').matches ||
-                    window.navigator.standalone === true ||
-                    !!window.ReactNativeWebView ||
-                    !!window.Capacitor
-                  )) ? (
-                    <Navigate to="/login" replace />
-                  ) : (
-                    <Landing />
-                  )
-                } 
-              />
-              <Route path="/institutions" element={<LandingInstitutions />} />
-              <Route path="/individuals" element={<LandingIndividuals />} />
-              <Route path="/3m" element={<Landing3M />} />
-              <Route path="/contact" element={<LandingContact />} />
-              <Route path="/event" element={<EventRegistrationLanding />} />
-              <Route path="/event-registration" element={<EventRegistrationLanding />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/utica-command" element={page(<UTICACommandCenterPage />)} />
+      <Route path="/utica-command-center" element={<Navigate to="/utica-command" replace />} />
+      <Route path="/utica-presentation" element={<Navigate to="/utica-command?fullscreen=true" replace />} />
 
-              {/* UTICA Command Center Dedicated Standalone & Presentation Routes */}
-              <Route path="/utica-command" element={<UTICACommandCenterPage />} />
-              <Route path="/utica-command-center" element={<UTICACommandCenterPage />} />
-              <Route path="/utica-presentation" element={<UTICACommandCenterPage />} />
+      <Route element={<SmartInvestmentLayout />}>
+        <Route path="/investment-map" element={<InvestmentMap />} />
+        <Route path="/investment-network" element={<InvestmentNetwork />} />
+        <Route path="/investment-network/fund/:fundSlug" element={<FundProfileDetail />} />
+        <Route path="/fund/:fundSlug" element={<FundProfileDetail />} />
+        <Route path="/investment-network/:organizationSlug" element={<InvestorProfileDetail />} />
+        <Route path="/investor/:id" element={<InvestorProfileDetail />} />
+        <Route path="/investment-project/:id" element={<ProjectDetail />} />
+        <Route path="/project/:id" element={<ProjectDetail />} />
+        <Route path="/matchmaker" element={<AIMatchmaker />} />
+        <Route path="/intelligence" element={<ExecutiveIntelligence />} />
+        {['/executive-intelligence', '/executive-command-center', '/executive', '/command-center'].map((path) => (
+          <Route key={path} path={path} element={<Navigate to="/intelligence" replace />} />
+        ))}
+      </Route>
 
-              {/* Public & Authenticated Investment Network & Intelligence Routes */}
-              <Route element={<SmartInvestmentLayout />}>
-                <Route path="/investment-map" element={<InvestmentMap />} />
-                <Route path="/investment-network" element={<InvestmentNetwork />} />
-                <Route path="/investment-network/fund/:fundSlug" element={<FundProfileDetail />} />
-                <Route path="/fund/:fundSlug" element={<FundProfileDetail />} />
-                <Route path="/investment-network/:organizationSlug" element={<InvestorProfileDetail />} />
-                <Route path="/matchmaker" element={<AIMatchmaker />} />
-                <Route path="/intelligence" element={<ExecutiveIntelligence />} />
-                <Route path="/executive-intelligence" element={<ExecutiveIntelligence />} />
-                <Route path="/executive-command-center" element={<ExecutiveIntelligence />} />
-                <Route path="/executive" element={<ExecutiveIntelligence />} />
-                <Route path="/command-center" element={<ExecutiveIntelligence />} />
-                <Route path="/investor/:id" element={<InvestorProfileDetail />} />
-                <Route path="/investment-project/:id" element={<ProjectDetail />} />
-                <Route path="/project/:id" element={<ProjectDetail />} />
-              </Route>
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/onboarding" element={page(<Onboarding />)} />
+        <Route element={<AppLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/create-circle" element={<CreateCircle />} />
+          <Route path="/my-circles" element={<MyCircles />} />
+          <Route path="/all-circles" element={<AllCircles />} />
+          <Route path="/circle/:id" element={<CircleDetail />} />
+          <Route path="/join-circle" element={<JoinCircle />} />
+          <Route path="/create-poll" element={<CreatePoll />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/profile/:userId" element={<UserProfile />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/saved" element={<SavedPosts />} />
+          <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
+      </Route>
 
-              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-                <Route path="/onboarding" element={<Onboarding />} />
-                <Route element={<AppLayout />}>
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/create-circle" element={<CreateCircle />} />
-                  <Route path="/my-circles" element={<MyCircles />} />
-                  <Route path="/circle/:id" element={<CircleDetail />} />
-                  <Route path="/create-poll" element={<CreatePoll />} />
-                  <Route path="/profile" element={<UserProfile />} />
-                  <Route path="/profile/:userId" element={<UserProfile />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/join-circle" element={<JoinCircle />} />
-                  <Route path="/saved" element={<SavedPosts />} />
-                  <Route path="/post/:id" element={<PostDetail />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/all-circles" element={<AllCircles />} />
-                </Route>
-              </Route>
-
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          )}
-        </>
-      )}
-    </>
+      <Route path="*" element={page(<PageNotFound />)} />
+    </Routes>
   );
 };
 
@@ -185,21 +146,21 @@ function App() {
   return (
     <HelmetProvider>
       <LanguageProvider>
-      <ThemeProvider>
-        <AuthProvider>
-        <LanguageProfileSync />
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <ScrollToTop />
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
-      </AuthProvider>
-    </ThemeProvider>
-    </LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <LanguageProfileSync />
+            <QueryClientProvider client={queryClientInstance}>
+              <Router>
+                <ScrollToTop />
+                <AppRoutes />
+              </Router>
+              <Toaster />
+            </QueryClientProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </HelmetProvider>
-  )
+  );
 }
 
-export default App
+export default App;

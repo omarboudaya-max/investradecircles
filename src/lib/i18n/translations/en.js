@@ -331,6 +331,7 @@ const en = {
   home: {
     noPostsTitle: 'No posts yet',
     noPostsSubtitle: 'Be the first to share something with your circles!',
+    beFirstToPost: 'Be the first to share something with your circles!',
   },
   savedPosts: {
     title: 'Saved Posts',
@@ -499,23 +500,6 @@ const en = {
     deleteCircle: 'Delete Circle',
     resolve: 'Resolve',
   },
-  circleDetail: {
-    members: 'Members',
-    posts: 'Posts',
-    about: 'About',
-    join: 'Join',
-    leave: 'Leave',
-    joined: 'Joined',
-    invite: 'Invite',
-    settings: 'Settings',
-    noDescription: 'No description provided.',
-    noPosts: 'No posts in this circle yet.',
-    beFirst: 'Be the first to post!',
-    createPost: 'Create Post',
-    private: 'Private',
-    public: 'Public',
-    joinToSee: 'Join this circle to see its content.',
-  },
   joinCircle: {
     title: 'Join Circle',
     enterCode: 'Enter invite code',
@@ -536,6 +520,7 @@ const en = {
     clickToOpen: 'Click to open',
     unknown: 'Unknown',
     public: 'Public',
+    postError: 'Failed to update post',
   },
   commentSection: {
     placeholder: 'Write a comment...',
@@ -619,26 +604,6 @@ const en = {
     verified: 'Verified',
     official: 'Official',
     posting: 'Posting to:',
-  },
-  postCard: {
-    unknown: 'User',
-    public: 'Public',
-    copyLink: 'Copy link',
-    linkCopied: 'Link copied to clipboard',
-    deletePost: 'Delete post',
-    postDeleted: 'Post deleted',
-    reportPost: 'Report post',
-    postReported: 'Post reported',
-    reportThankYou: 'Thank you for keeping our community safe.',
-    attachedDocument: 'Attached Document',
-    clickToOpen: 'Click to open / download',
-    comment: 'Comment',
-    postError: 'Failed to update post',
-  },
-  home: {
-    noPostsTitle: 'No posts yet',
-    noPostsSubtitle: 'Be the first to share something with your circles!',
-    beFirstToPost: 'Be the first to share something with your circles!',
   },
 };
 

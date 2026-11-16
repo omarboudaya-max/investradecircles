@@ -73,10 +73,11 @@ export default function CircleEventCalendar({ circleId, isMember, isAdmin, isMod
         const roomName = `investraders-${id.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}`;
         meet_link = `https://meet.jit.si/${roomName}`;
       }
-      await supabase.from('CircleEvent').update({
+      const { error } = await supabase.from('CircleEvent').update({
         session_active: active,
-        ...(meet_link !== undefined && { meet_link }).eq('id', id),
-      });
+        ...(meet_link !== undefined ? { meet_link } : {}),
+      }).eq('id', id);
+      if (error) throw new Error(error.message);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['circle-events', circleId] }),
   });

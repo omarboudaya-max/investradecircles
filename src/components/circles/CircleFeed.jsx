@@ -1,85 +1,87 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Newspaper } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Newspaper, TrendingUp } from 'lucide-react';
 import PostCard from '@/components/feed/PostCard';
+import CreatePostBox from '@/components/feed/CreatePostBox';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Maps circle category to relevant keywords/tags used in post filtering
+// Words that make a public post relevant to a kind of circle.
 const CATEGORY_KEYWORDS = {
-  chamber_of_commerce: ['commerce', 'trade', 'business', 'economy', 'chamber', 'industry', 'enterprise'],
-  stock_market: ['stocks', 'shares', 'market', 'nasdaq', 'sp500', 'earnings', 'ipo', 'trading', 'equity'],
-  university: ['university', 'education', 'research', 'academic', 'campus', 'scholarship', 'faculty'],
-  institution: ['institution', 'finance', 'banking', 'regulation', 'governance', 'corporate'],
-  small_business: ['small business', 'startup', 'entrepreneur', 'local', 'growth', 'funding'],
-  individual: ['investor', 'portfolio', 'savings', 'wealth', 'personal', 'strategy'],
-  topics: [],
+  chamber_of_commerce: ['commerce', 'trade', 'export', 'business', 'economy', 'chamber', 'chambre', 'industry', 'industrie', 'enterprise', 'entreprise'],
+  stock_market: ['stocks', 'shares', 'market', 'nasdaq', 'sp500', 'earnings', 'ipo', 'trading', 'equity', 'bourse'],
+  university: ['university', 'université', 'education', 'research', 'recherche', 'academic', 'campus', 'scholarship', 'faculty'],
+  institution: ['institution', 'finance', 'banking', 'banque', 'regulation', 'governance', 'corporate'],
+  small_business: ['small business', 'startup', 'entrepreneur', 'local', 'growth', 'funding', 'pme'],
+  individual: ['investor', 'investisseur', 'portfolio', 'savings', 'wealth', 'strategy'],
 };
 
-function scorePost(post, category, circleId) {
-  let score = 0;
-  // Posts explicitly tied to this circle rank highest
-  if (post.circle_id === circleId) score += 10;
-  // Posts with public visibility
-  if (post.visibility === 'public') score += 1;
-  // Keyword match in content
-  const keywords = CATEGORY_KEYWORDS[category] || [];
-  const content = (post.content || '').toLowerCase();
-  keywords.forEach((kw) => { if (content.includes(kw)) score += 2; });
-  return score;
+function Section({ title, count, children }) {
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <span className="text-xs text-muted-foreground">· {count}</span>
+      </div>
+      {children}
+    </section>
+  );
 }
 
+/**
+ * A circle's feed: what was posted inside the circle first, then public posts from
+ * the wider platform that touch the circle's subject — clearly labelled as such.
+ */
 export default function CircleFeed({ circle, user }) {
   const circleId = circle?.id;
   const category = circle?.category || 'general';
   const isMember = circle?.member_ids?.includes(user?.id) || circle?.created_by_id === user?.id;
 
-  const { data: posts = [], isLoading } = useQuery({
-    queryKey: ['circle-feed-posts', circleId, category],
-    queryFn: () => supabase.from('Post').select('*').order('created_date', { ascending: false }).limit(100).then(res => res.data || []),
-    enabled: !!circleId,
+  const { data: circlePosts = [], isLoading } = useQuery({
+    queryKey: ['circle-feed-posts', circleId, 'inside'],
+    queryFn: () => supabase.from('Post').select('*').eq('circle_id', circleId).order('created_date', { ascending: false }).limit(100).then((res) => res.data || []),
+    enabled: Boolean(circleId),
   });
 
-  // Filter: circle posts + public posts that match category keywords; exclude private posts of other circles
-  const filteredPosts = posts
-    .filter((p) => {
-      if (p.post_type === 'announcement') return false;
-      if (p.circle_id === circleId) return true;
-      if (p.visibility === 'private') return false;
-      if (p.visibility === 'circle' && p.circle_id !== circleId) return false;
-      if (category === 'general') return p.visibility === 'public';
-      const keywords = CATEGORY_KEYWORDS[category] || [];
-      const content = (p.content || '').toLowerCase();
-      return keywords.some((kw) => content.includes(kw));
-    })
-    .map((p) => ({ ...p, _score: scorePost(p, category, circleId) }))
-    .sort((a, b) => b._score - a._score || new Date(b.created_date) - new Date(a.created_date));
+  const { data: publicPosts = [] } = useQuery({
+    queryKey: ['circle-feed-posts', circleId, 'related'],
+    queryFn: () => supabase.from('Post').select('*').eq('visibility', 'public').order('created_date', { ascending: false }).limit(100).then((res) => res.data || []),
+    enabled: Boolean(circleId),
+    staleTime: 60000,
+  });
+
+  const inside = useMemo(() => circlePosts.filter((p) => p.post_type !== 'announcement'), [circlePosts]);
+  const related = useMemo(() => {
+    const keywords = CATEGORY_KEYWORDS[category] || [];
+    if (!keywords.length) return [];
+    return publicPosts
+      .filter((p) => p.circle_id !== circleId && keywords.some((kw) => (p.content || '').toLowerCase().includes(kw)))
+      .slice(0, 15);
+  }, [publicPosts, category, circleId]);
 
   return (
-    <div className="px-6 pb-6 space-y-4">
-      <div className="flex items-center gap-2 pt-4 pb-1">
-        <TrendingUp className="w-4 h-4 text-primary" />
-        <h3 className="text-sm font-semibold">
-          {category === 'topics' ? 'Circle Feed' : `${category.replace(/_/g, ' ')} Feed`}
-        </h3>
-        <span className="ml-auto text-xs text-muted-foreground">{filteredPosts.length} posts</span>
-      </div>
+    <div className="space-y-6 px-4 pb-6 pt-4 sm:px-6">
+      {isMember && <CreatePostBox defaultCircle={circle} />}
 
       {isLoading ? (
-        <div className="space-y-3">
-          {Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
-        </div>
-      ) : filteredPosts.length === 0 ? (
-        <div className="text-center py-10 text-muted-foreground">
-          <Newspaper className="w-8 h-8 mx-auto mb-2 opacity-40" />
-          <p className="text-sm">No posts yet for this topic. Be the first to share!</p>
-        </div>
+        <div className="space-y-3">{Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}</div>
       ) : (
-        <div className="space-y-3">
-          {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} readOnly={!isMember} />
-          ))}
-        </div>
+        <Section title={`Posted in ${circle?.name || 'this circle'}`} count={inside.length}>
+          {inside.length === 0 ? (
+            <div className="rounded-xl border border-dashed py-10 text-center text-muted-foreground">
+              <Newspaper className="mx-auto mb-2 h-8 w-8 opacity-40" />
+              <p className="text-sm">{isMember ? 'Nothing has been posted here yet. Start the conversation above.' : 'Nothing has been posted here yet.'}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">{inside.map((post) => <PostCard key={post.id} post={post} readOnly={!isMember} />)}</div>
+          )}
+        </Section>
+      )}
+
+      {related.length > 0 && (
+        <Section title="Related public posts on Investraders" count={related.length}>
+          <div className="space-y-3">{related.map((post) => <PostCard key={post.id} post={post} />)}</div>
+        </Section>
       )}
     </div>
   );

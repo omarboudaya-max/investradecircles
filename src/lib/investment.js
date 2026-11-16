@@ -1,6 +1,6 @@
 import {
   Building2, Cpu, Sprout, Sun, Plane, Briefcase, HeartPulse, HardHat,
-  Coins, Layers, Globe, Factory, MapPin, ShieldCheck, Sparkles, TrendingUp
+  Coins, Layers, Globe, Factory
 } from 'lucide-react';
 
 export const STAGE_LABELS = {
