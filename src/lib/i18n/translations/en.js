@@ -578,6 +578,23 @@ const en = {
     accept: 'Accept',
     decline: 'Decline',
   },
+  connections: {
+    requestsTitle: 'Connection Requests',
+    showAll: (n) => `Show all ${n} requests`,
+    showFewer: 'Show fewer',
+    updateFailed: 'Could not update the request',
+  },
+  matchNudge: {
+    title: 'Get matched with the right people',
+    needType: 'Tell us who you are so we can match you with investors, innovators and partners.',
+    needPrefs: 'Say what you are looking for and we will rank the investors, projects and members that fit.',
+    investor: '💼 Investor',
+    innovator: '🚀 Innovator',
+    other: '🌐 Other',
+    cta: 'Set up my matching',
+    later: 'Later',
+    saveFailed: 'Could not save your choice',
+  },
   sharePost: {
     title: 'Share Post',
     copyLink: 'Copy Link',

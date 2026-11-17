@@ -6,6 +6,8 @@ import CreatePostBox from '@/components/feed/CreatePostBox';
 import PostCard from '@/components/feed/PostCard';
 import CircleDiscovery from '@/components/feed/CircleDiscovery';
 import PendingInvites from '@/components/circles/PendingInvites';
+import PendingConnectionRequests from '@/components/profile/PendingConnectionRequests';
+import MatchProfileNudge from '@/components/matching/MatchProfileNudge';
 import WeeklyLeaderboard from '@/components/feed/WeeklyLeaderboard';
 import UpcomingEventsCalendar from '@/components/feed/UpcomingEventsCalendar';
 import PullToRefresh from '@/components/ui/PullToRefresh';
@@ -37,6 +39,9 @@ export default function Home() {
       <div className="max-w-2xl mx-auto pb-6">
         <StoryBar />
         <CreatePostBox />
+        <MatchProfileNudge />
+        {/* The right-hand panel that also lists these is only shown on very wide screens. */}
+        <PendingConnectionRequests limit={3} className="xl:hidden mb-5 bg-card rounded-2xl border p-4" />
         <PendingInvites />
         <WeeklyLeaderboard />
         <UpcomingEventsCalendar />

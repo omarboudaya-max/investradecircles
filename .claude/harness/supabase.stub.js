@@ -27,8 +27,27 @@ function refused(label) {
   return chain;
 }
 
+// With row-level security on, the public key the harness uses can no longer read private
+// tables, so screens that need such rows get a few fictional ones.
+const FIXTURES = {
+  Connection: () => Array.from({ length: 5 }, (_, i) => ({
+    id: `00000000-0000-4000-8000-0000000000c${i}`,
+    requester_id: `00000000-0000-4000-8000-0000000000d${i}`,
+    recipient_id: HARNESS_USER_ID,
+    status: 'pending',
+    created_date: new Date(Date.now() - i * 3600000).toISOString(),
+  })),
+  profiles: () => Array.from({ length: 5 }, (_, i) => ({
+    id: `00000000-0000-4000-8000-0000000000d${i}`,
+    full_name: ['Amira Ben Salah', 'Karim Trabelsi', 'Leila Gharbi', 'Youssef Mejri', 'Sonia Haddad'][i],
+    avatar_url: null,
+    headline: ['Agri-food exporter', 'Seed investor, fintech', 'Textile SME founder', 'Family office analyst', 'Logistics consultant'][i],
+  })),
+};
+
 function transform(table, result) {
   if (!result || result.error) return result;
+  if (FIXTURES[table] && Array.isArray(result.data) && result.data.length === 0) return { ...result, data: FIXTURES[table]() };
   if (PRIVATE_TABLES.has(table)) return { ...result, data: Array.isArray(result.data) ? [] : null, count: 0 };
   if (table === 'Circle') {
     const patch = (row) => (row && row.name && row.name.trim() === MANAGED_CIRCLE ? { ...row, created_by_id: HARNESS_USER_ID, member_ids: [...(row.member_ids || []), HARNESS_USER_ID] } : row);

@@ -184,21 +184,26 @@ export default function Onboarding() {
 
                 <div className="space-y-5">
                   <div>
-                    <label className="text-sm font-semibold mb-1.5 block">I am a...</label>
-                    <div className="flex gap-3">
-                      <button 
-                        onClick={() => setUserType('investor')}
-                        className={`flex-1 py-3 border rounded-xl font-medium transition-colors ${userType === 'investor' ? 'bg-blue-50 border-blue-600 text-blue-700' : 'hover:bg-slate-50'}`}
-                      >
-                        💼 Investor
-                      </button>
-                      <button 
-                        onClick={() => setUserType('innovator')}
-                        className={`flex-1 py-3 border rounded-xl font-medium transition-colors ${userType === 'innovator' ? 'bg-cyan-50 border-cyan-600 text-cyan-700' : 'hover:bg-slate-50'}`}
-                      >
-                        🚀 Innovator
-                      </button>
+                    {/* Required: matching between innovators and investors depends on it. */}
+                    <label className="text-sm font-semibold mb-1.5 block">I am a... <span className="text-red-500">*</span></label>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {[
+                        { id: 'investor', label: '💼 Investor', active: 'bg-blue-50 border-blue-600 text-blue-700 dark:bg-blue-950/40 dark:text-blue-200' },
+                        { id: 'innovator', label: '🚀 Innovator', active: 'bg-cyan-50 border-cyan-600 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-200' },
+                        { id: 'other', label: '🌐 Other', active: 'bg-slate-100 border-slate-600 text-slate-800 dark:bg-slate-800 dark:text-slate-100' },
+                      ].map((option) => (
+                        <button
+                          key={option.id}
+                          type="button"
+                          aria-pressed={userType === option.id}
+                          onClick={() => setUserType(option.id)}
+                          className={`flex-1 py-3 border rounded-xl font-medium transition-colors ${userType === option.id ? option.active : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
                     </div>
+                    {!userType && <p className="text-xs text-muted-foreground mt-1.5">Choose one to continue.</p>}
                   </div>
                   <div>
                     <label className="text-sm font-semibold mb-1.5 block">Headline</label>
@@ -211,8 +216,8 @@ export default function Onboarding() {
                 </div>
 
                 <div className="flex justify-between items-center mt-12">
-                  <Button variant="ghost" onClick={nextStep} className="text-slate-400 hover:text-slate-600">Skip</Button>
-                  <Button onClick={nextStep} className="bg-blue-600 hover:bg-blue-700 rounded-full px-8">Continue</Button>
+                  <span />
+                  <Button onClick={nextStep} disabled={!userType} className="bg-blue-600 hover:bg-blue-700 rounded-full px-8">Continue</Button>
                 </div>
               </motion.div>
             )}

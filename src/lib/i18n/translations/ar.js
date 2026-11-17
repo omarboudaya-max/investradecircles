@@ -578,6 +578,23 @@ const ar = {
     accept: 'قبول',
     decline: 'رفض',
   },
+  connections: {
+    requestsTitle: 'طلبات التواصل',
+    showAll: (n) => `عرض كل الطلبات (${n})`,
+    showFewer: 'عرض أقل',
+    updateFailed: 'تعذّر تحديث الطلب',
+  },
+  matchNudge: {
+    title: 'تواصل مع الأشخاص المناسبين',
+    needType: 'أخبرنا من أنت لنربطك بالمستثمرين والمبتكرين والشركاء.',
+    needPrefs: 'حدّد ما تبحث عنه وسنرتّب لك المستثمرين والمشاريع والأعضاء الأنسب.',
+    investor: '💼 مستثمر',
+    innovator: '🚀 مبتكر',
+    other: '🌐 أخرى',
+    cta: 'إعداد المطابقة',
+    later: 'لاحقاً',
+    saveFailed: 'تعذّر حفظ اختيارك',
+  },
   sharePost: {
     title: 'مشاركة المنشور',
     copyLink: 'نسخ الرابط',

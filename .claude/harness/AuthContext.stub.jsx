@@ -20,7 +20,8 @@ const user = {
   bio: 'Olive oil and dates, export to France and Germany.',
   user_type: 'innovator',
   role,
-  is_onboarded: true,
+  // Add ?onboarded=0 to the address to walk through the onboarding steps.
+  is_onboarded: new URLSearchParams(window.location.search).get('onboarded') !== '0',
   match_profile: null,
 };
 

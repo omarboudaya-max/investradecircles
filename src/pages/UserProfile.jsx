@@ -25,7 +25,7 @@ export default function UserProfile() {
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
 
-  const USER_TYPE_LABELS = { innovator: '🚀 Innovator', investor: '💼 Investor' };
+  const USER_TYPE_LABELS = { innovator: '🚀 Innovator', investor: '💼 Investor', other: '🌐 Other' };
   const BUSINESS_TYPE_LABELS = {
     startup: 'Startup', small_business: 'Small Business', enterprise: 'Enterprise',
     freelancer: 'Freelancer / Solo', venture_capital: 'Venture Capital',

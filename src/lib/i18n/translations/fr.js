@@ -579,6 +579,23 @@ const fr = {
     accept: 'Accepter',
     decline: 'Décliner',
   },
+  connections: {
+    requestsTitle: 'Demandes de connexion',
+    showAll: (n) => `Voir les ${n} demandes`,
+    showFewer: 'Voir moins',
+    updateFailed: 'Impossible de mettre à jour la demande',
+  },
+  matchNudge: {
+    title: 'Trouvez les bons interlocuteurs',
+    needType: 'Dites-nous qui vous êtes pour vous mettre en relation avec des investisseurs, des innovateurs et des partenaires.',
+    needPrefs: 'Indiquez ce que vous recherchez : nous classerons les investisseurs, projets et membres qui correspondent.',
+    investor: '💼 Investisseur',
+    innovator: '🚀 Innovateur',
+    other: '🌐 Autre',
+    cta: 'Configurer mon matching',
+    later: 'Plus tard',
+    saveFailed: "Impossible d'enregistrer votre choix",
+  },
   sharePost: {
     title: 'Partager la Publication',
     copyLink: 'Copier le Lien',

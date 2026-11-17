@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Check, MessageCircle, FileText, Zap, UserPlus, Users, HelpCircle, AtSign } from 'lucide-react';
+import { ArrowLeft, Bell, Check, MessageCircle, FileText, Zap, UserPlus, Users, HelpCircle, AtSign, CalendarClock, Handshake } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
@@ -16,6 +16,8 @@ const TYPE_ICON = {
   message: MessageCircle,
   mention: AtSign,
   circle_question: HelpCircle,
+  event_reminder: CalendarClock,
+  intro_request: Handshake,
 };
 
 export default function Notifications() {
