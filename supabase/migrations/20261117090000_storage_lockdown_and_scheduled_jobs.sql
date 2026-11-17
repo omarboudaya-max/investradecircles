@@ -106,16 +106,23 @@ REVOKE ALL ON FUNCTION public.send_event_reminders() FROM PUBLIC, anon, authenti
 --    be run by hand:  SELECT public.cleanup_expired_stories();
 -- ----------------------------------------------------------------------------
 DO $cron$
+DECLARE
+  -- cron.schedule is overloaded, and to_regproc() returns NULL for an ambiguous name,
+  -- so look the function up in the catalog instead.
+  has_cron constant text := $q$SELECT EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'cron' AND p.proname = 'schedule')$q$;
+  available boolean;
 BEGIN
-  IF to_regproc('cron.schedule') IS NULL THEN
+  EXECUTE has_cron INTO available;
+  IF NOT available THEN
     BEGIN
       CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA pg_catalog;
     EXCEPTION WHEN OTHERS THEN
       RAISE NOTICE 'pg_cron could not be enabled (%). Enable it under Database > Extensions, then run this file again.', SQLERRM;
     END;
+    EXECUTE has_cron INTO available;
   END IF;
 
-  IF to_regproc('cron.schedule') IS NOT NULL THEN
+  IF available THEN
     -- Named jobs replace themselves, so re-running this file does not create duplicates.
     PERFORM cron.schedule('investraders-cleanup-expired-stories', '15 3 * * *', 'SELECT public.cleanup_expired_stories()');
     PERFORM cron.schedule('investraders-event-reminders', '5 * * * *', 'SELECT public.send_event_reminders()');
