@@ -141,16 +141,41 @@ export function readArticle(html, url) {
   const description = meta(html, 'og:description') || meta(html, 'description');
   const title = meta(html, 'og:title') || stripTags((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '');
   const main = (html.match(/<article[\s\S]*?<\/article>/i) || html.match(/<main[\s\S]*?<\/main>/i) || [html])[0];
-  const paragraphs = [...main.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
-    .map((m) => stripTags(m[1]))
-    .filter((p) => p.length > 60 && !/cookie|newsletter|javascript|abonnez|subscribe|all rights reserved|tous droits/i.test(p));
+  const paragraphs = [...main.matchAll(/<(p|li|h2|h3)\b[^>]*>([\s\S]*?)<\/\1>/gi)]
+    .map((m) => stripTags(m[2]))
+    .filter((p) => p.length > 25 && !/cookie|newsletter|javascript|abonnez|subscribe|all rights reserved|tous droits|share on|partager sur/i.test(p));
   return {
     publishedAt,
     image: image ? absolute(image, url) : '',
     description: stripTags(description).slice(0, 1200),
     title,
-    text: paragraphs.join('\n').slice(0, 6000),
+    text: [...new Set(paragraphs)].join('\n').slice(0, 7000),
+    links: outboundLinks(main, url),
   };
+}
+
+const SOCIAL = /(facebook|twitter|x\.com|linkedin|instagram|whatsapp|telegram|t\.me|youtube|youtu\.be|pinterest|tiktok|reddit|mailto:|wa\.me|addtoany|sharethis|google\.com\/(maps|search)|feedburner|wp-login|\/tag\/|\/category\/|\/author\/)/i;
+
+/** Links inside the article that leave the page: candidates for the official application page. */
+function outboundLinks(html, pageUrl) {
+  let pageHost = '';
+  try { pageHost = new URL(pageUrl).hostname.replace(/^www\./, ''); } catch { /* keep empty */ }
+  const out = [];
+  const seen = new Set();
+  for (const m of html.matchAll(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    const href = absolute(m[1], pageUrl);
+    if (!/^https?:\/\//.test(href) || SOCIAL.test(href) || seen.has(href)) continue;
+    let host = '';
+    try { host = new URL(href).hostname.replace(/^www\./, ''); } catch { continue; }
+    const text = stripTags(m[2]).slice(0, 80);
+    const sameSite = host === pageHost;
+    // Same-site links are kept only when the text says they lead to the application.
+    if (sameSite && !/apply|application|candidat|postul|register|inscri|official|site officiel|learn more|more info|details|guidelines/i.test(text)) continue;
+    seen.add(href);
+    out.push({ url: href, text });
+    if (out.length >= 15) break;
+  }
+  return out;
 }
 
 // ── Listing pages ───────────────────────────────────────────────────────────
@@ -202,6 +227,7 @@ export async function enrich(item) {
       description: item.description || page.description,
       pageImage: page.image,
       text: page.text,
+      links: page.links,
       enriched: true,
     };
   } catch (error) {

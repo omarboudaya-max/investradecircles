@@ -22,8 +22,8 @@ export async function usableImage(url) {
 }
 
 const CATEGORY_STYLE = {
-  INVESTMENT: { label: 'Financement', from: '#047857', to: '#0ea5e9' },
-  OPPORTUNITY: { label: 'Opportunité', from: '#0f766e', to: '#2563eb' },
+  INVESTMENT: { label: 'Investissement', from: '#047857', to: '#0ea5e9' },
+  OPPORTUNITY: { label: 'Appel à candidatures', from: '#0f766e', to: '#2563eb' },
   PARTNERSHIP: { label: 'Partenariat', from: '#6d28d9', to: '#2563eb' },
   EXPANSION: { label: 'International', from: '#0369a1', to: '#06b6d4' },
   INSIGHT: { label: 'Tendances', from: '#b45309', to: '#2563eb' },
@@ -51,13 +51,14 @@ function wrap(text, maxChars, maxLines) {
 }
 
 /** A 1200×630 branded card as SVG text. */
-export function brandedCard({ headline, category, sourceName, date }) {
+export function brandedCard({ headline, category, sourceName, date, deadline }) {
   const style = CATEGORY_STYLE[category] || CATEGORY_STYLE.ANNOUNCEMENT;
+  const fmt = (d) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Tunis' }).format(d);
   const lines = wrap(headline, 30, 4);
   const fontSize = lines.length >= 4 ? 52 : 58;
   const lineHeight = Math.round(fontSize * 1.18);
   const top = 300 - ((lines.length - 1) * lineHeight) / 2;
-  const dateText = date ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Tunis' }).format(date) : '';
+  const footerRight = deadline ? `Date limite : ${fmt(deadline)}` : [sourceName, date ? fmt(date) : ''].filter(Boolean).join(' · ');
   const titleSpans = lines.map((l, i) => `<tspan x="80" y="${Math.round(top + i * lineHeight)}">${escapeXml(l)}</tspan>`).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
@@ -74,6 +75,6 @@ export function brandedCard({ headline, category, sourceName, date }) {
   <text font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="${fontSize}" font-weight="800" fill="#ffffff">${titleSpans}</text>
   <rect x="80" y="520" width="1040" height="2" fill="#ffffff" fill-opacity="0.35"/>
   <text x="80" y="568" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">Veille Investraders</text>
-  <text x="1120" y="568" text-anchor="end" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="22" fill="#ffffff" fill-opacity="0.9">${escapeXml([sourceName, dateText].filter(Boolean).join(' · '))}</text>
+  <text x="1120" y="568" text-anchor="end" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="${deadline ? 26 : 22}" font-weight="${deadline ? 700 : 400}" fill="#ffffff" fill-opacity="0.95">${escapeXml(footerRight)}</text>
 </svg>`;
 }

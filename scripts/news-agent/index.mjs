@@ -18,15 +18,15 @@
 import fs from 'fs';
 import path from 'path';
 import { randomBytes, randomUUID } from 'crypto';
-import { SOURCES, TOPIC_KEYWORDS, REGION_KEYWORDS } from './sources.mjs';
+import { SOURCES, OPPORTUNITY_KEYWORDS, EXCLUDE_KEYWORDS, REGION_KEYWORDS } from './sources.mjs';
 import { collect, enrich, normalize } from './feeds.mjs';
-import { chooseArticle, writePost } from './llm.mjs';
+import { rankOpportunities, writeOpportunityPost } from './llm.mjs';
 import { usableImage, brandedCard } from './image.mjs';
 
 const AGENT_NAME = 'Investraders_agent';
 const AGENT_AVATAR = 'https://www.investraders.net/logo.png';
-const AGENT_HEADLINE = 'Agent IA de veille — financement, startups et programmes d’accompagnement';
-const AGENT_BIO = 'Chaque jour, le matin, l’après-midi et le soir, je partage une actualité sur le financement, les startups, les programmes d’accompagnement et l’investissement, en Tunisie et dans le monde. Résumés rédigés par IA à partir de sources officielles et spécialisées : vérifiez toujours les détails auprès de la source citée.';
+const AGENT_HEADLINE = 'Agent IA — appels à candidatures, financements et programmes pour startups';
+const AGENT_BIO = 'Trois fois par jour, je partage une opportunité à saisir pour les startups, innovateurs, PME et investisseurs : appels à candidatures, subventions, programmes d’accélération et d’accompagnement, concours et événements d’investissement ouverts aux candidats tunisiens. Publications rédigées par IA à partir de sources spécialisées et officielles : vérifiez toujours les conditions auprès de la source citée.';
 const SLOT_LABEL = { morning: 'matin', afternoon: 'après-midi', night: 'soir', extra: 'édition spéciale' };
 
 const log = (...args) => console.log(...args);
@@ -69,12 +69,16 @@ function scoreCandidates(items, { usedUrls, recentSources, now, ageFactor }) {
     if (ageDays < -1 || ageDays > source.maxAgeDays * ageFactor) continue;
     const titleKey = normalize(item.title).replace(/[^a-z0-9]+/g, ' ').trim();
     if (seenTitles.has(titleKey)) continue;
-    const haystack = normalize(`${item.title} ${item.description} ${(item.text || '').slice(0, 1500)}`);
-    const topicHits = TOPIC_KEYWORDS.filter((k) => haystack.includes(k)).length;
-    if (topicHits === 0) continue;
+    const haystack = normalize(` ${item.title} ${item.description} ${(item.text || '').slice(0, 1500)} `);
+    const titleText = normalize(` ${item.title} `);
+    // Aimed at students, job seekers or academics: not for this audience.
+    if (EXCLUDE_KEYWORDS.some((k) => titleText.includes(k))) continue;
+    const hits = OPPORTUNITY_KEYWORDS.filter((k) => haystack.includes(k)).length;
+    if (hits < 2) continue;
     seenTitles.add(titleKey);
     const regional = REGION_KEYWORDS.some((k) => haystack.includes(k));
-    let score = Math.min(topicHits, 6) + (regional ? 4 : 0) + (item.tunisian ? 3 : 0)
+    const tunisiaNamed = /tunisi/.test(haystack);
+    let score = Math.min(hits, 8) + (source.weight || 1) * 2 + (regional ? 2 : 0) + (tunisiaNamed || item.tunisian ? 4 : 0)
       + 2 * Math.max(0, 1 - ageDays / (source.maxAgeDays * ageFactor));
     if (recentSources.includes(item.sourceId)) score -= 3;
     out.push({ ...item, score });
@@ -161,28 +165,48 @@ async function main() {
   let candidates = scoreCandidates(items, { usedUrls, recentSources, now, ageFactor: 1 });
   if (candidates.length === 0) candidates = scoreCandidates(items, { usedUrls, recentSources, now, ageFactor: 2 });
   log(`${items.length} items read, ${candidates.length} relevant candidates.`);
-  if (candidates.length === 0) { log('No fresh relevant news — skipping this slot.'); return; }
+  if (candidates.length === 0) { log('No open opportunity in the sources right now — skipping this slot.'); return; }
 
-  const choice = await chooseArticle(groqKey, candidates, recentTitles, SLOT_LABEL[slot]);
-  if (choice.index === null) { log(`Nothing suitable: ${choice.reason}`); return; }
-  let article = candidates[choice.index];
-  log(`Chosen: [${article.sourceId}] ${article.title}\n  ${article.url}\n  why: ${choice.reason}`);
-  if (!article.enriched) article = await enrich(article);
-
-  const post = await writePost(groqKey, article);
+  // Rank, then try the best few until one is a real opportunity, open to Tunisian
+  // applicants and still before its deadline.
+  const { ranked, reasons } = await rankOpportunities(groqKey, candidates, recentTitles, tunis.date);
+  if (ranked.length === 0) { log('No open opportunity for this audience today — skipping.'); return; }
+  let article = null;
+  let post = null;
+  for (const [n, index] of ranked.entries()) {
+    let candidate = candidates[index];
+    log(`Trying [${candidate.sourceId}] ${candidate.title}\n  ${candidate.url}\n  why: ${reasons[n]}`);
+    if (!candidate.enriched) candidate = await enrich(candidate);
+    const result = await writeOpportunityPost(groqKey, candidate, tunis.date);
+    if (result.ok) { article = candidate; post = result.post; break; }
+    log(`  skipped: ${result.why}`);
+  }
+  if (!post) { log('None of the shortlisted items is an open opportunity — skipping.'); return; }
 
   let imageUrl = '';
   let usedArticleImage = false;
   for (const candidate of [article.pageImage, article.image]) {
     if (await usableImage(candidate)) { imageUrl = candidate; usedArticleImage = true; break; }
   }
-  const card = usedArticleImage ? null : brandedCard({ headline: post.headline, category: post.category, sourceName: article.sourceName, date: article.publishedAt });
+  const card = usedArticleImage ? null : brandedCard({ headline: post.headline, category: post.category, sourceName: article.sourceName, date: article.publishedAt, deadline: post.deadline });
 
+  const deadlineText = post.deadline
+    ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(post.deadline)
+    : '';
+  const details = [
+    post.who && `👥 Pour qui : ${post.who}`,
+    post.reward && `🎁 À la clé : ${post.reward}`,
+    post.criteria.length ? `✅ Conditions :\n${post.criteria.map((c) => `• ${c}`).join('\n')}` : '',
+    deadlineText && `⏳ Date limite : ${deadlineText}`,
+  ].filter(Boolean).join('\n');
+  const links = post.applyUrl && post.applyUrl !== article.url
+    ? `🔗 Candidater / en savoir plus : ${post.applyUrl}\n📰 Source : ${article.sourceName} — ${article.url}`
+    : `🔗 Détails et candidature : ${article.url} (${article.sourceName})`;
   const content = [
     `${post.emoji} ${post.headline}`,
-    post.summary,
-    `👉 ${post.why}`,
-    `🔗 ${usedArticleImage ? 'Source et image' : 'Source'} : ${article.sourceName} — ${article.url}`,
+    post.intro,
+    details,
+    links,
     post.hashtags.join(' '),
   ].filter(Boolean).join('\n\n');
 
