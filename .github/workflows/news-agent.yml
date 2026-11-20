@@ -1,0 +1,53 @@
+name: Investraders news agent
+
+# Three posts a day, Tunis time (UTC+1, no daylight saving):
+#   morning 08:30 · afternoon 13:30 · night 19:30
+# GitHub sometimes delays or drops scheduled runs, so each slot has a backup run
+# 45 minutes later. The agent posts at most once per slot, so the backup does
+# nothing when the first run succeeded.
+on:
+  schedule:
+    - cron: '30 7 * * *'
+    - cron: '15 8 * * *'
+    - cron: '30 12 * * *'
+    - cron: '15 13 * * *'
+    - cron: '30 18 * * *'
+    - cron: '15 19 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run: choose and write the post, but publish nothing'
+        type: boolean
+        default: false
+
+concurrency:
+  group: news-agent
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Run the news agent
+        env:
+          SUPABASE_URL: https://earhypzdxwbohdncdzvz.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: node scripts/news-agent/index.mjs

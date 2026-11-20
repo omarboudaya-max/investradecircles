@@ -12,7 +12,9 @@
     "preview": "vite preview",
     "scrape-market-data": "node scrape-market-data.mjs",
     "scrape-ai": "node scrape-ai-agent.mjs",
-    "scrape-circles": "node scrape-circles-ai.mjs"
+    "scrape-circles": "node scrape-circles-ai.mjs",
+    "news-agent": "node scripts/news-agent/index.mjs",
+    "news-agent:dry": "node scripts/news-agent/index.mjs --dry-run"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

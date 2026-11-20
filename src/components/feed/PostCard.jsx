@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Globe2, ArrowRight } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, FileText, Download, FileSpreadsheet, File, Trash2, Flag, Link as LinkIcon, Sparkles, Globe2, ArrowRight, Bot } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import EmojiReactions from '@/components/feed/EmojiReactions';
 import CommentSection from '@/components/feed/CommentSection';
@@ -30,6 +30,7 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
   const [showComments, setShowComments] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState(null);
+  const [imageFailed, setImageFailed] = useState(false);
   const navigate = useNavigate();
   const liked = post.liked_by?.includes(user?.id);
   const isOwn = post.created_by_id === user?.id;
@@ -233,6 +234,14 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
       <div className="px-4 pb-3 space-y-2">
         {/* Intent Badge & Original Language Indicator */}
         <div className="flex items-center gap-2 flex-wrap">
+          {post.post_type === 'agent_news' && (
+            <span
+              title={t.postCard?.agentBadgeHint || 'Summary written by AI from the cited source. Check details with the source.'}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary"
+            >
+              <Bot className="w-3 h-3" /> {t.postCard?.agentBadge || 'AI news watch'}
+            </span>
+          )}
           {intentObj && (
             <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${INTENT_TONES[intentObj.tone]}`}>
               {intentObj.label}
@@ -249,8 +258,8 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
 
         <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{renderContent(post.content)}</p>
 
-        {/* Business signal — only when the post actually carries one */}
-        {signal.hasSignal && (signal.sector || signal.targetCountry || matchmakerLink) && (
+        {/* Business signal — only when a member's post actually carries one (news is not a request) */}
+        {post.post_type !== 'agent_news' && signal.hasSignal && (signal.sector || signal.targetCountry || matchmakerLink) && (
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
               <Sparkles className="h-3.5 w-3.5 text-primary" /> {signal.intent}
@@ -277,11 +286,16 @@ export default function PostCard({ post, onDeleted, readOnly = false }) {
         )}
       </div>
 
-      {post.image_url && (
+      {post.image_url && !imageFailed && (
         <div className="px-4 pb-3">
           <img
             src={post.image_url}
             alt=""
+            loading="lazy"
+            // News images are loaded straight from the publisher: send no referrer
+            // (avoids hot-link blocking) and hide the frame if the image goes away.
+            referrerPolicy="no-referrer"
+            onError={() => setImageFailed(true)}
             className="w-full rounded-xl object-contain max-h-96 cursor-zoom-in hover:brightness-95 transition-all"
             onClick={() => setLightboxSrc(post.image_url)}
           />

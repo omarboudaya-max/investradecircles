@@ -333,6 +333,7 @@ const fr = {
     noPostsTitle: 'Aucune publication pour le moment',
     noPostsSubtitle: 'Soyez le premier à partager une information avec vos cercles !',
     beFirstToPost: 'Soyez le premier à partager une information avec vos cercles !',
+    loadMore: 'Voir plus de publications',
   },
   savedPosts: {
     title: 'Publications Enregistrées',
@@ -522,6 +523,8 @@ const fr = {
     clickToOpen: 'Cliquer pour ouvrir / télécharger',
     comment: 'Commenter',
     postError: 'Échec de la mise à jour de la publication',
+    agentBadge: 'Veille IA',
+    agentBadgeHint: 'Résumé rédigé par IA à partir de la source citée. Vérifiez les détails auprès de la source.',
   },
   commentSection: {
     placeholder: 'Écrire un commentaire...',

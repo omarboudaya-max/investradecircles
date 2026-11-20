@@ -26,7 +26,9 @@ async function loadProfiles() {
 
 export async function loadIntelligenceData() {
   const [posts, comments, responses, profiles, circles, projects, organizations, vehicles, interests, registrations, governorates, sectors] = await Promise.all([
-    rows(supabase.from('Post').select('id,circle_id,created_by_id,author_name,author_avatar,visibility,content,likes,liked_by,intent_category,created_date').order('created_date', { ascending: false }).limit(2000)),
+    // The news agent's posts are curated news, not member signals: keep them out of the analysis.
+    rows(supabase.from('Post').select('id,circle_id,created_by_id,author_name,author_avatar,visibility,content,likes,liked_by,intent_category,post_type,created_date').order('created_date', { ascending: false }).limit(2000))
+      .then((list) => list.filter((p) => p.post_type !== 'agent_news')),
     rows(supabase.from('Comment').select('id,post_id,circle_id,created_by_id,author_name,content,created_date').order('created_date', { ascending: false }).limit(2000)),
     rows(supabase.from('CircleResponse').select('id,circle_id,question_id,created_by_id,author_name,response_text,upvoted_by,created_date').order('created_date', { ascending: false }).limit(2000)),
     loadProfiles(),

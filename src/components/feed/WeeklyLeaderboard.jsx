@@ -37,7 +37,8 @@ export default function WeeklyLeaderboard() {
   const { data: weeklyPosts = [], isLoading: postsLoading } = useQuery({
     queryKey: ['leaderboard-posts', weekKey],
     queryFn: () => supabase.from('Post').select('*').order('created_date', { ascending: false }).limit(500).then(res => res.data || []),
-    select: (d) => d.filter((p) => p.created_date >= weekAgo),
+    // The news agent's daily posts are not member contributions.
+    select: (d) => d.filter((p) => p.created_date >= weekAgo && p.post_type !== 'agent_news'),
     staleTime: 15 * 60 * 1000,
   });
 

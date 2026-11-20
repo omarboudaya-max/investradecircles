@@ -332,6 +332,7 @@ const ar = {
     noPostsTitle: 'لا توجد منشورات بعد',
     noPostsSubtitle: 'كن أول من يشارك شيئاً مع دوائره!',
     beFirstToPost: 'كن أول من يشارك شيئاً مع دوائرك!',
+    loadMore: 'عرض المزيد من المنشورات',
   },
   savedPosts: {
     title: 'المنشورات المحفوظة',
@@ -521,6 +522,8 @@ const ar = {
     unknown: 'غير معروف',
     public: 'عام',
     postError: 'فشل تحديث المنشور',
+    agentBadge: 'رصد بالذكاء الاصطناعي',
+    agentBadgeHint: 'ملخص كتبه الذكاء الاصطناعي من المصدر المذكور. تحقق من التفاصيل لدى المصدر.',
   },
   commentSection: {
     placeholder: 'اكتب تعليقاً...',

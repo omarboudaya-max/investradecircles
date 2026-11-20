@@ -37,6 +37,17 @@ const FIXTURES = {
     status: 'pending',
     created_date: new Date(Date.now() - i * 3600000).toISOString(),
   })),
+  Post: () => {
+    const hoursAgo = (h) => new Date(Date.now() - h * 3600000).toISOString();
+    const base = { circle_id: null, visibility: 'public', post_type: 'text', liked_by: [], saved_by: [], reactions: {}, intent_category: 'ANNOUNCEMENT', author_avatar: null };
+    return [
+      { ...base, id: '00000000-0000-4000-8000-0000000000e1', created_by_id: '00000000-0000-4000-8000-0000000000d0', author_name: 'Amira Ben Salah', content: 'Nous recherchons un distributeur en Allemagne pour notre huile d’olive bio.', likes: 0, created_date: hoursAgo(2), intent_category: 'NEED' },
+      { ...base, id: '00000000-0000-4000-8000-0000000000e2', created_by_id: '00000000-0000-4000-8000-0000000000d1', author_name: 'Karim Trabelsi', content: 'Notre fonds ouvre un nouveau ticket seed pour les fintechs tunisiennes.', likes: 7, reactions: { '🔥': ['a', 'b', 'c'] }, created_date: hoursAgo(40), intent_category: 'INVESTMENT' },
+      { ...base, id: '00000000-0000-4000-8000-0000000000e3', created_by_id: '00000000-0000-4000-8000-0000000000d2', author_name: 'Leila Gharbi', content: 'Retour sur le salon textile de Sousse.', likes: 25, created_date: hoursAgo(24 * 25) },
+      { ...base, id: '00000000-0000-4000-8000-0000000000e4', created_by_id: '00000000-0000-4000-8000-00000000a6e7', author_name: 'Investraders_agent', author_avatar: 'https://www.investraders.net/logo.png', post_type: 'agent_news', intent_category: 'INVESTMENT', likes: 1, created_date: hoursAgo(5), image_url: 'https://investintunisia.tn/wp-content/uploads/2026/11/Marquardt_Tun.webp', content: '🚀 Marquardt obtient jusqu’à 52 M€ de l’IFC pour développer ses sites en Tunisie\n\nLe groupe allemand agrandit trois unités de production dans le Grand Tunis, avec plus de 400 emplois qualifiés prévus.\n\n👉 Un signal fort de l’attractivité industrielle de la Tunisie.\n\n🔗 Source et image : FIPA — Invest in Tunisia — https://investintunisia.tn/\n\n#Investissement #Tunisie' },
+      ...Array.from({ length: 16 }, (_, i) => ({ ...base, id: `00000000-0000-4000-8000-0000000001${String(i).padStart(2, '0')}`, created_by_id: '00000000-0000-4000-8000-0000000000d3', author_name: 'Youssef Mejri', content: `Publication de test n°${i + 1}`, likes: i % 3, created_date: hoursAgo(30 + i * 20) })),
+    ];
+  },
   profiles: () => Array.from({ length: 5 }, (_, i) => ({
     id: `00000000-0000-4000-8000-0000000000d${i}`,
     full_name: ['Amira Ben Salah', 'Karim Trabelsi', 'Leila Gharbi', 'Youssef Mejri', 'Sonia Haddad'][i],

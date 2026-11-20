@@ -332,6 +332,7 @@ const en = {
     noPostsTitle: 'No posts yet',
     noPostsSubtitle: 'Be the first to share something with your circles!',
     beFirstToPost: 'Be the first to share something with your circles!',
+    loadMore: 'Load more posts',
   },
   savedPosts: {
     title: 'Saved Posts',
@@ -521,6 +522,8 @@ const en = {
     unknown: 'Unknown',
     public: 'Public',
     postError: 'Failed to update post',
+    agentBadge: 'AI news watch',
+    agentBadgeHint: 'Summary written by AI from the cited source. Check details with the source.',
   },
   commentSection: {
     placeholder: 'Write a comment...',
