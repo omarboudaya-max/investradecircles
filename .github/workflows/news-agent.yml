@@ -19,6 +19,10 @@ on:
         description: 'Dry run: choose and write the post, but publish nothing'
         type: boolean
         default: false
+      extra_post:
+        description: 'Extra post now, outside the three daily slots'
+        type: boolean
+        default: false
 
 concurrency:
   group: news-agent
@@ -50,4 +54,5 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+          EXTRA_POST: ${{ inputs.extra_post && '1' || '' }}
         run: node scripts/news-agent/index.mjs

@@ -4,8 +4,9 @@
 -- WHAT THIS DOES
 --   1. AgentNewsItem: what the Investraders_agent has published (or is publishing).
 --      • one row per source article, so the same article is never posted twice;
---      • at most one live row per day and slot (morning / afternoon / night), so a
---        retried or duplicated scheduled run can never post twice in a slot.
+--      • at most one row per day and scheduled slot (morning / afternoon / night), so a
+--        retried or duplicated scheduled run can never post twice in a slot;
+--      • 'extra' rows are one-off posts requested by hand, outside the schedule.
 --      Written only by the agent (service role). Administrators can read it.
 --   2. PostSeen: which posts a member has already seen in the home feed, so the
 --      feed shows unseen posts first. Each member reads and writes only their own rows.
@@ -23,14 +24,20 @@ CREATE TABLE IF NOT EXISTS public."AgentNewsItem" (
   title        TEXT,
   published_at TIMESTAMPTZ,
   slot_date    DATE NOT NULL,
-  slot         TEXT NOT NULL CHECK (slot IN ('morning', 'afternoon', 'night')),
+  slot         TEXT NOT NULL CHECK (slot IN ('morning', 'afternoon', 'night', 'extra')),
   status       TEXT NOT NULL DEFAULT 'posting' CHECK (status IN ('posting', 'posted')),
   post_id      UUID REFERENCES public."Post"(id) ON DELETE SET NULL,
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Upgrade a table created by the first version of this file (no 'extra' slot,
+-- one row per slot for every slot): replace the rule and the index in place.
+ALTER TABLE public."AgentNewsItem" DROP CONSTRAINT IF EXISTS "AgentNewsItem_slot_check";
+ALTER TABLE public."AgentNewsItem" ADD CONSTRAINT "AgentNewsItem_slot_check" CHECK (slot IN ('morning', 'afternoon', 'night', 'extra'));
+DROP INDEX IF EXISTS public.agent_news_item_one_per_slot;
+
 CREATE UNIQUE INDEX IF NOT EXISTS agent_news_item_url_key ON public."AgentNewsItem" (url);
-CREATE UNIQUE INDEX IF NOT EXISTS agent_news_item_one_per_slot ON public."AgentNewsItem" (slot_date, slot);
+CREATE UNIQUE INDEX IF NOT EXISTS agent_news_item_one_per_slot ON public."AgentNewsItem" (slot_date, slot) WHERE slot <> 'extra';
 CREATE INDEX IF NOT EXISTS agent_news_item_created_idx ON public."AgentNewsItem" (created_at DESC);
 
 ALTER TABLE public."AgentNewsItem" ENABLE ROW LEVEL SECURITY;

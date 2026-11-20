@@ -8,6 +8,7 @@
 //   GROQ_API_KEY               language model key
 //   DRY_RUN=1                  choose and write the post but publish nothing
 //   FORCE_SLOT                 morning | afternoon | night (optional override)
+//   EXTRA_POST=1 / --now       publish one extra post now, outside the daily slots
 //   AGENT_EMAIL                login e-mail of the agent account (default agent@investraders.net)
 //   OUT_DIR                    dry run only: where to write post.json and card.svg
 //
@@ -26,7 +27,7 @@ const AGENT_NAME = 'Investraders_agent';
 const AGENT_AVATAR = 'https://www.investraders.net/logo.png';
 const AGENT_HEADLINE = 'Agent IA de veille — financement, startups et programmes d’accompagnement';
 const AGENT_BIO = 'Chaque jour, le matin, l’après-midi et le soir, je partage une actualité sur le financement, les startups, les programmes d’accompagnement et l’investissement, en Tunisie et dans le monde. Résumés rédigés par IA à partir de sources officielles et spécialisées : vérifiez toujours les détails auprès de la source citée.';
-const SLOT_LABEL = { morning: 'matin', afternoon: 'après-midi', night: 'soir' };
+const SLOT_LABEL = { morning: 'matin', afternoon: 'après-midi', night: 'soir', extra: 'édition spéciale' };
 
 const log = (...args) => console.log(...args);
 const truthy = (v) => /^(1|true|yes)$/i.test(String(v || ''));
@@ -126,13 +127,15 @@ async function main() {
   const dryRun = truthy(process.env.DRY_RUN) || process.argv.includes('--dry-run');
   const groqKey = process.env.GROQ_API_KEY;
   if (!groqKey) throw new Error('GROQ_API_KEY is not set');
+  process.env.SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
   if (!dryRun && (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY)) {
     throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set (or run with DRY_RUN=1)');
   }
 
   const now = new Date();
   const tunis = tunisNow(now);
-  const slot = ['morning', 'afternoon', 'night'].includes(process.env.FORCE_SLOT) ? process.env.FORCE_SLOT : tunis.slot;
+  const extra = truthy(process.env.EXTRA_POST) || process.argv.includes('--now');
+  const slot = extra ? 'extra' : ['morning', 'afternoon', 'night'].includes(process.env.FORCE_SLOT) ? process.env.FORCE_SLOT : tunis.slot;
   log(`Investraders news agent — ${tunis.date} ${SLOT_LABEL[slot]}${dryRun ? ' (dry run)' : ''}`);
 
   const db = dryRun ? null : await connect();
@@ -140,9 +143,11 @@ async function main() {
   let recentTitles = [];
   let recentSources = [];
   if (db) {
-    const { data: taken, error: slotError } = await db.from('AgentNewsItem').select('id,status').eq('slot_date', tunis.date).eq('slot', slot).maybeSingle();
+    const { data: taken, error: slotError } = extra
+      ? await db.from('AgentNewsItem').select('id,status').limit(1).maybeSingle().then((r) => ({ data: null, error: r.error }))
+      : await db.from('AgentNewsItem').select('id,status').eq('slot_date', tunis.date).eq('slot', slot).maybeSingle();
     if (slotError) throw new Error(`Could not read the agent log (is the migration applied?): ${slotError.message}`);
-    if (taken) { log(`Slot already ${taken.status} — nothing to do.`); return; }
+    if (taken && !extra) { log(`Slot already ${taken.status} — nothing to do.`); return; }
     const since = new Date(now - 90 * 86_400_000).toISOString();
     const { data: history, error: historyError } = await db.from('AgentNewsItem').select('url,title,source,created_at').gte('created_at', since).order('created_at', { ascending: false }).limit(500);
     if (historyError) throw new Error(`Could not read the agent history: ${historyError.message}`);
